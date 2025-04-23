@@ -8,8 +8,6 @@
 <title>biztrack</title>
 </head>
 <body>
-<h1 align="center">ERP : biztrack</h1>
 <c:import url="/WEB-INF/views/common/menubar.jsp" />
-<h1>fffff</h1>
 </body>
 </html>
