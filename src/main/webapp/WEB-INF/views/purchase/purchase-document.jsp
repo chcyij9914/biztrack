@@ -108,53 +108,24 @@
 										<th>문서 종류</th>
 										<th>문서번호</th>
 										<th>제목</th>
-										<th>거래처명</th>
+										<th>구매처명</th>
 										<th>상태</th>
 									</tr>
 								</thead>
-								<%-- 		<tbody class="text-center bg-white">
+										<tbody class="text-center bg-white">
 									<!-- 예시 데이터 반복 -->
-									<c:forEach var="doc" items="${documentList}">
+									<c:forEach var="purchase" items="${requestScope.list}">
 										<tr>
 											<td><input type="checkbox" /></td>
-											<td>${doc.type}</td>
-											<td>${doc.number}</td>
-											<td>${doc.title}</td>
-											<td>${doc.clientName}</td>
-											<td><span class="badge badge-primary">${doc.status}</span></td>
+											<td>${documentType}</td>
+											<td>${documentId}</td>
+											<td>${productCode}</td>
+											<td>${vendorName}</td>
+											<td><span class="badge badge-primary">${approve1Status}</span></td>
 										</tr>
 									</c:forEach>
-								</tbody> --%>
-								<tbody class="text-center bg-white">
-									<tr>
-										<td><input type="checkbox"></td>
-										<td>구매품의서</td>
-										<td>20250409-3</td>
-										<td>방염 처리 폴리에스터 원단 500m</td>
-										<td>한화원단</td>
-										<td><span class="badge badge-primary">결재중</span></td>
-									</tr>
-									<tr>
-										<td><input type="checkbox"></td>
-										<td>지출결의서</td>
-										<td>20250407-1</td>
-										<td>산업용 고해상 카메라 120EA</td>
-										<td>(주)농촌공업</td>
-										<td><span class="badge badge-primary">결재완료</span></td>
-									</tr>
-									<tr>
-										<td><input type="checkbox"></td>
-										<td>구매품의서</td>
-										<td>20250401-3</td>
-										<td>정전기 방지용 작업 장갑 300EA</td>
-										<td>세미테크</td>
-										<td><span class="badge badge-primary">결재완료</span></td>
-									</tr>
 								</tbody>
-							</table>
-						</div>
-					</div>
-
+								
 					<!-- Pagination -->
 					<nav aria-label="Page navigation example">
 						<ul class="pagination justify-content-center">
