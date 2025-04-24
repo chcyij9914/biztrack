@@ -113,7 +113,7 @@
       </a>
       <div id="collapseClient" class="collapse" aria-labelledby="headingClient" data-parent="#accordionSidebar">
          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="${pageContext.request.contextPath}/client/list.do">거래처관리</a>
+            <a class="collapse-item" href="${pageContext.request.contextPath}/client/clist.do">거래처관리</a>
             <a class="collapse-item" href="${pageContext.request.contextPath}/client/ProposalList.do">제안서관리</a>
          </div>
       </div>
