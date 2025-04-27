@@ -12,13 +12,15 @@ public class Product implements java.io.Serializable{
 	private String subcategoryID;
 	private int costPrice;
 	private int salePrice;
+	private String categoryName;
+	private String subcategoryName;
 	
 	public Product() {
 		super();
 	}
 
 	public Product(String productCode, String productName, String categoryID, String subcategoryID, int costPrice,
-			int salePrice) {
+			int salePrice, String categoryName, String subcategoryName) {
 		super();
 		this.productCode = productCode;
 		this.productName = productName;
@@ -26,6 +28,8 @@ public class Product implements java.io.Serializable{
 		this.subcategoryID = subcategoryID;
 		this.costPrice = costPrice;
 		this.salePrice = salePrice;
+		this.categoryName = categoryName;
+		this.subcategoryName = subcategoryName;
 	}
 
 	public String getProductCode() {
@@ -76,6 +80,22 @@ public class Product implements java.io.Serializable{
 		this.salePrice = salePrice;
 	}
 
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getSubcategoryName() {
+		return subcategoryName;
+	}
+
+	public void setSubcategoryName(String subcategoryName) {
+		this.subcategoryName = subcategoryName;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -83,10 +103,10 @@ public class Product implements java.io.Serializable{
 	@Override
 	public String toString() {
 		return "Product [productCode=" + productCode + ", productName=" + productName + ", categoryID=" + categoryID
-				+ ", subcategoryID=" + subcategoryID + ", costPrice=" + costPrice + ", salePrice=" + salePrice + "]";
+				+ ", subcategoryID=" + subcategoryID + ", costPrice=" + costPrice + ", salePrice=" + salePrice
+				+ ", categoryName=" + categoryName + ", subcategoryName=" + subcategoryName + "]";
 	}
-	
-	
+
 	
 	
 	

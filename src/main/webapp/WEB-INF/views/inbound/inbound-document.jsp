@@ -10,7 +10,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>product list</title>
+<title>inbound document</title>
 
 <!-- Fonts & Styles -->
 <link
@@ -63,8 +63,8 @@
 					<!-- Page Heading -->
 					<div class="d-flex justify-content-between align-items-center mb-2">
 						<div>
-							<h1 class="h3 text-gray-800 mb-1">상품 관리</h1>
-							<p class="text-muted small mb-0">판매 상품 목록</p>
+							<h1 class="h3 text-gray-800 mb-1">입고</h1>
+							<p class="text-muted small mb-0">물품 입고 목록</p>
 						</div>
 
 						<div class="d-flex align-items-center">
@@ -95,33 +95,33 @@
 							<table class="table table-bordered" id="purchaseTable"
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
+									<col style="width: 20%;">
 									<col style="width: 10%;">
 									<col style="width: 30%;">
-									<col style="width: 15%;">
-									<col style="width: 15%;">
+									<col style="width: 10%;">
 									<col style="width: 20%;">
 									<col style="width: 10%;">
 								</colgroup>
 								<thead class="text-center bg-light">
 									<tr>
-										<th>물품코드</th>
-										<th>물품명</th>
-										<th>카테고리</th>
-										<th>세부 카테고리</th>
-										<th>원가</th>
-										<th>판매가</th>
+										<th>입고 날짜</th>
+										<th>품번</th>
+										<th>품명</th>
+										<th>수량</th>
+										<th>구매처</th>
+										<th>상태</th>
 									</tr>
 								</thead>
 								<tbody class="text-center bg-white">
-
-									<c:forEach var="product" items="${requestScope.list}">
+									<!-- 예시 데이터 반복 -->
+									<c:forEach var="inbound" items="${requestScope.list}">
 										<tr>
-											<td>${product.productCode}</td>
-											<td>${product.productName}</td>
-											<td>${product.categoryName}</td>
-											<td>${product.subcategoryName}</td>
-											<td>${product.costPrice}</td>
-											<td>${product.salePrice}</td>
+											<td>${inbound.receivedDate}</td>
+											<td>${inbound.productCode}</td>
+											<td>${inbound.productName}</td>
+											<td>${inbound.inboundQuantity}</td>
+											<td>${inbound.vendorName}</td>
+											<td><span class="badge badge-primary">${inbound.approve1Status}</span></td>
 										</tr>
 									</c:forEach>
 								</tbody>
