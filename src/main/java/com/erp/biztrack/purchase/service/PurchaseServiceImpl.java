@@ -2,22 +2,27 @@ package com.erp.biztrack.purchase.service;
 
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.erp.biztrack.purchase.dto.Purchase;
+import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.purchase.model.dao.PurchaseDao;
+import com.erp.biztrack.purchase.model.dto.Purchase;
 
 @Service("purchaseService")
 public class PurchaseServiceImpl implements PurchaseService {
 
-	@Override
-	public ArrayList<Purchase> selectList(Paging paging) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Autowired
+	private PurchaseDao purchaseDao;
 
 	@Override
-	public Purchase selectPurchase(int purchaseNo) {
-		// TODO Auto-generated method stub
-		return null;
+	public int selectListCount() {
+	    return purchaseDao.selectListCount();  
 	}
+
+	
+	@Override
+	public ArrayList<Purchase> selectList(Paging paging) {
+		return purchaseDao.selectList(paging); }
+	 
 }

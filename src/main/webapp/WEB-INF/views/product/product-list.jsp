@@ -10,7 +10,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>purchase document</title>
+<title>product list</title>
 
 <!-- Fonts & Styles -->
 <link
@@ -111,14 +111,14 @@
 									</tr>
 								</thead>
 								<tbody class="text-center bg-white">
-									<!-- 예시 데이터 반복 -->
-									<c:forEach var="purchase" items="${requestScope.list}">
+									
+									<c:forEach var="purchase" items="00">
 										<tr>
-											<td>${purchase.documentType}</td>
-											<td>${purchase.documentId}</td>
-											<td>${purchase.productCode}</td>
-											<td>${purchase.vendorName}</td>
-											<td><span class="badge badge-primary">${purchase.approve1Status}</span></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td><span class="badge badge-primary"></span></td>
 										</tr>
 									</c:forEach>
 								</tbody>
