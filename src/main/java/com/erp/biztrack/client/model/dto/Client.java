@@ -17,7 +17,7 @@ public class Client implements java.io.Serializable{
 	private String url;									//	URL	VARCHAR2(300 BYTE)
 	private String clientStatus;						//	CLIENT_STATUS	VARCHAR2(50 BYTE)
 	private java.sql.Date contractStartDate;	//	CONTRACT_START_DATE	DATE
-	private java.sql.Date conractEndDate;		//	CONTRACT_END_DATE	DATE
+	private java.sql.Date contractEndDate;		//	CONTRACT_END_DATE	DATE
 	private String firstManagerId;					//	FIRST_MANAGER_ID	VARCHAR2(30 BYTE)
 	private String currentManagerId;				//	CURRENT_MANAGER_ID	VARCHAR2(30 BYTE)
 	private String directorName;					//	DIRECTOR_NAME	VARCHAR2(30 BYTE)
@@ -31,7 +31,7 @@ public class Client implements java.io.Serializable{
 
 	public Client(String clientId, String clientName, String ceoName, String businessNumber, String productCode,
 			String companyPhone, String fax, String address, String url, String clientStatus, Date contractStartDate,
-			Date conractEndDate, String firstManagerId, String currentManagerId, String directorName,
+			Date contractEndDate, String firstManagerId, String currentManagerId, String directorName,
 			String directorPhone, String email) {
 		super();
 		this.clientId = clientId;
@@ -45,12 +45,22 @@ public class Client implements java.io.Serializable{
 		this.url = url;
 		this.clientStatus = clientStatus;
 		this.contractStartDate = contractStartDate;
-		this.conractEndDate = conractEndDate;
+		this.contractEndDate = contractEndDate;
 		this.firstManagerId = firstManagerId;
 		this.currentManagerId = currentManagerId;
 		this.directorName = directorName;
 		this.directorPhone = directorPhone;
 		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "Client [clientId=" + clientId + ", clientName=" + clientName + ", ceoName=" + ceoName
+				+ ", businessNumber=" + businessNumber + ", productCode=" + productCode + ", companyPhone="
+				+ companyPhone + ", fax=" + fax + ", address=" + address + ", url=" + url + ", clientStatus="
+				+ clientStatus + ", contractStartDate=" + contractStartDate + ", conractEndDate=" + contractEndDate
+				+ ", firstManagerId=" + firstManagerId + ", currentManagerId=" + currentManagerId + ", directorName="
+				+ directorName + ", directorPhone=" + directorPhone + ", email=" + email + "]";
 	}
 
 	//getters and setters
@@ -142,12 +152,12 @@ public class Client implements java.io.Serializable{
 		this.contractStartDate = contractStartDate;
 	}
 
-	public java.sql.Date getConractEndDate() {
-		return conractEndDate;
+	public java.sql.Date getContractEndDate() {
+		return contractEndDate;
 	}
 
-	public void setConractEndDate(java.sql.Date conractEndDate) {
-		this.conractEndDate = conractEndDate;
+	public void setContractEndDate(java.sql.Date contractEndDate) {
+		this.contractEndDate = contractEndDate;
 	}
 
 	public String getFirstManagerId() {
@@ -192,15 +202,5 @@ public class Client implements java.io.Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	@Override
-	public String toString() {
-		return "Client [clientId=" + clientId + ", clientName=" + clientName + ", ceoName=" + ceoName
-				+ ", businessNumber=" + businessNumber + ", productCode=" + productCode + ", companyPhone="
-				+ companyPhone + ", fax=" + fax + ", address=" + address + ", url=" + url + ", clientStatus="
-				+ clientStatus + ", contractStartDate=" + contractStartDate + ", conractEndDate=" + conractEndDate
-				+ ", firstManagerId=" + firstManagerId + ", currentManagerId=" + currentManagerId + ", directorName="
-				+ directorName + ", directorPhone=" + directorPhone + ", email=" + email + "]";
 	}	
 }

@@ -56,7 +56,10 @@
                </div>
 
                <div class="d-flex align-items-center">
-                  <a href="#" class="btn btn-primary px-3 py-2 mr-3">+ 거래처 등록</a>
+				<a href="#" class="btn btn-primary px-3 py-2 mr-3"
+				onclick="window.open('${pageContext.request.contextPath}/client/insertForm.do', 'insertClientWindow', 'width=800,height=900'); return false;">
+				+ 거래처 등록
+				</a>
                   <form class="form-inline" action="#" method="get">
                      <select class="form-control mr-2" name="filter">
                         <option>거래처명</option>
