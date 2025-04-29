@@ -11,15 +11,20 @@ public class Client implements java.io.Serializable{
 	private String ceoName;						//	CEO_NAME	VARCHAR2(30 BYTE)
 	private String businessNumber;				//	BUSINESS_NUMBER	VARCHAR2(50 BYTE)
 	private String productCode;					//	PRODUCT_CODE	VARCHAR2(30 BYTE)
+	private String categoryName; 				// CATEGORY_NAME	VARCHAR2(30 BYTE) 상품명
 	private String companyPhone;				//	COMPANY_PHONE	VARCHAR2(20 BYTE)
 	private String fax;									//	FAX	VARCHAR2(30 BYTE)
 	private String address;							//	ADDRESS	VARCHAR2(200 BYTE)
 	private String url;									//	URL	VARCHAR2(300 BYTE)
 	private String clientStatus;						//	CLIENT_STATUS	VARCHAR2(50 BYTE)
 	private java.sql.Date contractStartDate;	//	CONTRACT_START_DATE	DATE
-	private java.sql.Date contractEndDate;		//	CONTRACT_END_DATE	DATE
+	private java.sql.Date contractEndDate;	//	CONTRACT_END_DATE	DATE
 	private String firstManagerId;					//	FIRST_MANAGER_ID	VARCHAR2(30 BYTE)
+	private String firstManagerName;  			// 최초 계약자명
+	private String firstManagerJob;				// 최초 계약자 담당자 직급
 	private String currentManagerId;				//	CURRENT_MANAGER_ID	VARCHAR2(30 BYTE)
+	private String currentManagerName; 		// 현재 관리 담당자명
+	private String currentManagerJob;			// 현재 관리 담담자 직급
 	private String directorName;					//	DIRECTOR_NAME	VARCHAR2(30 BYTE)
 	private String directorPhone;					//	DIRECTOR_PHONE	VARCHAR2(20 BYTE)
 	private String email;								//	EMAIL	VARCHAR2(100 BYTE)
@@ -30,15 +35,17 @@ public class Client implements java.io.Serializable{
 	}
 
 	public Client(String clientId, String clientName, String ceoName, String businessNumber, String productCode,
-			String companyPhone, String fax, String address, String url, String clientStatus, Date contractStartDate,
-			Date contractEndDate, String firstManagerId, String currentManagerId, String directorName,
-			String directorPhone, String email) {
+			String categoryName, String companyPhone, String fax, String address, String url, String clientStatus,
+			Date contractStartDate, Date contractEndDate, String firstManagerId, String firstManagerName,
+			String firstManagerJob, String currentManagerId, String currentManagerName, String currentManagerJob,
+			String directorName, String directorPhone, String email) {
 		super();
 		this.clientId = clientId;
 		this.clientName = clientName;
 		this.ceoName = ceoName;
 		this.businessNumber = businessNumber;
 		this.productCode = productCode;
+		this.categoryName = categoryName;
 		this.companyPhone = companyPhone;
 		this.fax = fax;
 		this.address = address;
@@ -47,7 +54,11 @@ public class Client implements java.io.Serializable{
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		this.firstManagerId = firstManagerId;
+		this.firstManagerName = firstManagerName;
+		this.firstManagerJob = firstManagerJob;
 		this.currentManagerId = currentManagerId;
+		this.currentManagerName = currentManagerName;
+		this.currentManagerJob = currentManagerJob;
 		this.directorName = directorName;
 		this.directorPhone = directorPhone;
 		this.email = email;
@@ -56,11 +67,13 @@ public class Client implements java.io.Serializable{
 	@Override
 	public String toString() {
 		return "Client [clientId=" + clientId + ", clientName=" + clientName + ", ceoName=" + ceoName
-				+ ", businessNumber=" + businessNumber + ", productCode=" + productCode + ", companyPhone="
-				+ companyPhone + ", fax=" + fax + ", address=" + address + ", url=" + url + ", clientStatus="
-				+ clientStatus + ", contractStartDate=" + contractStartDate + ", conractEndDate=" + contractEndDate
-				+ ", firstManagerId=" + firstManagerId + ", currentManagerId=" + currentManagerId + ", directorName="
-				+ directorName + ", directorPhone=" + directorPhone + ", email=" + email + "]";
+				+ ", businessNumber=" + businessNumber + ", productCode=" + productCode + ", categoryName="
+				+ categoryName + ", companyPhone=" + companyPhone + ", fax=" + fax + ", address=" + address + ", url="
+				+ url + ", clientStatus=" + clientStatus + ", contractStartDate=" + contractStartDate
+				+ ", contractEndDate=" + contractEndDate + ", firstManagerId=" + firstManagerId + ", firstManagerName="
+				+ firstManagerName + ", firstManagerJob=" + firstManagerJob + ", currentManagerId=" + currentManagerId
+				+ ", currentManagerName=" + currentManagerName + ", currentManagerJob=" + currentManagerJob
+				+ ", directorName=" + directorName + ", directorPhone=" + directorPhone + ", email=" + email + "]";
 	}
 
 	//getters and setters
@@ -102,6 +115,14 @@ public class Client implements java.io.Serializable{
 
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 
 	public String getCompanyPhone() {
@@ -168,12 +189,44 @@ public class Client implements java.io.Serializable{
 		this.firstManagerId = firstManagerId;
 	}
 
+	public String getFirstManagerName() {
+		return firstManagerName;
+	}
+
+	public void setFirstManagerName(String firstManagerName) {
+		this.firstManagerName = firstManagerName;
+	}
+
+	public String getFirstManagerJob() {
+		return firstManagerJob;
+	}
+
+	public void setFirstManagerJob(String firstManagerJob) {
+		this.firstManagerJob = firstManagerJob;
+	}
+
 	public String getCurrentManagerId() {
 		return currentManagerId;
 	}
 
 	public void setCurrentManagerId(String currentManagerId) {
 		this.currentManagerId = currentManagerId;
+	}
+
+	public String getCurrentManagerName() {
+		return currentManagerName;
+	}
+
+	public void setCurrentManagerName(String currentManagerName) {
+		this.currentManagerName = currentManagerName;
+	}
+
+	public String getCurrentManagerJob() {
+		return currentManagerJob;
+	}
+
+	public void setCurrentManagerJob(String currentManagerJob) {
+		this.currentManagerJob = currentManagerJob;
 	}
 
 	public String getDirectorName() {
@@ -202,5 +255,5 @@ public class Client implements java.io.Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}	
+	}
 }

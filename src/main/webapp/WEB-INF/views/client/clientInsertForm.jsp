@@ -44,9 +44,14 @@
     </div>
 
     <div class="form-group">
-      <label for="address">주소</label>
-      <input type="text" name="address" id="address" class="form-control">
-    </div>
+            <label>주소</label>
+            <div class="input-group">
+              <input type="text" name="address" id="address" class="form-control" readonly placeholder="주소를 검색해주세요">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-secondary" onclick="searchAddress()">주소 검색</button>
+              </div>
+            </div>
+          </div>
 
     <div class="form-group">
       <label for="url">홈페이지 URL</label>
@@ -114,6 +119,19 @@
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
+
+<!-- Daum 주소검색 API -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+function searchAddress() {
+  new daum.Postcode({
+    oncomplete: function(data) {
+      var fullAddr = data.address; // 도로명 주소
+      document.getElementById('address').value = fullAddr;
+    }
+  }).open();
+}
+</script>
 
 <!-- 명함 OCR 적용하기 Ajax -->
 <script>

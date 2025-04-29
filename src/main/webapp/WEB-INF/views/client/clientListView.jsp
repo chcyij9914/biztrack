@@ -6,8 +6,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport"
-   content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>거래처 관리</title>
 
 <!-- Fonts & Styles -->
@@ -106,12 +105,15 @@
                               <td>${client.businessNumber}</td>
                               <td>${client.companyPhone}</td>
                               <td><span class="badge badge-secondary">${client.clientStatus}</span></td>
-                              <td><a href="#" class="btn btn-sm btn-outline-secondary">상세</a></td>
+                              <td><a href="${pageContext.request.contextPath}/client/detail.do?clientId=${client.clientId}"
+                              				class="btn btn-sm btn-outline-secondary">상세</a></td>
                            </tr>
                         </c:forEach>
                      </tbody>
                   </table>
                </div>
+               
+               
                
 				<!-- 페이징 영역 -->
 				<c:import url="/WEB-INF/views/common/pagingView.jsp" />
