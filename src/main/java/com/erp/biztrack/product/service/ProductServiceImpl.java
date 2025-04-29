@@ -15,14 +15,22 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductDao productDao;
 
+	// 페이징 목적 (게시글 수 카운팅)
 	@Override
 	public int selectListCount() {
-	    return productDao.selectListCount();  
+		return productDao.selectListCount();
 	}
 
-	
+	// 판매상품 리스트 조회
 	@Override
 	public ArrayList<Product> selectList(Paging paging) {
-		return productDao.selectList(paging); }
-	 
+		return productDao.selectList(paging);
+	}
+
+	// 구매문서 작성 시 상품목록 가져오기
+	@Override
+	public ArrayList<Product> selectAll() {
+		return productDao.selectAll();
+
+	}
 }
