@@ -6,12 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
 	
-	@RequestMapping("login.do")
-	public String forwardLoginView() {
-		return "employee/login";
-	}
-	
-	@RequestMapping("main.do")
+	@RequestMapping("/main.do")
 	public String forwardMainView() {
 		return "common/main";
 	}
