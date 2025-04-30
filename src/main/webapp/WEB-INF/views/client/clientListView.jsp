@@ -105,7 +105,7 @@
                               <td>${client.businessNumber}</td>
                               <td>${client.companyPhone}</td>
                               <td><span class="badge badge-secondary">${client.clientStatus}</span></td>
-                              <td><a href="${pageContext.request.contextPath}/client/detail.do?clientId=${client.clientId}"
+                              <td><a href="${pageContext.request.contextPath}/client/cdetail.do?clientId=${client.clientId}"
                               				class="btn btn-sm btn-outline-secondary">상세</a></td>
                            </tr>
                         </c:forEach>

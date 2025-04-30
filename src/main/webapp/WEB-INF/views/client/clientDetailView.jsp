@@ -124,6 +124,34 @@
         </div>
 
       </div>
+      <!-- 버튼 영역 (가운데 정렬) -->
+		<div class="d-flex justify-content-center mb-4">
+		  <!-- 수정하기 버튼 -->
+		  <a href="${pageContext.request.contextPath}/client/cupdate.do?clientId=${client.clientId}" 
+		     class="btn btn-warning btn-icon-split mr-2">
+		    <span class="icon text-white-50">
+		      <i class="fas fa-edit"></i>
+		    </span>
+		    <span class="text">수정하기</span>
+		  </a>
+		
+		  <!-- 이전페이지 버튼 -->
+		  <button type="button" class="btn btn-secondary btn-icon-split mr-2" onclick="history.back();">
+		    <span class="icon text-white-50">
+		      <i class="fas fa-arrow-left"></i>
+		    </span>
+		    <span class="text">이전페이지</span>
+		  </button>
+		
+		  <!-- 목록으로 버튼 -->
+		  <a href="${pageContext.request.contextPath}/client/clist.do" class="btn btn-info btn-icon-split">
+		    <span class="icon text-white-50">
+		      <i class="fas fa-list"></i>
+		    </span>
+		    <span class="text">목록으로</span>
+		  </a>
+		</div>
+      
     </div>
   </div>
 </div>

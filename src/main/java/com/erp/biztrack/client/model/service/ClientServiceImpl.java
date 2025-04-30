@@ -18,7 +18,6 @@ public class ClientServiceImpl implements ClientService {
 	@Autowired
 	private ClientDao clientDao;
 
-	// 거래처 목록 조회 관련 ----------------------------------------
 	@Override
 	public ArrayList<Client> selectClientList(Paging paging) {
 		return clientDao.selectClientList(paging);
@@ -29,7 +28,6 @@ public class ClientServiceImpl implements ClientService {
 		return clientDao.selectListCount();
 	}
 
-	// 거래처 등록 관련 ---------------------------------------------
 	@Override
 	public int insertClient(Client client) {
 		// 계약상태 계산
@@ -83,6 +81,16 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public String selectBusinessCardFilePath(String clientId) {
 		return clientDao.selectBusinessCardFilePath(clientId);
+	}
+
+	@Override
+	public int updateClient(Client client) {
+		return clientDao.updateClient(client);
+	}
+
+	@Override
+	public int deleteFile(FileDTO file) {
+		return clientDao.deleteFile(file);
 	}
 
 }
