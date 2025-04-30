@@ -22,4 +22,7 @@ public interface ClientService {
     Client selectClientDetail(String clientId);
     String selectContractFilePath(String clientId);
     String selectBusinessCardFilePath(String clientId);
+    //거래처 수정 관련 -----------------------------------
+    int updateClient(Client client);
+    int deleteFile(FileDTO file);
 }
