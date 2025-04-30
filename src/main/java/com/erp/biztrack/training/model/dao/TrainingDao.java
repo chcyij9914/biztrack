@@ -28,7 +28,7 @@ public class TrainingDao {
     }
 
     //  특정 교육 상세 조회
-    public Training selectTraining(int trainingId) {
+    public Training selectTraining(String trainingId) {
         return sqlSessionTemplate.selectOne("trainingMapper.selectTraining", trainingId);
     }
 
@@ -60,7 +60,7 @@ public class TrainingDao {
         return sqlSessionTemplate.selectOne("trainingMapper.selectLast");
     }
 
-	public int deleteTraining(int trainingId) {
+	public int deleteTraining(String trainingId) {
 		return 0;
 	}
 
