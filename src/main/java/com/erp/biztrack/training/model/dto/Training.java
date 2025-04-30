@@ -16,13 +16,14 @@ public class Training implements java.io.Serializable {
 	    private Date endDate;
 	    private int capacity;
 	    private String location;
+	    private String detailContent;
 	    
 	    public Training() {
 	    	super();
 	    }
 
 		public Training(String trainingId, String title, String courseContent, String instructorName, Date startDate,
-				Date endDate, int capacity, String location) {
+				Date endDate, int capacity, String location , String detailContent) {
 			super();
 			this.trainingId = trainingId;
 			this.title = title;
@@ -32,6 +33,7 @@ public class Training implements java.io.Serializable {
 			this.endDate = endDate;
 			this.capacity = capacity;
 			this.location = location;
+			this.detailContent = detailContent;
 		}
 
 		public String getTrainingId() {
@@ -97,12 +99,20 @@ public class Training implements java.io.Serializable {
 		public void setLocation(String location) {
 			this.location = location;
 		}
+		
+		public String getdetailContent() {
+			return detailContent;
+		}
+
+		public void setdetailContent(String detailContent) {
+			this.detailContent = detailContent;
+		}
 
 		@Override
 		public String toString() {
 			return "Training [trainingId=" + trainingId + ", title=" + title + ", courseContent=" + courseContent
 					+ ", instructorName=" + instructorName + ", startDate=" + startDate + ", endDate=" + endDate
-					+ ", capacity=" + capacity + ", location=" + location + "]";
+					+ ", capacity=" + capacity + ", location=" + location + ", detailContent="+ detailContent+" ]";
 		}
 	    
 	    

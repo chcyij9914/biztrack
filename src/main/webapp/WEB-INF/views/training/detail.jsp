@@ -58,36 +58,36 @@
 				<div class="card shadow mb-4">
 					<div class="card-body">
 						<form action="/biztrack/training/enroll.do" method="post">
-							<input type="hidden" name="training_id" value="${training.id}" />
+							<input type="hidden" name="training_id" value="${training.trainingId}" />
 
 							<div class="form-group">
-								<p><strong>교육명:</strong> ${training.title}</p>
+								<p><strong>교육명:</strong> </p>
 								<input type="text" class="form-control" value="${training.title}" readonly />
 							</div>
 							
 							<div class="form-group">
-								<p><strong>강사:</strong> ${training.instructor}</p>
-								<input type="text" class="form-control" value="${training.instructor}" readonly />
+								<p><strong>강사:</strong> </p>
+								<input type="text" class="form-control" value="${training.instructorName}" readonly />
 							</div>
 
 							<div class="form-group">
-								<p><strong>교육 일정:</strong> ${training.startDate}  ${training.endDate}</p>
-								<input type="text" class="form-control" value="${training.startDate} - ${training.endDate}" readonly />
+								<p><strong>교육 일정:</strong></p>
+								<input type="text" class="form-control" value="${training.startDate} -${training.endDate}" readonly />
 							</div>
 							
 							<div class="form-group">
-								<p><strong>정원:</strong> ${training.capacity}</p>
+								<p><strong>정원:</strong> </p>
 								<input type="text" class="form-control" value="${training.capacity} " readonly />
 							</div>
 
 							<div class="form-group">
-								 <p><strong>장소:</strong> ${training.location}</p>
+								 <p><strong>장소:</strong></p>
 								<input type="text" class="form-control" value="${training.location}" readonly />
 							</div>
 
 							<div class="form-group">
-								<p><strong>교육 내용:</strong> ${training.content}</p>
-								<textarea class="form-control" rows="4" readonly>${training.content}</textarea>
+								<p><strong>교육 계획서:</strong></p>
+								<textarea class="form-control" rows="4" readonly>${training.detailContent}</textarea>
 							</div>
 
 							<div class="text-center">

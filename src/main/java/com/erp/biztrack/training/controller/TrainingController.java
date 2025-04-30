@@ -19,8 +19,6 @@ import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.training.model.dto.Training;
 import com.erp.biztrack.training.model.service.TrainingService;
 
-import jakarta.servlet.http.HttpSession;
-
 @Controller
 
 public class TrainingController {
@@ -78,16 +76,16 @@ public class TrainingController {
 	 
 
     // 교육 상세보기 페이지로 이동
-	  @GetMapping("detail.do")
-    public ModelAndView trainingDetailMethod(@RequestParam("id") int trainingId,
-                                             ModelAndView mv,
-                                             HttpSession session) {
-        logger.info("detail.do : " + trainingId);
+	  @RequestMapping("training/detail.do")
+    public ModelAndView trainingDetailMethod(@RequestParam("id") String trainingId, ModelAndView mv) {
+		 logger.info("detail.do : " + trainingId); 
+		  
+		  System.out.println("받은 ID: " + trainingId);
 
-        Training training = trainingService.selectTraining(trainingId);
+		  Training training = trainingService.selectTraining(trainingId);
 
         if (training != null) {
-            mv.addObject("training", training);
+        	mv.addObject("training", training);
             mv.setViewName("training/detail");
         } else {
             mv.addObject("message", trainingId + "번 교육 상세 조회 실패!");
