@@ -42,7 +42,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public Training selectTraining(int trainingId) {
+    public Training selectTraining(String trainingId) {
         return trainingDao.selectTraining(trainingId);
     }
 
@@ -52,7 +52,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public int deleteTraining(int trainingId) {
+    public int deleteTraining(String trainingId) {
         return trainingDao.deleteTraining(trainingId);
     }
 

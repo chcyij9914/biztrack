@@ -15,7 +15,7 @@ public interface TrainingService {
 	ArrayList<Training> selectList(Paging paging);
 
 	// 특정 교육 상세 조회
-	Training selectTraining(int trainingId);
+	Training selectTraining(String trainingId);
 
 	// Ajax 테스트용: 마지막 등록된 교육 조회
 	Training selectList();
@@ -26,7 +26,7 @@ public interface TrainingService {
 	int insertTraining(Training training);
 
 	// 교육 글 삭제
-	int deleteTraining(int trainingId);
+	int deleteTraining(String trainingId);
 
 	// 교육 글 수정
 	int updateTraining(Training training);

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.client.model.service.ClientService;
@@ -87,139 +88,200 @@ public class ClientController {
 	// 거래처 등록 페이지 요청 처리용 (명함 + 파일첨부)
 	@RequestMapping(value = "insert.do", method = RequestMethod.POST)
 	public String insertClient(Client client, @RequestParam("contractFile") MultipartFile contractFile,
-	                            HttpServletRequest request, HttpServletResponse response) throws IOException {
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-	    String contractSavePath = request.getSession().getServletContext().getRealPath("/resources/upload/contract");
-	    String businessCardSavePath = request.getSession().getServletContext().getRealPath("/resources/upload/businesscard");
+		String contractSavePath = request.getSession().getServletContext().getRealPath("/resources/upload/contract");
+		String businessCardSavePath = request.getSession().getServletContext()
+				.getRealPath("/resources/upload/businesscard");
 
-	    new File(contractSavePath).mkdirs();
-	    new File(businessCardSavePath).mkdirs();
+		new File(contractSavePath).mkdirs();
+		new File(businessCardSavePath).mkdirs();
 
-	    String clientId = null;
-	    String documentId = null;
+		String clientId = null;
+		String documentId = null;
 
-	    // 1. 세션에 저장된 명함 파일 정보 가져오기
-	    File savedBusinessCardFile = (File) request.getSession().getAttribute("businessCardSavedFile");
-	    String savedBusinessCardOriginalName = (String) request.getSession().getAttribute("businessCardOriginalName");
-	    String savedBusinessCardRenameName = (String) request.getSession().getAttribute("businessCardRenameName");
+		// 1. 세션에 저장된 명함 파일 정보 가져오기
+		File savedBusinessCardFile = (File) request.getSession().getAttribute("businessCardSavedFile");
+		String savedBusinessCardOriginalName = (String) request.getSession().getAttribute("businessCardOriginalName");
+		String savedBusinessCardRenameName = (String) request.getSession().getAttribute("businessCardRenameName");
 
-	    // 2. 거래처 등록
-	    clientService.insertClient(client);
-	    clientId = clientService.selectLastClientId();
+		// 2. 거래처 등록
+		clientService.insertClient(client);
+		clientId = clientService.selectLastClientId();
 
-	    // 3. 계약서 문서 등록
-	    if (clientId != null) {
-	        DocumentDTO doc = new DocumentDTO();
-	        doc.setDocumentType("계약서");
-	        doc.setClientId(clientId);
-	        doc.setDocumentWriter(client.getFirstManagerId());
-	        doc.setDocumentManagerId(client.getCurrentManagerId());
+		// 3. 계약서 문서 등록
+		if (clientId != null) {
+			DocumentDTO doc = new DocumentDTO();
+			doc.setDocumentType("계약서");
+			doc.setClientId(clientId);
+			doc.setDocumentWriter(client.getFirstManagerId());
+			doc.setDocumentManagerId(client.getCurrentManagerId());
 
-	        clientService.insertDocument(doc);
-	        documentId = clientService.selectLatestDocumentId();
-	    }
+			clientService.insertDocument(doc);
+			documentId = clientService.selectLatestDocumentId();
+		}
 
-	    // 4. 계약서 파일 저장
-	    if (!contractFile.isEmpty() && documentId != null) {
-	        String originName = contractFile.getOriginalFilename();
-	        String renameName = FileRenameUtil.changeFileName(originName);
-	        contractFile.transferTo(new File(contractSavePath, renameName));
+		// 4. 계약서 파일 저장
+		if (!contractFile.isEmpty() && documentId != null) {
+			String originName = contractFile.getOriginalFilename();
+			String renameName = FileRenameUtil.changeFileName(originName);
+			contractFile.transferTo(new File(contractSavePath, renameName));
 
-	        FileDTO contractFileDTO = new FileDTO();
-	        contractFileDTO.setFilePath("/resources/upload/contract/" + renameName);
-	        contractFileDTO.setOriginalFileName(originName);
-	        contractFileDTO.setRenameFileName(renameName);
-	        contractFileDTO.setUploadFileSize((int) contractFile.getSize());
-	        contractFileDTO.setDocumentId(documentId);
-	        contractFileDTO.setClientId(null); // 계약서 파일은 clientId X
+			FileDTO contractFileDTO = new FileDTO();
+			contractFileDTO.setFilePath("/resources/upload/contract/" + renameName);
+			contractFileDTO.setOriginalFileName(originName);
+			contractFileDTO.setRenameFileName(renameName);
+			contractFileDTO.setUploadFileSize((int) contractFile.getSize());
+			contractFileDTO.setDocumentId(documentId);
+			contractFileDTO.setClientId(null); // 계약서 파일은 clientId X
 
-	        clientService.insertFile(contractFileDTO);
-	    }
+			clientService.insertFile(contractFileDTO);
+		}
 
-	    // 5. 명함 파일 등록
-	    if (savedBusinessCardFile != null && clientId != null) {
-	        FileDTO businessCardFileDTO = new FileDTO();
-	        businessCardFileDTO.setFilePath("/resources/upload/businesscard/" + savedBusinessCardRenameName);
-	        businessCardFileDTO.setOriginalFileName(savedBusinessCardOriginalName);
-	        businessCardFileDTO.setRenameFileName(savedBusinessCardRenameName);
-	        businessCardFileDTO.setUploadFileSize((int) savedBusinessCardFile.length());
-	        businessCardFileDTO.setDocumentId(null);
-	        businessCardFileDTO.setClientId(clientId);
+		// 5. 명함 파일 등록
+		if (savedBusinessCardFile != null && clientId != null) {
+			FileDTO businessCardFileDTO = new FileDTO();
+			businessCardFileDTO.setFilePath("/resources/upload/businesscard/" + savedBusinessCardRenameName);
+			businessCardFileDTO.setOriginalFileName(savedBusinessCardOriginalName);
+			businessCardFileDTO.setRenameFileName(savedBusinessCardRenameName);
+			businessCardFileDTO.setUploadFileSize((int) savedBusinessCardFile.length());
+			businessCardFileDTO.setDocumentId(null);
+			businessCardFileDTO.setClientId(clientId);
 
-	        clientService.insertFile(businessCardFileDTO);
-	    }
+			clientService.insertFile(businessCardFileDTO);
+		}
 
-	    // 6. 완료 후 세션 정리
-	    request.getSession().removeAttribute("businessCardSavedFile");
-	    request.getSession().removeAttribute("businessCardOriginalName");
-	    request.getSession().removeAttribute("businessCardRenameName");
+		// 6. 완료 후 세션 정리
+		request.getSession().removeAttribute("businessCardSavedFile");
+		request.getSession().removeAttribute("businessCardOriginalName");
+		request.getSession().removeAttribute("businessCardRenameName");
 
-	    // 7. 부모창 새로고침 + 현재창 닫기
-	    response.setContentType("text/html; charset=UTF-8");
-	    response.getWriter().println("<script>");
-	    response.getWriter().println("opener.location.reload();");
-	    response.getWriter().println("window.close();");
-	    response.getWriter().println("</script>");
-	    response.getWriter().flush();
+		// 7. 부모창 새로고침 + 현재창 닫기
+		response.setContentType("text/html; charset=UTF-8");
+		response.getWriter().println("<script>");
+		response.getWriter().println("opener.location.reload();");
+		response.getWriter().println("window.close();");
+		response.getWriter().println("</script>");
+		response.getWriter().flush();
 
-	    return null;
+		return null;
 	}
-
 
 	// 명함 OCR 적용 및 명함 파일 저장
 	@ResponseBody
 	@RequestMapping(value = "applyBusinessCard.do", method = RequestMethod.POST)
 	public Map<String, String> applyBusinessCard(@RequestParam("businessCard") MultipartFile businessCard,
-	                                             HttpServletRequest request) {
-	    Map<String, String> result = new HashMap<>();
+			HttpServletRequest request) {
+		Map<String, String> result = new HashMap<>();
 
-	    if (!businessCard.isEmpty()) {
-	        try {
-	            String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/businesscard");
+		if (!businessCard.isEmpty()) {
+			try {
+				String savePath = request.getSession().getServletContext()
+						.getRealPath("/resources/upload/businesscard");
 
-	            // 명함 파일 저장
-	            String originName = businessCard.getOriginalFilename();
-	            String renameName = FileRenameUtil.changeFileName(originName);
-	            File savedFile = new File(savePath, renameName);
-	            businessCard.transferTo(savedFile);
+				// 명함 파일 저장
+				String originName = businessCard.getOriginalFilename();
+				String renameName = FileRenameUtil.changeFileName(originName);
+				File savedFile = new File(savePath, renameName);
+				businessCard.transferTo(savedFile);
 
-	            // OCR 호출
-	            String ocrJson = clovaOcrService.readBusinessCard(savedFile);
-	            Map<String, String> info = clovaOcrService.extractContactInfo(ocrJson);
+				// OCR 호출
+				String ocrJson = clovaOcrService.readBusinessCard(savedFile);
+				Map<String, String> info = clovaOcrService.extractContactInfo(ocrJson);
 
-	            // 결과 리턴
-	            result.put("name", info.getOrDefault("name", ""));
-	            result.put("phone", info.getOrDefault("phone", ""));
-	            result.put("email", info.getOrDefault("email", ""));
-	            result.put("tel", info.getOrDefault("tel", ""));
-	            result.put("fax", info.getOrDefault("fax", ""));
-	            result.put("address", info.getOrDefault("address", ""));
+				// 결과 리턴
+				result.put("name", info.getOrDefault("name", ""));
+				result.put("phone", info.getOrDefault("phone", ""));
+				result.put("email", info.getOrDefault("email", ""));
+				result.put("tel", info.getOrDefault("tel", ""));
+				result.put("fax", info.getOrDefault("fax", ""));
+				result.put("address", info.getOrDefault("address", ""));
 
-	            // 세션에 저장
-	            request.getSession().setAttribute("businessCardSavedFile", savedFile);
-	            request.getSession().setAttribute("businessCardOriginalName", originName);
-	            request.getSession().setAttribute("businessCardRenameName", renameName);
+				// 세션에 저장
+				request.getSession().setAttribute("businessCardSavedFile", savedFile);
+				request.getSession().setAttribute("businessCardOriginalName", originName);
+				request.getSession().setAttribute("businessCardRenameName", renameName);
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return result;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
-	
+
 	// 거래처 상세보기
-	@RequestMapping("detail.do")
+	@RequestMapping("cdetail.do")
 	public String clientDetail(@RequestParam("clientId") String clientId, Model model) {
-	    Client client = clientService.selectClientDetail(clientId);
-	    String contractFilePath = clientService.selectContractFilePath(clientId);
-	    String businessCardFilePath = clientService.selectBusinessCardFilePath(clientId);
+		Client client = clientService.selectClientDetail(clientId);
+		String contractFilePath = clientService.selectContractFilePath(clientId);
+		String businessCardFilePath = clientService.selectBusinessCardFilePath(clientId);
 
-	    model.addAttribute("client", client);
-	    model.addAttribute("contractFilePath", contractFilePath);
-	    model.addAttribute("businessCardFilePath", businessCardFilePath);
+		model.addAttribute("client", client);
+		model.addAttribute("contractFilePath", contractFilePath);
+		model.addAttribute("businessCardFilePath", businessCardFilePath);
 
-	    return "client/clientDetailView";
+		return "client/clientDetailView";
 	}
 
+	// 거래처 수정 처리
+	// 수정 폼 요청 (GET)
+	@RequestMapping(value = "cupdate.do", method = RequestMethod.GET)
+	public String updateForm(@RequestParam("clientId") String clientId, Model model) {
+		Client client = clientService.selectClientDetail(clientId);
+		String businessCardFilePath = clientService.selectBusinessCardFilePath(clientId);
+		model.addAttribute("client", client);
+		model.addAttribute("businessCardFilePath", businessCardFilePath);
+		return "client/clientUpdateView"; // 수정 JSP 경로
+	}
+
+	// 거래처 수정 요청 (POST 방식만 사용)
+	@RequestMapping(value = "cupdate.do", method = RequestMethod.POST)
+	public String updateClient(Client client,
+			@RequestParam(value = "businessCardFile", required = false) MultipartFile businessCardFile,
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		// 1. 거래처 정보 수정
+		clientService.updateClient(client);
+
+		// 2. 명함 파일이 새로 업로드된 경우
+		if (businessCardFile != null && !businessCardFile.isEmpty()) {
+			String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/businesscard/");
+			String originalFilename = businessCardFile.getOriginalFilename();
+			String renameFilename = FileRenameUtil.changeFileName(originalFilename);
+
+			// 2-1. 기존 명함 물리 파일 삭제
+			String oldPath = clientService.selectBusinessCardFilePath(client.getClientId());
+			if (oldPath != null) {
+				String fullPath = request.getSession().getServletContext().getRealPath(oldPath);
+				File oldFile = new File(fullPath);
+				if (oldFile.exists()) {
+					oldFile.delete();
+				}
+			}
+
+			// 2-2. DB의 명함 파일 정보 삭제
+			FileDTO deleteTarget = new FileDTO();
+			deleteTarget.setClientId(client.getClientId());
+			deleteTarget.setDocumentId(null);
+			clientService.deleteFile(deleteTarget);
+
+			// 2-3. 새 명함 insert
+			FileDTO newFile = new FileDTO();
+			newFile.setClientId(client.getClientId());
+			newFile.setOriginalFileName(originalFilename);
+			newFile.setRenameFileName(renameFilename);
+			newFile.setFilePath("/resources/upload/businesscard/" + renameFilename);
+			newFile.setUploadFileSize((int) businessCardFile.getSize());
+
+			try {
+				businessCardFile.transferTo(new File(savePath + renameFilename));
+				clientService.insertFile(newFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		redirectAttributes.addFlashAttribute("message", "거래처 정보가 수정되었습니다.");
+		return "redirect:/client/cdetail.do?clientId=" + client.getClientId();
+	}
 
 }

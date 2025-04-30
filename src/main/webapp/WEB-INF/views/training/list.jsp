@@ -40,7 +40,26 @@
 	background-color: #f0f0f0;
 }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(function () {
+        $('#detailBtn').on('click', function () {
+            const selected = $('input[name="selectedId"]:checked');
+            if (selected.length === 0) {
+                alert('교육을 하나 선택해주세요.');
+                return;
+            }
+
+            const trainingId = selected.val();
+            const url = '${pageContext.request.contextPath}/training/detail.do?id=' + trainingId;
+            window.location.href = url;
+        });
+    });
+</script>
 </head>
+
 
 <body id="page-top">
 	<div id="wrapper">
@@ -66,25 +85,8 @@
 
 						<div class="d-flex align-items-center">
 
-							<button type="button" class="btn btn-primary"
-								onclick="goToDetail()">상세보기</button>
+							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
 							&nbsp;&nbsp;
-
-
-							<script>
-								function goToDetail() {
-									const checked = document
-											.querySelector('input[name="selectedId"]:checked');
-									if (!checked) {
-										alert("상세보기를 할 교육을 하나 선택해주세요.");
-										return;
-									}
-
-									const trainingId = checked.value;
-									location.href = '${pageContext.request.contextPath}/training/detail.do?id='
-											+ trainingId;
-								}
-							</script>
 
 
 							<form class="form-inline"
@@ -131,7 +133,7 @@
 									<table class="table table-bordered text-center">
 										<thead class="thead-light">
 											<tr>
-												<th><input type="checkbox"></th>
+												<th><input type="radio"></th>
 												<th>교육명</th>
 												<th>교육 내용</th>
 												<th>강사명</th>
@@ -141,53 +143,55 @@
 												<th>교육장소</th>
 											</tr>
 										</thead>
-												<tbody class="text-center bg-white">
+										<tbody class="text-center bg-white">
 
 
-									<c:forEach var="training" items="${trainingList}">
-										<tr>
-										    <th><input type="checkbox" name="selectedId" value="${training.trainingId}"></th>
-											<td>${training.title}</td>
-											<td>${training.courseContent}</td>
-											<td>${training.instructorName}</td>
-											<td>${training.startDate}</td>
-											<td>${training.endDate}</td>
-											<td>${training.capacity}</td>
-											<td>${training.location}</td>
-											<%-- <td><span class="badge badge-secondary">${training.trainingStatus}</span></td> --%>
-										<!-- 	<td><a href="#" class="btn btn-sm btn-outline-secondary">상세</a></td> -->
-										</tr>
-									</c:forEach>
+											<c:forEach var="training" items="${trainingList}">
+												<tr>
+													<td><input type="radio" name="selectedId"
+														value="${training.trainingId}"></td>
 
-								</tbody>
-							</table>
-						</div>
+													<td>${training.title}</td>
+													<td>${training.courseContent}</td>
+													<td>${training.instructorName}</td>
+													<td>${training.startDate}</td>
+													<td>${training.endDate}</td>
+													<td>${training.capacity}</td>
+													<td>${training.location}</td>
+													<%-- <td><span class="badge badge-secondary">${training.trainingStatus}</span></td> --%>
+													<!-- 	<td><a href="#" class="btn btn-sm btn-outline-secondary">상세</a></td> -->
+												</tr>
+											</c:forEach>
 
-						<!-- 페이징 영역 -->
-						<c:import url="/WEB-INF/views/common/pagingView.jsp" />
-					</div>
+										</tbody>
+									</table>
+									</div>
 
-				</div>
-				<!-- End Page Content -->
+									<!-- 페이징 영역 -->
+									<c:import url="/WEB-INF/views/common/pagingView.jsp" />
+									</div>
 
-				<c:import url="/WEB-INF/views/common/footer.jsp" />
+									</div>
+									<!-- End Page Content -->
 
-			</div>
-		</div>
-	</div>
+									<c:import url="/WEB-INF/views/common/footer.jsp" />
 
-	<!-- Scroll to Top Button-->
-	<a class="scroll-to-top rounded" href="#page-top"><i
-		class="fas fa-angle-up"></i></a>
+									</div>
+									</div>
+									</div>
 
-	<!-- JS -->
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
+									<!-- Scroll to Top Button-->
+									<a class="scroll-to-top rounded" href="#page-top"><i
+										class="fas fa-angle-up"></i></a>
+
+									<!-- JS -->
+									<script
+										src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
+									<script
+										src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+									<script
+										src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+									<script
+										src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
 </body>
 </html>

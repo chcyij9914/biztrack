@@ -19,47 +19,64 @@ public class ClientDao {
 	@Autowired // root-context.xml 에서 생성한 객체를 자동 연결하는 어노테이션임
 	private SqlSessionTemplate sqlSessionTemplate;
 
-	// 거래처 목록 조회 관련 -----------------------------------
+	// 거래처 목록 조회 (페이징)
 	public ArrayList<Client> selectClientList(Paging paging) {
 		List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectClientList", paging);
 		return (ArrayList<Client>) list;
 	}
 
+	// 거래처 전체 수
 	public int selectListCount() {
 		return sqlSessionTemplate.selectOne("clientMapper.selectListCount");
 	}
 
-	// 거래처 등록 관련 -----------------------------------
+	// 거래처 등록
 	public int insertClient(Client client) {
 		return sqlSessionTemplate.insert("clientMapper.insertClient", client);
 	}
 
+	// 최신 거래처 ID 조회
 	public String selectLastClientId() {
 		return sqlSessionTemplate.selectOne("clientMapper.selectLastClientId");
 	}
 
+	// 파일 저장 (계약서, 명함 공통)
 	public int insertFile(FileDTO file) {
 		return sqlSessionTemplate.insert("clientMapper.insertFile", file);
 	}
 
+	// 문서 저장 (계약서용)
 	public int insertDocument(DocumentDTO document) {
 		return sqlSessionTemplate.insert("clientMapper.insertDocument", document);
 	}
 
+	// 최신 문서 ID 조회 (계약서)
 	public String selectLatestDocumentId() {
 		return sqlSessionTemplate.selectOne("clientMapper.selectLatestDocumentId");
 	}
-	
-	// 거래처 상세보기 관련 ------------------------------------
+
+	// 거래처 상세 조회
 	public Client selectClientDetail(String clientId) {
 		return sqlSessionTemplate.selectOne("clientMapper.selectClientDetail", clientId);
 	}
-	
+
+	// 계약서 파일 경로 조회
 	public String selectContractFilePath(String clientId) {
-	    return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
+		return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
 	}
-	
+
+	// 명함 파일 경로 조회
 	public String selectBusinessCardFilePath(String clientId) {
-	    return sqlSessionTemplate.selectOne("clientMapper.selectBusinessCardFilePath", clientId);
+		return sqlSessionTemplate.selectOne("clientMapper.selectBusinessCardFilePath", clientId);
+	}
+
+	// 거래처 정보 수정
+	public int updateClient(Client client) {
+		return sqlSessionTemplate.update("clientMapper.updateClient", client);
+	}
+
+	// 명함 파일 삭제
+	public int deleteFile(FileDTO file) {
+	    return sqlSessionTemplate.delete("clientMapper.deleteFile", file);
 	}
 }
