@@ -24,4 +24,27 @@ public class PurchaseDao {
 	public int selectListCount() {
 	    return sqlSessionTemplate.selectOne("purchaseMapper.selectListCount");
 	}
+	
+	// 시퀀스 실제 발급
+    public int selectNextDocumentSeq(String prefix) {
+        if ("A".equals(prefix)) {
+            return sqlSessionTemplate.selectOne("purchaseMapper.selectNextSeqA");
+        } else if ("B".equals(prefix)) {
+            return sqlSessionTemplate.selectOne("purchaseMapper.selectNextSeqB");
+        } else {
+            throw new IllegalArgumentException("Unknown document prefix: " + prefix);
+        }
+    }
+
+    // 시퀀스 현재 값 조회 (추가)
+    public int selectCurrentDocumentSeq(String prefix) {
+        if ("A".equals(prefix)) {
+            return sqlSessionTemplate.selectOne("purchaseMapper.selectCurrSeqA");
+        } else if ("B".equals(prefix)) {
+            return sqlSessionTemplate.selectOne("purchaseMapper.selectCurrSeqB");
+        } else {
+            throw new IllegalArgumentException("Unknown document prefix: " + prefix);
+        }
+    }
+
 }
