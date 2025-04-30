@@ -1,4 +1,4 @@
-package com.erp.biztrack.inbound.service;
+package com.erp.biztrack.inbound.model.service;
 
 import java.util.ArrayList;
 

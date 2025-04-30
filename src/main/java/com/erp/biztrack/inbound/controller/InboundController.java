@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.inbound.model.dto.Inbound;
-import com.erp.biztrack.inbound.service.InboundService;
+import com.erp.biztrack.inbound.model.service.InboundService;
 
 @Controller
 @RequestMapping("/purchase")

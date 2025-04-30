@@ -90,7 +90,7 @@
 
    <!-- Nav Item - 상품관리 -->
    <li class="nav-item">
-      <a class="nav-link" href="${pageContext.request.contextPath}/product/product-list.do">
+      <a class="nav-link" href="${pageContext.request.contextPath}/product/list.do">
          <i class="fas fa-fw fa-box"></i>
          <span>상품관리</span>
       </a>

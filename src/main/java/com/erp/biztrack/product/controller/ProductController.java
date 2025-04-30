@@ -12,8 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.product.model.dto.Product;
-import com.erp.biztrack.product.service.ProductService;
-import com.erp.biztrack.purchase.model.dto.Purchase;
+import com.erp.biztrack.product.model.service.ProductService;
 
 @Controller
 @RequestMapping("/product")
