@@ -4,6 +4,8 @@ import java.sql.Date;
 
 public class Inbound implements java.io.Serializable{
 
+	private static final long serialVersionUID = 1888455393661772085L;
+	
 	private String inboundId;
 	private String purchaseId;
 	private int inboundQuantity;
@@ -310,6 +312,10 @@ public class Inbound implements java.io.Serializable{
 
 	public void setApprove2Status(String approve2Status) {
 		this.approve2Status = approve2Status;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override
