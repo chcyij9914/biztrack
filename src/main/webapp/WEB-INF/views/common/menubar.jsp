@@ -98,11 +98,21 @@
 
    <!-- Nav Item - 영업 -->
    <li class="nav-item">
-      <a class="nav-link" href="${pageContext.request.contextPath}/sales/dashboard.do">
+     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBusiness"
+      		aria-expanded="true" aria-controls="collapseBusiness">
          <i class="fas fa-fw fa-chart-bar"></i>
          <span>영업</span>
       </a>
+      <div id="collapseBusiness" class="collapse" aria-labelledby="headingBusiness" data-parent="#accordionSidebar">
+         <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="${pageContext.request.contextPath}/schedule/ListSchedule.do">일정</a>
+            <a class="collapse-item" href="${pageContext.request.contextPath}/graph/graph.do">그래프</a>
+             <a class="collapse-item" href="${pageContext.request.contextPath}/reminder/reminder.do">리마인더</a>
+              <a class="collapse-item" href="${pageContext.request.contextPath}/Business/Business-document.do">영업문서</a>
+         </div>
+      </div>
    </li>
+
 
    <!-- Nav Item - 거래처 -->
    <li class="nav-item">
