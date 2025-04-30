@@ -95,16 +95,14 @@
 							<table class="table table-bordered" id="purchaseTable"
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
-									<col style="width: 20%;">
-									<col style="width: 15%;">
 									<col style="width: 10%;">
-									<col style="width: 25%;">
+									<col style="width: 20%;">
+									<col style="width: 35%;">
 									<col style="width: 20%;">
 									<col style="width: 10%;">
 								</colgroup>
 								<thead class="text-center bg-light">
 									<tr>
-										<th>작성일자</th>
 										<th>문서 종류</th>
 										<th>문서번호</th>
 										<th>제목</th>
@@ -116,10 +114,9 @@
 									<!-- 예시 데이터 반복 -->
 									<c:forEach var="purchase" items="${requestScope.list}">
 										<tr>
-											<td>${purchase.createdDate}</td>
 											<td>${purchase.documentType}</td>
 											<td>${purchase.documentId}</td>
-											<td>${purchase.title}</td>
+											<td>${purchase.productCode}</td>
 											<td>${purchase.vendorName}</td>
 											<td><span class="badge badge-primary">${purchase.approve1Status}</span></td>
 										</tr>
@@ -130,7 +127,7 @@
 
 						<!-- Paging -->
 						<c:import url="/WEB-INF/views/common/pagingView.jsp" />
-
+						
 						<!-- Footer -->
 						<c:import url="/WEB-INF/views/common/footer.jsp" />
 

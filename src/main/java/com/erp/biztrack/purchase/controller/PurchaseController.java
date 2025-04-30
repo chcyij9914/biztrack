@@ -6,15 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.common.Paging;
-import com.erp.biztrack.product.model.dto.Product;
-import com.erp.biztrack.product.service.ProductService;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 import com.erp.biztrack.purchase.service.PurchaseService;
 
@@ -26,10 +22,6 @@ public class PurchaseController {
 
 	@Autowired
 	private PurchaseService purchaseService;
-	
-	  @Autowired
-	    private ProductService productService;
-
 
 	/*
 	 * @Autowired 가 내부에서 자동 의존성 주입하고 서비스와 연결해 줌, 생성 코드 필요없음 public
@@ -72,9 +64,12 @@ public class PurchaseController {
 				
 			} else { // 조회 실패시
 				mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
+				mv.setViewName("common/error");
 			}
-			return mv;
 
+			return mv;
+			
+			
 		}
 		
 		// 문서 작성 페이지로 이동 처리용
@@ -82,19 +77,5 @@ public class PurchaseController {
 		public String moveNewPDocumentPage() {
 			return "purchase/purchase-document-new";
 		}
-		
-		// 물품 리스트 반환용 (Ajax로 호출됨)
-	    @RequestMapping("/product-list.do")
-	    @ResponseBody
-	    public ArrayList<Product> getProductList() {
-	        return productService.selectAll();
-	    }
-
-
-	    //문서번호 자동 생성
-	    @GetMapping("/peek-document-id.do")
-	    @ResponseBody
-	    public String peekDocumentId(@RequestParam("type") String type) {
-	        return purchaseService.peekDocumentId(type);
-	    }
+	
 }
