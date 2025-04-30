@@ -70,4 +70,19 @@ public class ClientServiceImpl implements ClientService {
 		return clientDao.selectLatestDocumentId();
 	}
 
+	@Override
+	public Client selectClientDetail(String clientId) {
+		return clientDao.selectClientDetail(clientId);
+	}
+
+	@Override
+	public String selectContractFilePath(String clientId) {
+		return clientDao.selectContractFilePath(clientId);
+	}
+
+	@Override
+	public String selectBusinessCardFilePath(String clientId) {
+		return clientDao.selectBusinessCardFilePath(clientId);
+	}
+
 }

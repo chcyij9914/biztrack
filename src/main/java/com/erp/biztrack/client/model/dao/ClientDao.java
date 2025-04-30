@@ -49,4 +49,17 @@ public class ClientDao {
 	public String selectLatestDocumentId() {
 		return sqlSessionTemplate.selectOne("clientMapper.selectLatestDocumentId");
 	}
+	
+	// 거래처 상세보기 관련 ------------------------------------
+	public Client selectClientDetail(String clientId) {
+		return sqlSessionTemplate.selectOne("clientMapper.selectClientDetail", clientId);
+	}
+	
+	public String selectContractFilePath(String clientId) {
+	    return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
+	}
+	
+	public String selectBusinessCardFilePath(String clientId) {
+	    return sqlSessionTemplate.selectOne("clientMapper.selectBusinessCardFilePath", clientId);
+	}
 }

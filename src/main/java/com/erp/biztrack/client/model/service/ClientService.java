@@ -18,4 +18,8 @@ public interface ClientService {
     int insertFile(FileDTO file);
     int insertDocument(DocumentDTO document);
     String selectLatestDocumentId();
+    //거래처 상세보기 관련 --------------------------------
+    Client selectClientDetail(String clientId);
+    String selectContractFilePath(String clientId);
+    String selectBusinessCardFilePath(String clientId);
 }

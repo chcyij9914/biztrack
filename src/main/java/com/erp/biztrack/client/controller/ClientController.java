@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -165,7 +166,7 @@ public class ClientController {
 	}
 
 
-// 명함 OCR 적용 및 명함 파일 저장
+	// 명함 OCR 적용 및 명함 파일 저장
 	@ResponseBody
 	@RequestMapping(value = "applyBusinessCard.do", method = RequestMethod.POST)
 	public Map<String, String> applyBusinessCard(@RequestParam("businessCard") MultipartFile businessCard,
@@ -194,7 +195,7 @@ public class ClientController {
 	            result.put("fax", info.getOrDefault("fax", ""));
 	            result.put("address", info.getOrDefault("address", ""));
 
-	            // ★★★ 세션에 저장 ★★★
+	            // 세션에 저장
 	            request.getSession().setAttribute("businessCardSavedFile", savedFile);
 	            request.getSession().setAttribute("businessCardOriginalName", originName);
 	            request.getSession().setAttribute("businessCardRenameName", renameName);
@@ -205,5 +206,20 @@ public class ClientController {
 	    }
 	    return result;
 	}
+	
+	// 거래처 상세보기
+	@RequestMapping("detail.do")
+	public String clientDetail(@RequestParam("clientId") String clientId, Model model) {
+	    Client client = clientService.selectClientDetail(clientId);
+	    String contractFilePath = clientService.selectContractFilePath(clientId);
+	    String businessCardFilePath = clientService.selectBusinessCardFilePath(clientId);
+
+	    model.addAttribute("client", client);
+	    model.addAttribute("contractFilePath", contractFilePath);
+	    model.addAttribute("businessCardFilePath", businessCardFilePath);
+
+	    return "client/clientDetailView";
+	}
+
 
 }
