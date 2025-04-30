@@ -1,0 +1,231 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>일정 관리</title>
+
+<!-- 스타일 -->
+<style>
+.fc .fc-button {
+    background-color: #f8f9fc;
+    color: #4e73df;
+    border: 1px solid #d1d3e2;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+.fc .fc-button:hover {
+    background-color: #e2e6ea;
+    color: #2e59d9;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #4e73df;
+    color: white;
+    border-color: #4e73df;
+}
+.fc-col-header-cell-cushion, .fc-daygrid-day-number {
+    color: #858796;
+    font-weight: 600;
+}
+</style>
+</head>
+<body id="page-top">
+
+<div id="wrapper">
+    <%@ include file="/WEB-INF/views/common/menubar.jsp" %>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid">
+
+                <!-- 타이틀 + 등록 버튼 -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap mb-4">
+                    <div class="mb-2">
+                        <h1 class="h4 text-gray-800 mb-0">일정 관리</h1>
+                        <div class="text-muted small">일정 목록</div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary shadow-sm"
+                            style="font-size: 15px; font-weight: 600; padding: 10px 20px; border-radius: 10px;
+                            margin-right: 50px; margin-top: 50px;"
+                            onclick="openSchedulePopup();">일정 등록</button>
+                    </div>
+                </div>
+
+                <!-- 캘린더 + 목록 -->
+                <div class="row">
+                    <!-- 캘린더 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">캘린더</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 일정 목록 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">일정 목록</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-center" width="100%" cellspacing="0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>일정 번호</th>
+                                                <th>제목</th>
+                                                <th>시작일</th>
+                                                <th>종료일</th>
+                                                <th>장소</th>
+                                                <th>유형</th>
+                                                <th>관리</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="schedule" items="${scheduleList}">
+                                                <tr>
+                                                    <td>${schedule.scId}</td>
+                                                    <td>${schedule.scTitle}</td>
+                                                    <td class="${schedule.scType eq 'PUBLIC' ? 'text-danger' : 'text-primary'}">
+                                                        <fmt:formatDate value="${schedule.startDatetime}" pattern="yyyy-MM-dd HH:mm" />
+                                                    </td>
+                                                    <td class="${schedule.scType eq 'PUBLIC' ? 'text-danger' : 'text-primary'}">
+                                                        <fmt:formatDate value="${schedule.endDatetime}" pattern="yyyy-MM-dd HH:mm" />
+                                                    </td>
+                                                    <td>${schedule.place}</td>
+                                                    <td>
+                                                        <span class="badge ${schedule.scType eq 'PUBLIC' ? 'badge-danger' : 'badge-primary'}">
+                                                            ${schedule.scType}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="${pageContext.request.contextPath}/schedule/UpdateForm.do?scId=${schedule.scId}" class="btn btn-sm btn-outline-info">수정</a>
+                                                        <a href="${pageContext.request.contextPath}/schedule/DeleteSchedule.do?scId=${schedule.scId}" class="btn btn-sm btn-outline-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 일정 상세 모달 -->
+<div class="modal fade" id="eventDetailModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div id="modalHeader" class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalTitle">일정 제목</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div><strong>일정 번호 :</strong> <span id="modalScId"></span></div>
+        <div><strong>장소 :</strong> <span id="modalPlace"></span></div>
+        <div><strong>유형 :</strong> <span id="modalType" class="badge"></span></div>
+        <div><strong>시작일 :</strong> <span id="modalStart"></span></div>
+        <div><strong>종료일 :</strong> <span id="modalEnd"></span></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 팝업 오픈 스크립트 -->
+<script>
+function openSchedulePopup() {
+    const url = '${pageContext.request.contextPath}/schedule/AddForm.do';
+    const width = 1000;
+    const height = 800;
+    const left = (window.screenLeft || window.screenX || 0) + (window.innerWidth - width) / 2;
+    const top = (window.screenTop || window.screenY || 0) + (window.innerHeight - height) / 2;
+
+    const popupName = 'schedulePopup_' + new Date().getTime();
+
+    const popupWindow = window.open(
+        url,
+        popupName,
+        `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no`
+    );
+
+    if (popupWindow) {
+        popupWindow.focus();
+    } else {
+        alert('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
+    }
+}
+</script>
+
+<!-- 필수 JS -->
+<script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
+
+<!-- FullCalendar -->
+<script src="${pageContext.request.contextPath}/resources/vendor/fullcalendar/core/index.global.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/vendor/fullcalendar/daygrid/index.global.min.js"></script>
+
+<!-- 캘린더 초기화 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'ko',
+        events: '${pageContext.request.contextPath}/schedule/events.do',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth'
+        },
+        buttonText: {
+            today: '오늘',
+            month: '월'
+        },
+        navLinks: true,
+        editable: false,
+        eventClick: function(info) {
+            const event = info.event;
+            const ext = event.extendedProps;
+            const isPublic = ext.scType === 'PUBLIC';
+
+            // 스타일 반영
+            document.getElementById('modalTitle').innerText = event.title;
+            document.getElementById('modalTitle').style.color = '#FFFFFF';
+            document.getElementById('modalScId').innerText = ext.scId || '-';
+            document.getElementById('modalPlace').innerText = ext.place || '-';
+            document.getElementById('modalType').innerText = ext.scType || '-';
+            document.getElementById('modalType').className = isPublic ? 'badge badge-danger' : 'badge badge-primary';
+            document.getElementById('modalStart').innerText = ext.startDatetime || '-';
+            document.getElementById('modalEnd').innerText = ext.endDatetime || '-';
+
+            $('#eventDetailModal').modal('show');
+            info.jsEvent.preventDefault();
+        }
+    });
+
+    calendar.render();
+});
+</script>
+
+</body>
+</html>
