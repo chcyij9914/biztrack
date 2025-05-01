@@ -63,6 +63,27 @@
 						<a href="#" class="text-primary small">수료 여부 확인</a>
 					</div> -->
 					</div>
+					
+				
+
+					<a href="${pageContext.request.contextPath}/training/update.do"
+						class="btn btn-primary btn-icon-split mr-2"> <span
+						class="icon text-white-50"><i class="fas fa-pen"></i></span> <span
+						class="text">수정</span>
+					</a>
+
+					<form method="post"
+						action="${pageContext.request.contextPath}/training/delete.do"
+						style="display: inline;">
+						<input type="hidden" name="trainingId"
+							value="${training.trainingId}" />
+						<button type="submit" class="btn btn-danger btn-icon-split mr-2">
+							<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
+							<span class="text">삭제</span>
+						</button>
+					</form>
+
+
 
 					<!-- 상세 정보 -->
 					<div class="card shadow mb-4">
