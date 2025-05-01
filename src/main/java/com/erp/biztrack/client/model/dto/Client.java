@@ -2,39 +2,39 @@ package com.erp.biztrack.client.model.dto;
 
 import java.sql.Date;
 
-public class Client implements java.io.Serializable{
+public class Client implements java.io.Serializable {
 	private static final long serialVersionUID = -8641928397507077733L;
-	
-	//Filed
-	private String clientId;							//	CLIENT_ID	VARCHAR2(30 BYTE)
-	private String clientName;						//	CLIENT_NAME	VARCHAR2(50 BYTE)
-	private String ceoName;						//	CEO_NAME	VARCHAR2(30 BYTE)
-	private String businessNumber;				//	BUSINESS_NUMBER	VARCHAR2(50 BYTE)
-	private String productCode;					//	PRODUCT_CODE	VARCHAR2(30 BYTE)
-	private String categoryName; 				// CATEGORY_NAME	VARCHAR2(30 BYTE) 상품명
-	private String companyPhone;				//	COMPANY_PHONE	VARCHAR2(20 BYTE)
-	private String fax;									//	FAX	VARCHAR2(30 BYTE)
-	private String address;							//	ADDRESS	VARCHAR2(200 BYTE)
-	private String url;									//	URL	VARCHAR2(300 BYTE)
-	private String clientStatus;						//	CLIENT_STATUS	VARCHAR2(50 BYTE)
-	private java.sql.Date contractStartDate;	//	CONTRACT_START_DATE	DATE
-	private java.sql.Date contractEndDate;	//	CONTRACT_END_DATE	DATE
-	private String firstManagerId;					//	FIRST_MANAGER_ID	VARCHAR2(30 BYTE)
-	private String firstManagerName;  			// 최초 계약자명
-	private String firstManagerJob;				// 최초 계약자 담당자 직급
-	private String currentManagerId;				//	CURRENT_MANAGER_ID	VARCHAR2(30 BYTE)
-	private String currentManagerName; 		// 현재 관리 담당자명
-	private String currentManagerJob;			// 현재 관리 담담자 직급
-	private String directorName;					//	DIRECTOR_NAME	VARCHAR2(30 BYTE)
-	private String directorPhone;					//	DIRECTOR_PHONE	VARCHAR2(20 BYTE)
-	private String email;								//	EMAIL	VARCHAR2(100 BYTE)
-	
-	//Constructor
+
+	// Filed
+	private String clientId; // CLIENT_ID VARCHAR2(30 BYTE)
+	private String clientName; // CLIENT_NAME VARCHAR2(50 BYTE)
+	private String ceoName; // CEO_NAME VARCHAR2(30 BYTE)
+	private String businessNumber; // BUSINESS_NUMBER VARCHAR2(50 BYTE)
+	private String categoryId; // CATEGORY_ID VARCHAR2(10 BYTE)
+	private String categoryName; // CATEGORY_NAME VARCHAR2(30 BYTE) 카테고리명
+	private String companyPhone; // COMPANY_PHONE VARCHAR2(20 BYTE)
+	private String fax; // FAX VARCHAR2(30 BYTE)
+	private String address; // ADDRESS VARCHAR2(200 BYTE)
+	private String url; // URL VARCHAR2(300 BYTE)
+	private String clientStatus; // CLIENT_STATUS VARCHAR2(50 BYTE)
+	private java.sql.Date contractStartDate; // CONTRACT_START_DATE DATE
+	private java.sql.Date contractEndDate; // CONTRACT_END_DATE DATE
+	private String firstManagerId; // FIRST_MANAGER_ID VARCHAR2(30 BYTE)
+	private String firstManagerName; // 최초 계약자명
+	private String firstManagerJob; // 최초 계약자 담당자 직급
+	private String currentManagerId; // CURRENT_MANAGER_ID VARCHAR2(30 BYTE)
+	private String currentManagerName; // 현재 관리 담당자명
+	private String currentManagerJob; // 현재 관리 담담자 직급
+	private String directorName; // DIRECTOR_NAME VARCHAR2(30 BYTE)
+	private String directorPhone; // DIRECTOR_PHONE VARCHAR2(20 BYTE)
+	private String email; // EMAIL VARCHAR2(100 BYTE)
+
+	// Constructor
 	public Client() {
 		super();
 	}
 
-	public Client(String clientId, String clientName, String ceoName, String businessNumber, String productCode,
+	public Client(String clientId, String clientName, String ceoName, String businessNumber, String categoryId,
 			String categoryName, String companyPhone, String fax, String address, String url, String clientStatus,
 			Date contractStartDate, Date contractEndDate, String firstManagerId, String firstManagerName,
 			String firstManagerJob, String currentManagerId, String currentManagerName, String currentManagerJob,
@@ -44,7 +44,7 @@ public class Client implements java.io.Serializable{
 		this.clientName = clientName;
 		this.ceoName = ceoName;
 		this.businessNumber = businessNumber;
-		this.productCode = productCode;
+		this.categoryId = categoryId;
 		this.categoryName = categoryName;
 		this.companyPhone = companyPhone;
 		this.fax = fax;
@@ -67,16 +67,16 @@ public class Client implements java.io.Serializable{
 	@Override
 	public String toString() {
 		return "Client [clientId=" + clientId + ", clientName=" + clientName + ", ceoName=" + ceoName
-				+ ", businessNumber=" + businessNumber + ", productCode=" + productCode + ", categoryName="
-				+ categoryName + ", companyPhone=" + companyPhone + ", fax=" + fax + ", address=" + address + ", url="
-				+ url + ", clientStatus=" + clientStatus + ", contractStartDate=" + contractStartDate
-				+ ", contractEndDate=" + contractEndDate + ", firstManagerId=" + firstManagerId + ", firstManagerName="
-				+ firstManagerName + ", firstManagerJob=" + firstManagerJob + ", currentManagerId=" + currentManagerId
+				+ ", businessNumber=" + businessNumber + ", categoryId=" + categoryId + ", categoryName=" + categoryName
+				+ ", companyPhone=" + companyPhone + ", fax=" + fax + ", address=" + address + ", url=" + url
+				+ ", clientStatus=" + clientStatus + ", contractStartDate=" + contractStartDate + ", contractEndDate="
+				+ contractEndDate + ", firstManagerId=" + firstManagerId + ", firstManagerName=" + firstManagerName
+				+ ", firstManagerJob=" + firstManagerJob + ", currentManagerId=" + currentManagerId
 				+ ", currentManagerName=" + currentManagerName + ", currentManagerJob=" + currentManagerJob
 				+ ", directorName=" + directorName + ", directorPhone=" + directorPhone + ", email=" + email + "]";
 	}
 
-	//getters and setters
+	// getters and setters
 	public String getClientId() {
 		return clientId;
 	}
@@ -109,12 +109,12 @@ public class Client implements java.io.Serializable{
 		this.businessNumber = businessNumber;
 	}
 
-	public String getProductCode() {
-		return productCode;
+	public String getCategoryId() {
+		return categoryId;
 	}
 
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public String getCategoryName() {
