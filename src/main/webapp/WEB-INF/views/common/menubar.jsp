@@ -35,13 +35,16 @@
    <!-- Nav Item - 공지사항 -->
    <li class="nav-item">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseNotice"
-      	aria-expanded="true" aria-controls="collapseNotice">
+         aria-expanded="true" aria-controls="collapseNotice">
          <i class="fas fa-fw fa-bell"></i>
          <span>공지사항</span>
       </a>
       <div id="collapseNotice" class="collapse" aria-labelledby="headingNotice" data-parent="#accordionSidebar">
          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#">공지 목록</a>
+            <a class="collapse-item" href="#">공지 목록 </a>
+            <a class="collapse-item" href="#">공지 작성 </a>
+            <a class="collapse-item" href="#">공지 수정 </a>
+            <a class="collapse-item" href="#">공지 상세보기 </a>
          </div>
       </div>
    </li>
@@ -98,10 +101,19 @@
 
    <!-- Nav Item - 영업 -->
    <li class="nav-item">
-      <a class="nav-link" href="${pageContext.request.contextPath}/sales/dashboard.do">
+     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBusiness"
+            aria-expanded="true" aria-controls="collapseBusiness">
          <i class="fas fa-fw fa-chart-bar"></i>
          <span>영업</span>
       </a>
+      <div id="collapseBusiness" class="collapse" aria-labelledby="headingBusiness" data-parent="#accordionSidebar">
+         <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="${pageContext.request.contextPath}/schedule/ListSchedule.do">일정</a>
+            <a class="collapse-item" href="${pageContext.request.contextPath}/graph/graph.do">그래프</a>
+             <a class="collapse-item" href="${pageContext.request.contextPath}/reminder/reminder.do">리마인더</a>
+              <a class="collapse-item" href="${pageContext.request.contextPath}/Business/Business-document.do">영업문서</a>
+         </div>
+      </div>
    </li>
 
    <!-- Nav Item - 거래처 -->
@@ -120,12 +132,61 @@
    </li>
 
    <!-- Nav Item - 교육관리 -->
-   <li class="nav-item">
-      <a class="nav-link" href="${pageContext.request.contextPath}/training/list.do">
-         <i class="fas fa-fw fa-book-open"></i>
-         <span>교육관리</span>
-      </a>
-   </li>
+<li class="nav-item">
+  <a class="nav-link collapsed" href="#"
+     data-toggle="collapse" data-target="#collapseEdu"
+     aria-expanded="false" aria-controls="collapseEdu">
+    <i class="fas fa-fw fa-book-open"></i>
+    <span>교육관리</span>
+  </a>
+  <div id="collapseEdu" class="collapse" aria-labelledby="headingEdu" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+      <h6 class="collapse-header">교육관리 메뉴:</h6>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/list.do">교육 목록</a>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/training/register.do">교육 등록/수정</a>
+    <%--  <a class="collapse-item" href="${pageContext.request.contextPath}/training/detail.do?id=TR001"> 교육 상세보기</a> --%>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/training/analysis.do" class="btn btn-outline-info">평가 분석</a>
+
+    </div>
+  </div>
+</li>
+
+<!-- Nav Item - 학습관리 -->
+<li class="nav-item">
+  <a class="nav-link collapsed" href="#"
+     data-toggle="collapse" data-target="#collapseLearn"
+     aria-expanded="false" aria-controls="collapseLearn">
+    <i class="fas fa-fw fa-book-open"></i>
+    <span>학습관리</span>
+  </a>
+  <div id="collapseLearn" class="collapse" aria-labelledby="headingLearn" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+      <h6 class="collapse-header">학습관리 메뉴:</h6>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/list.do"> 내 수강일정</a>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/progress.do"> 내 학습진도</a>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/assignment.do">과제 제출</a> 
+      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/evaluation.do">평가 작성</a>
+    </div>
+  </div>
+</li>
+
+<!-- Nav Item - 수강신청 관리 -->
+<li class="nav-item">
+  <a class="nav-link collapsed" href="#"
+     data-toggle="collapse" data-target="#collapseApply"
+     aria-expanded="false" aria-controls="collapseApply">
+    <i class="fas fa-fw fa-book-open"></i>
+    <span>수강신청 관리</span>
+  </a>
+  <div id="collapseApply" class="collapse" aria-labelledby="headingApply" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+      <h6 class="collapse-header">수강신청관리 메뉴:</h6>
+       <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/"> 수강신청 </a>
+      <a class="collapse-item" href="/training/history.do">수강내역확인</a>
+      <a class="collapse-item" href="/training/applicant.do">수강신청자 관리</a>
+    </div>
+  </div>
+</li>
 
    <!-- Divider -->
    <hr class="sidebar-divider d-none d-md-block">
