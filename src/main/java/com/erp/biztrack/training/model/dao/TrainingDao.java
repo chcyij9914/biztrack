@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.MergedAnnotations.Search;
 import org.springframework.stereotype.Repository;
 
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.common.Search;
 import com.erp.biztrack.training.model.dto.Training;
 
 @Repository
@@ -39,27 +39,23 @@ public class TrainingDao {
 
     //  교육 제목으로 검색한 목록 조회
     public ArrayList<Training> selectSearchTitle(Search search) {
-        List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchTitle", search);
+       List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchTitle", search);
         return (ArrayList<Training>) list;
     }
 
     //  교육 내용으로 검색한 목록 조회
-    public ArrayList<Training> selectSearchContent(Search search) {
-        List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchContent", search);
+    public ArrayList<Training> selectSearchcourseContent(Search search) {
+        List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchcourseContent", search);
         return (ArrayList<Training>) list;
     }
 
-    //  교육 날짜로 검색한 목록 조회
-    public ArrayList<Training> selectSearchDate(Search search) {
-        List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchDate", search);
+    //  교육 강사명으로 검색한 목록 조회
+    public ArrayList<Training> selectSearchInstructor(Search search) {
+        List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchInstructor", search);
         return (ArrayList<Training>) list;
     }
 
-    //  Ajax 테스트용 : 가장 마지막 등록된 교육 1개 조회
-    public Training selectList() {
-        return sqlSessionTemplate.selectOne("trainingMapper.selectLast");
-    }
-
+ 
 	public int deleteTraining(String trainingId) {
 		return 0;
 	}
@@ -67,6 +63,21 @@ public class TrainingDao {
 	public int updateTraining(Training training) {
 		return 0;
 	}
+
+	public int selectSearchTitleCount(String keyword) {
+		return sqlSessionTemplate.selectOne("trainingMapper.selectSearchTitleCount", keyword);
+	}
+
+	public int selectSearchcourseContentCount(String keyword) {
+		  return sqlSessionTemplate.selectOne("trainingMapper.selectSearchcourseContentCount", keyword);
+	}
+
+	public int selectSearchInstructorCount(String keyword) {
+		 return sqlSessionTemplate.selectOne("trainingMapper.selectSearchInstructorCount", keyword);
+	}
+
+	
+
 	
 }
   
