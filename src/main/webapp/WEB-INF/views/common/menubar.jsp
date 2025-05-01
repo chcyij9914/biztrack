@@ -143,7 +143,7 @@
     <div class="bg-white py-2 collapse-inner rounded">
       <h6 class="collapse-header">교육관리 메뉴:</h6>
       <a class="collapse-item" href="${pageContext.request.contextPath}/list.do">교육 목록</a>
-      <a class="collapse-item" href="${pageContext.request.contextPath}/training/register.do">교육 등록/수정</a>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/training/register.do">교육 등록</a>
     <%--  <a class="collapse-item" href="${pageContext.request.contextPath}/training/detail.do?id=TR001"> 교육 상세보기</a> --%>
       <a class="collapse-item" href="${pageContext.request.contextPath}/training/analysis.do" class="btn btn-outline-info">평가 분석</a>
 

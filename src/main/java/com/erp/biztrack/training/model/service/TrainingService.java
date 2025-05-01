@@ -1,6 +1,7 @@
 package com.erp.biztrack.training.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -8,6 +9,7 @@ import com.erp.biztrack.training.model.dto.Training;
 
 public interface TrainingService {
 
+	
 	// 전체 교육 글 개수 조회
 	int selectListCount();
 	// 페이징 적용된 교육 목록 조회
@@ -20,8 +22,10 @@ public interface TrainingService {
 
 	// 새 교육 등록
 	int insertTraining(Training training);
-	// 교육 글 삭제
-	int deleteTraining(String trainingId);
+	
+	// 교육 글 삭제	
+	 int deleteTraining(String trainingId); 
+	 
 	// 교육 글 수정
 	int updateTraining(Training training);
 
@@ -38,5 +42,8 @@ public interface TrainingService {
 	// 교육 강사명 검색 목록
 	int selectSearchInstructorCount(String keyword);
 	ArrayList<Training> selectSearchInstructor(Search search);
+	ArrayList<Training> selectAll(Paging paging);
+	
+	
 
 }

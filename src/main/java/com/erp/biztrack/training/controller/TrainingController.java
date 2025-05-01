@@ -1,18 +1,18 @@
 package com.erp.biztrack.training.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.common.Paging;
@@ -30,10 +30,36 @@ public class TrainingController {
 	private TrainingService trainingService;
 
 	// 교육 등록 페이지로 이동
-	@RequestMapping(value = "training/register.do", method = RequestMethod.GET)
-	public String trainingRegisterPage() {
-		return "training/trainingRegister";
+	@RequestMapping("/training/register.do")
+	public String registerPage() {
+	    return "training/register";  
 	}
+	
+	// 교육 등록 
+	@RequestMapping(value = "/training/insert.do", method = RequestMethod.POST)
+	public String insertTraining(
+			  Training training, Model model) {
+		logger.info("insert.do : " + training);
+	    
+	    //  ID 생성
+	    training.setTrainingId(generateTrainingId());
+	    
+	    int result = trainingService.insertTraining(training);
+	    
+	    if (result > 0) {
+	    	//새 교육 등록 성공시, 교육 목록 페이지로 이동 처리
+	        return "redirect:/list.do";  
+	    } else {
+	        model.addAttribute("message", " 새 교육 등록 실패!");
+	        return "common/error";
+	    }
+	}
+	private String generateTrainingId() {
+		int random = (int) (Math.random() * 1000);
+		return "TR" + String.format("%03d", random);
+	}
+
+
 
 	// 교육 목록
 	@RequestMapping("list.do")
@@ -50,7 +76,7 @@ public class TrainingController {
 		Paging paging = new Paging(listCount, limit, currentPage, "list.do");
 		paging.calculate();
 
-		ArrayList<Training> list = trainingService.selectList(paging);
+		ArrayList<Training> list = trainingService.selectAll(paging);
 
 		if (list != null && list.size() > 0) {
 			mv.addObject("trainingList", list);
@@ -82,6 +108,22 @@ public class TrainingController {
 		}
 
 		return mv;
+	}
+
+	// 교육 삭제
+	@RequestMapping(value = "/training/delete.do", method = RequestMethod.POST)
+	public String deleteTraining(@RequestParam("trainingId") String trainingId, Model model) {
+		logger.info("deleteSelected.do : " + trainingId);
+
+	    int result = trainingService.deleteTraining(trainingId);
+
+	    if (result > 0) {
+	        // 삭제 성공 시 목록 페이지로 이동
+	        return "redirect:/training/list.do";
+	    } else {
+	        model.addAttribute("message", "교육 삭제 실패!");
+	        return "common/error";
+	    }
 	}
 
 	// 교육 분석 페이지로 이동
