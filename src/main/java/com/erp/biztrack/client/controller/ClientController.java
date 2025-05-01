@@ -26,6 +26,7 @@ import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.FileRenameUtil;
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.common.Search;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,7 +39,7 @@ public class ClientController {
 	// ClientService 서비스 모델과 연결 처리
 	@Autowired
 	private ClientService clientService;
-
+	
 	// ClovaOcrService 서비스 연결 처리
 	@Autowired
 	private ClovaOcrService clovaOcrService;
@@ -70,10 +71,12 @@ public class ClientController {
 		paging.calculate();
 
 		ArrayList<Client> list = clientService.selectClientList(paging);
+		ArrayList<Client> categoryList = clientService.selectCategoryList();
 
 		if (list != null && list.size() > 0) {
 			mv.addObject("clientList", list);
 			mv.addObject("paging", paging);
+			mv.addObject("categoryList", categoryList);
 			mv.setViewName("client/clientListView");
 		} else {
 			mv.addObject("message", currentPage + "페이지에 출력할 거래처 목록 조회 실패!");
@@ -282,6 +285,96 @@ public class ClientController {
 
 		redirectAttributes.addFlashAttribute("message", "거래처 정보가 수정되었습니다.");
 		return "redirect:/client/cdetail.do?clientId=" + client.getClientId();
+	}
+
+	// 거래처 검색 관련----------------------------------------
+	// 거래처명으로 검색
+	@RequestMapping("csearchName.do")
+	public ModelAndView searchClientByName(@RequestParam("keyword") String keyword,
+			@RequestParam(name = "page", required = false) String page,
+			@RequestParam(name = "limit", required = false) String slimit, ModelAndView mv) {
+
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
+
+		int listCount = clientService.selectSearchClientNameCount(keyword);
+		Paging paging = new Paging(listCount, limit, currentPage, "csearchName.do");
+		paging.calculate();
+
+		Search search = new Search();
+		search.setKeyword(keyword);
+		search.setStartRow(paging.getStartRow());
+		search.setEndRow(paging.getEndRow());
+
+		ArrayList<Client> list = clientService.selectSearchClientNameList(search);
+		ArrayList<Client> categoryList = clientService.selectCategoryList();
+
+		mv.addObject("clientList", list);
+		mv.addObject("paging", paging);
+		mv.addObject("keyword", keyword);
+		mv.addObject("categoryList", categoryList);
+		mv.setViewName("client/clientListView");
+		return mv;
+	}
+
+	// 거래처상태로 검색
+	@RequestMapping("csearchStatus.do")
+	public ModelAndView searchClientByStatus(@RequestParam(name = "statusParam", required = false) String statusParam,
+			@RequestParam(name = "page", required = false) String page, ModelAndView mv) {
+
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int limit = 10;
+
+		int listCount = clientService.selectSearchClientStatusCount(statusParam);
+		Paging paging = new Paging(listCount, limit, currentPage, "csearchStatus.do");
+		paging.calculate();
+
+		Search search = new Search();
+		search.setStatus(statusParam);
+		search.setStartRow(paging.getStartRow());
+		search.setEndRow(paging.getEndRow());
+
+		ArrayList<Client> list = clientService.selectSearchClientStatusList(search);
+		ArrayList<Client> categoryList = clientService.selectCategoryList();
+
+		mv.addObject("clientList", list);
+		mv.addObject("paging", paging);
+		mv.addObject("action", "status");
+		mv.addObject("searchStatus", statusParam);
+		mv.addObject("categoryList", categoryList);
+		mv.setViewName("client/clientListView");
+
+		return mv;
+	}
+
+	// 거래처 카테고리로 검색
+	@RequestMapping("csearchCategory.do")
+	public ModelAndView searchClientByCategory(@RequestParam(name = "categoryId", required = false) String categoryId,
+			@RequestParam(name = "page", required = false) String page,
+			@RequestParam(name = "limit", required = false) String slimit, ModelAndView mv) {
+
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
+
+		int listCount = clientService.selectSearchClientCategoryCount(categoryId);
+		Paging paging = new Paging(listCount, limit, currentPage, "csearchCategory.do");
+		paging.calculate();
+
+		Search search = new Search();
+		search.setCategoryId(categoryId);
+		search.setStartRow(paging.getStartRow());
+		search.setEndRow(paging.getEndRow());
+
+		ArrayList<Client> list = clientService.selectSearchClientCategoryList(search);
+		ArrayList<Client> categoryList = clientService.selectCategoryList();
+
+		mv.addObject("clientList", list);
+		mv.addObject("paging", paging);
+		mv.addObject("categoryId", categoryId);
+		mv.addObject("categoryList", categoryList);
+		mv.setViewName("client/clientListView");
+
+		return mv;
 	}
 
 }

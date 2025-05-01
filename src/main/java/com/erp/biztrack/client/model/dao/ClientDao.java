@@ -13,6 +13,7 @@ import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.common.Search;
 
 @Repository("clientDao")
 public class ClientDao {
@@ -24,7 +25,7 @@ public class ClientDao {
 		List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectClientList", paging);
 		return (ArrayList<Client>) list;
 	}
-
+	
 	// 거래처 전체 수
 	public int selectListCount() {
 		return sqlSessionTemplate.selectOne("clientMapper.selectListCount");
@@ -79,4 +80,39 @@ public class ClientDao {
 	public int deleteFile(FileDTO file) {
 	    return sqlSessionTemplate.delete("clientMapper.deleteFile", file);
 	}
+	
+	// 거래처명 검색
+    public int selectSearchClientNameCount(String keyword) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectSearchClientNameCount", keyword);
+    }
+
+    public ArrayList<Client> selectSearchClientNameList(Search search) {
+    	List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectSearchClientNameList", search);
+		return (ArrayList<Client>) list;
+    }
+
+    // 계약상태 검색
+    public int selectSearchClientStatusCount(String status) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectSearchClientStatusCount", status);
+    }
+
+    public ArrayList<Client> selectSearchClientStatusList(Search search) {
+    	List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectSearchClientStatusList", search);
+		return (ArrayList<Client>) list;
+    }
+
+    // 카테고리 검색
+    public int selectSearchClientCategoryCount(String categoryId) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectSearchClientCategoryCount", categoryId);
+    }
+
+    public ArrayList<Client> selectSearchClientCategoryList(Search search) {
+    	List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectSearchClientCategoryList", search);
+		return (ArrayList<Client>) list;
+    }
+    
+    public ArrayList<Client> selectCategoryList() {
+        List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectCategoryList");
+        return (ArrayList<Client>) list;
+    }
 }
