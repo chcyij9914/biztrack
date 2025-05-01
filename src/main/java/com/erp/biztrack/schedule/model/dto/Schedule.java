@@ -2,7 +2,7 @@ package com.erp.biztrack.schedule.model.dto;
 
 import java.sql.Timestamp;
 
-public class Schedule implements java.io.Serializable { 
+public class Schedule implements java.io.Serializable {
     private static final long serialVersionUID = 7069296863418517748L;
 
     // Field
@@ -15,6 +15,12 @@ public class Schedule implements java.io.Serializable {
     private String place;
     private Timestamp startDatetime;
     private Timestamp endDatetime;
+
+    // 검색 필드 추가
+    private String searchType;
+    private String keyword;
+    private String beginDate;
+    private String endDate;
 
     // Constructor
     public Schedule() {
@@ -108,11 +114,45 @@ public class Schedule implements java.io.Serializable {
         this.endDatetime = endDatetime;
     }
 
+    public String getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(String beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
     // toString
     @Override
     public String toString() {
         return "Schedule [scId=" + scId + ", empId=" + empId + ", empName=" + empName +
                ", scTitle=" + scTitle + ", calColor=" + calColor + ", scType=" + scType +
-               ", place=" + place + ", startDatetime=" + startDatetime + ", endDatetime=" + endDatetime + "]";
+               ", place=" + place + ", startDatetime=" + startDatetime + ", endDatetime=" + endDatetime +
+               ", searchType=" + searchType + ", keyword=" + keyword + 
+               ", beginDate=" + beginDate + ", endDate=" + endDate + "]";
     }
 }

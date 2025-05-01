@@ -1,6 +1,7 @@
 package com.erp.biztrack.schedule.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,20 @@ public class ScheduleServiceImpl implements ScheduleService {
 	public int deleteSchedule(String scId) {
 		return scheduleDao.deleteSchedule(scId);
 	}
-	
 
+	@Override
+	public List<Schedule> searchByTitle(Schedule param) {
+	    return scheduleDao.searchByTitle(param);
+	}
+
+	@Override
+	public List<Schedule> searchByType(Schedule param) {
+	    return scheduleDao.searchByType(param);
+	}
+
+	@Override
+	public List<Schedule> searchByDate(Schedule param) {
+	    return scheduleDao.searchByDate(param);
+	}
+	
 }
