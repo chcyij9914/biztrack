@@ -44,20 +44,27 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    $(function () {
-        $('#detailBtn').on('click', function () {
-            const selected = $('input[name="selectedId"]:checked');
-            if (selected.length === 0) {
-                alert('교육을 하나 선택해주세요.');
-                return;
-            }
+	$(function() {
+		$('#detailBtn')
+				.on(
+						'click',
+						function() {
+							const selected = $('input[name="selectedId"]:checked');
+							if (selected.length === 0) {
+								alert('교육을 하나 선택해주세요.');
+								return;
+							}
 
-            const trainingId = selected.val();
-            const url = '${pageContext.request.contextPath}/training/detail.do?id=' + trainingId;
-            window.location.href = url;
-        });
-    });
+							const trainingId = selected.val();
+							const url = '${pageContext.request.contextPath}/training/detail.do?id='
+									+ trainingId;
+							window.location.href = url;
+						});
+	});
 </script>
+
+
+
 </head>
 
 
@@ -87,28 +94,19 @@
 
 							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
 							&nbsp;&nbsp;
+							<!-- <button type="submit" class="btn btn-danger">삭제</button>&nbsp;&nbsp; -->
 
-
+							
 							<form class="form-inline"
-								action="${pageContext.request.contextPath}/purchase/search.do"
+								action="${pageContext.request.contextPath}/training/searchAll.do"
 								method="get">
-								<form method="get"
-									action="${pageContext.request.contextPath}/training/list.do">
-									<input type="text" name="keyword" placeholder="교육명 검색"
-										class="form-control mr-2" />
-									<button type="submit" class="btn btn-outline-primary">검색</button>
-								</form>
-
-								<!-- <input type="date" class="form-control mr-2" name="date" /> <input
-									type="text" class="form-control mr-2" name="content"
-									placeholder="교육명 검색" /> <select class="form-control mr-2"
-									name="status">
-									<option value="">수강상태</option>
-									<option value="수강전">수강전</option>
-									<option value="수강중">수강중</option>
-									<option value="수강완료">수강완료</option>
-								</select>
-								<button type="submit" class="btn btn-outline-primary">검색</button> -->
+								<select class="form-control mr-2" name="action">
+									<option value="title">교육명</option>
+									<option value="content">교육내용</option>
+									<option value="Instructor">강사명</option>
+								</select> <input type="search" name="keyword" placeholder=" 검색"
+									class="form-control mr-2" /> <input type="submit"
+									class="btn btn-outline-primary" value="검색">
 							</form>
 						</div>
 					</div>
@@ -144,13 +142,11 @@
 											</tr>
 										</thead>
 										<tbody class="text-center bg-white">
-
-
+											<%--  조회된 목록 출력 부분 --%>
 											<c:forEach var="training" items="${trainingList}">
 												<tr>
 													<td><input type="radio" name="selectedId"
 														value="${training.trainingId}"></td>
-
 													<td>${training.title}</td>
 													<td>${training.courseContent}</td>
 													<td>${training.instructorName}</td>
@@ -158,13 +154,31 @@
 													<td>${training.endDate}</td>
 													<td>${training.capacity}</td>
 													<td>${training.location}</td>
-													<%-- <td><span class="badge badge-secondary">${training.trainingStatus}</span></td> --%>
-													<!-- 	<td><a href="#" class="btn btn-sm btn-outline-secondary">상세</a></td> -->
 												</tr>
 											</c:forEach>
 
 										</tbody>
 									</table>
+									</div>
+
+                  				<div class="d-flex justify-content-center mb-4">
+									<c:if test="${not empty param.action}">
+										<button type="button"
+											class="btn btn-secondary btn-icon-split mr-2"
+											onclick="history.back();">
+											<span class="icon text-white-50"> <i
+												class="fas fa-arrow-left"></i>
+											</span> <span class="text">이전페이지</span>
+										</button>
+
+										<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
+								    
+								        <a href="${pageContext.request.contextPath}/list.do"
+								            class="btn btn-info btn-icon-split">
+								            <span class="icon text-white-50"> <i class="fas fa-list"></i> </span>
+								            <span class="text">목록으로</span>
+								        </a>
+								    </c:if>
 									</div>
 
 									<!-- 페이징 영역 -->
