@@ -50,4 +50,24 @@ public class ScheduleDao {
 	public int deleteSchedule(String scId) {
 		return sqlSessionTemplate.delete("scheduleMapper.deleteSchedule", scId);
 	}
+	
+	// 일정 검색
+	
+	// 제목 검색
+	public ArrayList<Schedule> searchByTitle(Schedule param) {
+        List<Schedule> list = sqlSessionTemplate.selectList("scheduleMapper.searchByTitle", param);
+        return new ArrayList<>(list);
+    }
+
+    // 유형 검색
+	 public ArrayList<Schedule> searchByType(Schedule param) {
+	        List<Schedule> list = sqlSessionTemplate.selectList("scheduleMapper.searchByType", param);
+	        return new ArrayList<>(list);
+	    }
+
+	 // 날짜 검색
+	 public ArrayList<Schedule> searchByDate(Schedule param) {
+	        List<Schedule> list = sqlSessionTemplate.selectList("scheduleMapper.searchByDate", param);
+	        return new ArrayList<>(list);
+	    }
 }
