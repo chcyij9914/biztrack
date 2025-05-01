@@ -59,8 +59,6 @@ public class TrainingController {
 		return "TR" + String.format("%03d", random);
 	}
 
-
-
 	// 교육 목록
 	@RequestMapping("list.do")
 	public ModelAndView trainingList(ModelAndView mv,
@@ -127,7 +125,7 @@ public class TrainingController {
 	}
 
 	// 교육 분석 페이지로 이동
-	@GetMapping("training/analysis.do")
+	@GetMapping("/analysis.do")
 	public String analysisPage() {
 		return "training/analysis";
 	}
