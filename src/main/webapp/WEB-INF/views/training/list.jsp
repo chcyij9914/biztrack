@@ -62,6 +62,9 @@
 						});
 	});
 </script>
+
+
+
 </head>
 
 
@@ -91,8 +94,9 @@
 
 							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
 							&nbsp;&nbsp;
+							<!-- <button type="submit" class="btn btn-danger">삭제</button>&nbsp;&nbsp; -->
 
-
+							
 							<form class="form-inline"
 								action="${pageContext.request.contextPath}/training/searchAll.do"
 								method="get">
@@ -157,8 +161,8 @@
 									</table>
 									</div>
 
-									<div class="d-flex justify-content-center mb-4">
-
+                  				<div class="d-flex justify-content-center mb-4">
+									<c:if test="${not empty param.action}">
 										<button type="button"
 											class="btn btn-secondary btn-icon-split mr-2"
 											onclick="history.back();">
@@ -167,12 +171,14 @@
 											</span> <span class="text">이전페이지</span>
 										</button>
 
-										<!-- 목록으로 버튼 -->
-										<a href="${pageContext.request.contextPath}/list.do"
-											class="btn btn-info btn-icon-split"> <span
-											class="icon text-white-50"> <i class="fas fa-list"></i>
-										</span> <span class="text">목록으로</span>
-										</a>
+										<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
+								    
+								        <a href="${pageContext.request.contextPath}/list.do"
+								            class="btn btn-info btn-icon-split">
+								            <span class="icon text-white-50"> <i class="fas fa-list"></i> </span>
+								            <span class="text">목록으로</span>
+								        </a>
+								    </c:if>
 									</div>
 
 									<!-- 페이징 영역 -->

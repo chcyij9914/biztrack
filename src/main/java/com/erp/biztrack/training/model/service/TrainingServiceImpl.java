@@ -1,6 +1,7 @@
 package com.erp.biztrack.training.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,11 @@ public class TrainingServiceImpl implements TrainingService {
     public ArrayList<Training> selectList(Paging paging) {
         return trainingDao.selectList(paging);
     }
+    
+    @Override
+	public ArrayList<Training> selectAll(Paging paging) {
+		return trainingDao.selectList(paging);
+	}
 
     // 제목 검색 목록 조회
     @Override
@@ -58,10 +64,9 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
    // 교육 삭제
-    @Override
-    public int deleteTraining(String trainingId) {
-        return trainingDao.deleteTraining(trainingId);
-    }
+	  @Override public int deleteTraining(String trainingId) { 
+		  return trainingDao.deleteTraining(trainingId); }
+	 
 
     // 교육 수정
     @Override
