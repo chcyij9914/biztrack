@@ -25,7 +25,7 @@ public class ClientDao {
 		List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectClientList", paging);
 		return (ArrayList<Client>) list;
 	}
-
+	
 	// 거래처 전체 수
 	public int selectListCount() {
 		return sqlSessionTemplate.selectOne("clientMapper.selectListCount");

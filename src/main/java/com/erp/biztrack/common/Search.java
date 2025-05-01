@@ -13,7 +13,7 @@ public class Search {
 	private String categoryId; // 카테고리 명
 	private String categoryName; // 카테고리 명
 	private String filter; // 검색기준
-
+	
 	public Search() {
 		super();
 	}

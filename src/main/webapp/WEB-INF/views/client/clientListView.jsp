@@ -80,7 +80,7 @@
 									<option value="status">계약상태</option>
 									<option value="category">카테고리명</option>
 								</select>
-
+								
 								<form id="searchForm" method="get" class="form-inline"
 									action="csearchName.do">
 									<input type="text" name="keyword" class="form-control mr-2"

@@ -44,7 +44,7 @@ public class ClientServiceImpl implements ClientService {
 		} else {
 			client.setClientStatus("계약중");
 		}
-
+		
 		return clientDao.insertClient(client);
 
 	}

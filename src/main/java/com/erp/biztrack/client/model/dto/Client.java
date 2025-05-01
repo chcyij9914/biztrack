@@ -28,7 +28,7 @@ public class Client implements java.io.Serializable {
 	private String directorName; // DIRECTOR_NAME VARCHAR2(30 BYTE)
 	private String directorPhone; // DIRECTOR_PHONE VARCHAR2(20 BYTE)
 	private String email; // EMAIL VARCHAR2(100 BYTE)
-
+	
 	// Constructor
 	public Client() {
 		super();

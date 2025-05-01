@@ -35,3 +35,4 @@ public interface ClientService {
     ArrayList<Client> selectSearchClientCategoryList(Search search);
     ArrayList<Client> selectCategoryList();
 }
+

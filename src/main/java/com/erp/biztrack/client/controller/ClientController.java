@@ -39,7 +39,7 @@ public class ClientController {
 	// ClientService 서비스 모델과 연결 처리
 	@Autowired
 	private ClientService clientService;
-
+	
 	// ClovaOcrService 서비스 연결 처리
 	@Autowired
 	private ClovaOcrService clovaOcrService;
