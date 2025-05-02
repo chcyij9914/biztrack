@@ -69,7 +69,7 @@
 
 						<div class="d-flex align-items-center">
 							<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-								onclick="window.open('${pageContext.request.contextPath}/purchase/purchase-document-new.do', 'newWindow', 'width=800,height=600'); return false;">
+								onclick="window.open('${pageContext.request.contextPath}/purchase/new-purchase.do', 'newWindow', 'width=800,height=600'); return false;">
 								+ 새문서 </a>
 
 							<form class="form-inline"
@@ -95,12 +95,13 @@
 							<table class="table table-bordered" id="purchaseTable"
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
-									<col style="width: 20%;">
+									<col style="width: 17%;">
 									<col style="width: 15%;">
 									<col style="width: 10%;">
-									<col style="width: 25%;">
-									<col style="width: 20%;">
-									<col style="width: 10%;">
+									<col style="width: 23%;">
+									<col style="width: 14%;">
+									<col style="width: 8%;">
+									<col style="width: 8%;">
 								</colgroup>
 								<thead class="text-center bg-light">
 									<tr>
@@ -110,6 +111,7 @@
 										<th>제목</th>
 										<th>구매처명</th>
 										<th>상태</th>
+										<th>관리</th>
 									</tr>
 								</thead>
 								<tbody class="text-center bg-white">
@@ -122,6 +124,10 @@
 											<td>${purchase.title}</td>
 											<td>${purchase.vendorName}</td>
 											<td><span class="badge badge-primary">${purchase.approve1Status}</span></td>
+											<td><a href="#"
+												onclick="window.open('${pageContext.request.contextPath}/purchase/purchase-detail.do?documentId=${purchase.documentId}', 'detailWindow', 'width=800,height=600'); return false;"
+												class="btn btn-sm btn-outline-secondary"
+												width=1000,height=800'>상세</a></td>
 										</tr>
 									</c:forEach>
 								</tbody>

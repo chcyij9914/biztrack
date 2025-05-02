@@ -46,5 +46,10 @@ public class PurchaseDao {
             throw new IllegalArgumentException("Unknown document prefix: " + prefix);
         }
     }
+    
+    //문서 상세보기
+    public Purchase selectPurchaseDetail(String documentId) {
+        return sqlSessionTemplate.selectOne("purchaseMapper.selectPurchaseDetail", documentId);
+    }
 
 }

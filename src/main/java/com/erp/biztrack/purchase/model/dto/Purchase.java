@@ -26,7 +26,7 @@ public class Purchase implements java.io.Serializable{
 	private Date approve1Date;
 	private String approve1Status;
 	private String approver2Id;
-	private Date Dateapprove2Date;
+	private Date approve2Date;
 	private String approve2Status;
 	private String title;
 	private String remarks;
@@ -41,7 +41,7 @@ public class Purchase implements java.io.Serializable{
 	public Purchase(String purchaseId, String documentId, String productCode, int purchaseQuantity, String vendorName,
 			Date quoteDate, Date invoiceDate, String documentType, String clientId, String documentWriterId,
 			String documentManagerId, String approveId, String empId, String approver1Id, Date approve1Date,
-			String approve1Status, String approver2Id, Date dateapprove2Date, String approve2Status, String title,
+			String approve1Status, String approver2Id, Date approve2Date, String approve2Status, String title,
 			String remarks, Date createdDate) {
 		super();
 		this.purchaseId = purchaseId;
@@ -61,7 +61,7 @@ public class Purchase implements java.io.Serializable{
 		this.approve1Date = approve1Date;
 		this.approve1Status = approve1Status;
 		this.approver2Id = approver2Id;
-		Dateapprove2Date = dateapprove2Date;
+		this.approve2Date = approve2Date;
 		this.approve2Status = approve2Status;
 		this.title = title;
 		this.remarks = remarks;
@@ -239,13 +239,13 @@ public class Purchase implements java.io.Serializable{
 	}
 
 
-	public Date getDateapprove2Date() {
-		return Dateapprove2Date;
+	public Date getApprove2Date() {
+		return approve2Date;
 	}
 
 
-	public void setDateapprove2Date(Date dateapprove2Date) {
-		Dateapprove2Date = dateapprove2Date;
+	public void setApprove2Date(Date approve2Date) {
+		this.approve2Date = approve2Date;
 	}
 
 
@@ -301,12 +301,12 @@ public class Purchase implements java.io.Serializable{
 				+ ", invoiceDate=" + invoiceDate + ", documentType=" + documentType + ", clientId=" + clientId
 				+ ", documentWriterId=" + documentWriterId + ", documentManagerId=" + documentManagerId + ", approveId="
 				+ approveId + ", empId=" + empId + ", approver1Id=" + approver1Id + ", approve1Date=" + approve1Date
-				+ ", approve1Status=" + approve1Status + ", approver2Id=" + approver2Id + ", Dateapprove2Date="
-				+ Dateapprove2Date + ", approve2Status=" + approve2Status + ", title=" + title + ", remarks=" + remarks
+				+ ", approve1Status=" + approve1Status + ", approver2Id=" + approver2Id + ", approve2Date="
+				+ approve2Date + ", approve2Status=" + approve2Status + ", title=" + title + ", remarks=" + remarks
 				+ ", createdDate=" + createdDate + "]";
 	}
-	
-	
+
+
 	
 	
 }

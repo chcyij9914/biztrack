@@ -1,5 +1,7 @@
 package com.erp.biztrack.purchase.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -8,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.common.Paging;
@@ -17,6 +21,9 @@ import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 import com.erp.biztrack.purchase.model.service.PurchaseService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/purchase")
@@ -77,10 +84,16 @@ public class PurchaseController {
 
 		}
 		
-		// 문서 작성 페이지로 이동 처리용
-		@RequestMapping("purchase-document-new.do")
+		// 문서 작성 페이지로 이동 처리용(품의서)
+		@RequestMapping("new-purchase.do")
 		public String moveNewPDocumentPage() {
-			return "purchase/purchase-document-new";
+			return "purchase/new-purchase";
+		}
+		
+		// 문서 작성 페이지로 이동 처리용(지출결의서)
+		@RequestMapping("new-payment.do")
+		public String moveNewPaymentDocumentPage() {
+		    return "purchase/new-payment";
 		}
 		
 		// 물품 리스트 반환용 (Ajax로 호출됨)
@@ -97,4 +110,30 @@ public class PurchaseController {
 	    public String peekDocumentId(@RequestParam("type") String type) {
 	        return purchaseService.peekDocumentId(type);
 	    }
+	    
+	    //문서 상세보기
+	    @RequestMapping("purchase-detail.do")
+	    public ModelAndView purchaseDetail(@RequestParam("documentId") String documentId, ModelAndView mv) {
+	        Purchase detail = purchaseService.selectPurchaseDetail(documentId);
+
+	        if (detail != null) {
+	            mv.addObject("purchase", detail);
+
+	            // 문서 종류에 따라 뷰 분기
+	            if ("품의서".equals(detail.getDocumentType())) {
+	                mv.setViewName("purchase/purchase-detail");
+	            } else if ("지출결의서".equals(detail.getDocumentType())) {
+	                mv.setViewName("purchase/payment-detail");
+	            } else {
+	                mv.addObject("message", "알 수 없는 문서 유형입니다.");
+	                mv.setViewName("common/errorPage");
+	            }
+	        } else {
+	            mv.addObject("message", "해당 문서를 찾을 수 없습니다.");
+	            mv.setViewName("common/errorPage");
+	        }
+
+	        return mv;
+	    }
+	   
 }

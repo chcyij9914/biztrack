@@ -15,5 +15,8 @@ public interface PurchaseService {
 	//문서번호 자동 생성
     String peekDocumentId(String type);
     String generateDocumentId(String type);
+    
+    //문서 상세보기
+    Purchase selectPurchaseDetail(String documentId);
 
 	 }
