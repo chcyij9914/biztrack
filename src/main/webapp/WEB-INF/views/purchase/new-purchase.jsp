@@ -63,12 +63,13 @@ request.setAttribute("today", today);
 		<!-- 탭 + 상신버튼 -->
 		<div class="d-flex justify-content-between align-items-center mb-4"
 			style="border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">
-			<ul class="nav nav-tabs" id="docTab" role="tablist"
-				style="border-bottom: none;">
+			<ul class="nav nav-tabs">
 				<li class="nav-item"><a class="nav-link active"
-					id="purchase-tab" data-toggle="tab" href="#purchase" role="tab">구매품의서</a></li>
-				<li class="nav-item"><a class="nav-link" id="payment-tab"
-					data-toggle="tab" href="#payment" role="tab">지출결의서</a></li>
+					href="${pageContext.request.contextPath}/purchase/new-purchase.do">구매품의서</a>
+				</li>
+				<li class="nav-item"><a class="nav-link"
+					href="${pageContext.request.contextPath}/purchase/new-payment.do">지출결의서</a>
+				</li>
 			</ul>
 			<button type="submit" class="btn btn-primary px-4 py-1.5 ml-3">상신</button>
 		</div>
@@ -126,6 +127,7 @@ request.setAttribute("today", today);
 				</tbody>
 			</table>
 		</div>
+
 
 		<!-- 물품 목록 -->
 		<div class="mb-3">
@@ -216,11 +218,12 @@ request.setAttribute("today", today);
 		<div class="form-group">
 			<label>첨부파일</label>
 			<div class="d-flex align-items-center">
-				<input type="text" class="form-control" readonly value="파일명"
-					style="flex: 1;" /> <label for="fileUpload"
-					class="btn btn-outline-primary ml-2 mb-0"> <i
-					class="fas fa-upload"></i>
-				</label> <input type="file" name="file" id="fileUpload" class="d-none" />
+				<textarea class="form-control" id="fileNamePreview" readonly
+					rows="2" style="flex: 1; resize: none;"></textarea>
+				<label for="fileUpload" class="btn btn-outline-primary ml-2 mb-0">
+					<i class="fas fa-upload"></i>
+				</label> <input type="file" name="files" id="fileUpload" class="d-none"
+					multiple />
 			</div>
 		</div>
 
@@ -236,108 +239,56 @@ request.setAttribute("today", today);
 		<script
 			src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-		<!-- 물품 목록 Ajax + Select2 적용 -->
 		<script>
 let productList = []; // 전역 저장
 
 $(document).ready(function() {
+    const contextPath = '${pageContext.request.contextPath}';
+
+    // 문서번호 미리보기
+    $.ajax({
+        url: contextPath + '/purchase/peek-document-id.do',
+        type: 'GET',
+        data: { type: '구매품의서' },
+        success: function (documentId) {
+            $('#documentIdInput').val(documentId);
+        },
+        error: function () {
+            alert('문서번호 조회 실패');
+        }
+    });
+
+	<!-- 물품 목록 Ajax + Select2 적용 -->
     // 서버에서 상품 목록 불러오기
     $.ajax({
-        url: '${pageContext.request.contextPath}/purchase/product-list.do',
+        url: contextPath + '/purchase/product-list.do',
         method: 'GET',
         success: function(data) {
-            productList = data; // 불러온 데이터를 전역변수에 저장
+            productList = data;
             initializeSelect2();
         }
     });
+
+    // 파일 업로드 이름 미리보기
+    $('#fileUpload').on('change', function () {
+        const newFiles = Array.from(this.files);
+        uploadedFiles = uploadedFiles.concat(newFiles);
+        const fileMap = new Map();
+        uploadedFiles.forEach(file => {
+            fileMap.set(file.name, file);
+        });
+        uploadedFiles = Array.from(fileMap.values());
+        const fileNames = uploadedFiles.map(file => file.name).join('\n');
+        $('#fileNamePreview').val(fileNames);
+        $(this).val('');
+    });
 });
 
-// 셀렉트박스 초기화 함수
+let uploadedFiles = [];
+
+//물품 드롭다운
 function initializeSelect2() {
     $('select[name="productNameList"]').each(function() {
-        const select = $(this);
-        select.empty().append('<option value="">선택</option>');
-
-        productList.forEach(product => {
-            const option = $('<option>', {
-                value: product.productCode,
-                text: product.productName,
-                'data-saleprice': product.salePrice // 단가 저장
-            });
-            select.append(option);
-        });
-
-        select.select2({
-            width: '100%',
-            placeholder: "물품명 검색",
-            allowClear: true
-        });
-    });
-}
-
-// 물품명 선택시 물품코드 + 단가 입력
-function fillProductInfo(select) {
-    const selectedOption = select.options[select.selectedIndex];
-    const selectedProductCode = selectedOption.value;
-    const selectedSalePrice = selectedOption.getAttribute('data-saleprice');
-
-    const row = select.closest('tr');
-    row.querySelector('input[name="productCodeList"]').value = selectedProductCode;
-    row.querySelector('input[name="unitPriceList"]').value = selectedSalePrice;
-
-    calculateAmount(select);
-}
-
-// 수량 또는 단가 입력시 금액 자동 계산
-function calculateAmount(input) {
-    const row = input.closest('tr');
-    const quantity = parseInt(row.querySelector('input[name="quantityList"]').value) || 0;
-    const unitPrice = parseInt(row.querySelector('input[name="unitPriceList"]').value) || 0;
-    const total = Math.round(quantity * unitPrice * 1.1);
-
-    row.querySelector('input[name="totalPriceList"]').value = total;
-
-    calculateGrandTotal();
-}
-
-// 전체 합계 계산
-function calculateGrandTotal() {
-    let grandTotal = 0;
-    document.querySelectorAll('input[name="totalPriceList"]').forEach(input => {
-        grandTotal += parseInt(input.value) || 0;
-    });
-    document.querySelector('tfoot input').value = grandTotal;
-}
-
-// 품목 추가 버튼 클릭 시
-function addItem() {
-    const tbody = document.getElementById('itemTableBody');
-    const newRow = document.createElement('tr');
-
-    newRow.innerHTML = `
-        <td></td> <!-- 번호는 나중에 다시 채움 -->
-        <td><input type="text" class="form-control form-control-sm" name="productCodeList" readonly></td>
-        <td>
-            <select class="form-control form-control-sm select2" name="productNameList" onchange="fillProductInfo(this)">
-                <option value="">선택</option>
-            </select>
-        </td>
-        <td><input type="text" class="form-control form-control-sm" name="vendorNameList"></td>
-        <td><input type="date" class="form-control form-control-sm" name="quoteDateList"></td> 
-        <td><input type="number" class="form-control form-control-sm" name="quantityList" onchange="calculateAmount(this)"></td>
-        <td><input type="number" class="form-control form-control-sm" name="unitPriceList" onchange="calculateAmount(this)"></td>
-        <td><input type="number" class="form-control form-control-sm" name="totalPriceList" readonly></td>
-    `;
-
-    tbody.appendChild(newRow);
-
-    // 번호 다시 붙이기
-    Array.from(tbody.querySelectorAll('tr')).forEach((tr, idx) => {
-        tr.querySelector('td').textContent = idx + 1;
-    });
-
-    // 새로 추가된 셀렉트박스에 select2 + 상품옵션 다시 설정
-    $(newRow).find('select[name="productNameList"]').each(function() {
         const select = $(this);
         select.empty().append('<option value="">선택</option>');
         productList.forEach(product => {
@@ -356,49 +307,83 @@ function addItem() {
     });
 }
 
-//새 문서 작성시 미리보기용 문서번호 가져오기
-$(document).ready(function() {
+//상품코드 자동 입력
+function fillProductInfo(select) {
+    const selectedOption = select.options[select.selectedIndex];
+    const selectedProductCode = selectedOption.value;
 
-    const contextPath = '${pageContext.request.contextPath}';
+    const row = select.closest('tr');
+    row.querySelector('input[name="productCodeList"]').value = selectedProductCode;
 
-    // 기본값 구매품의서
-    $.ajax({
-        url: contextPath + '/purchase/peek-document-id.do',
-        type: 'GET',
-        data: { type: '구매품의서' },
-        success: function (documentId) {
-            $('#documentIdInput').val(documentId);
-        },
-        error: function () {
-            alert('문서번호 조회 실패');
-        }
+    calculateAmount(select);
+}
+
+//물품 가격 계산
+function calculateAmount(input) {
+    const row = input.closest('tr');
+    const quantity = parseInt(row.querySelector('input[name="quantityList"]').value) || 0;
+    const unitPrice = parseInt(row.querySelector('input[name="unitPriceList"]').value) || 0;
+    const total = Math.round(quantity * unitPrice * 1.1);
+    row.querySelector('input[name="totalPriceList"]').value = total;
+    calculateGrandTotal();
+}
+
+
+//합계 계산
+function calculateGrandTotal() {
+    let grandTotal = 0;
+    document.querySelectorAll('input[name="totalPriceList"]').forEach(input => {
+        grandTotal += parseInt(input.value) || 0;
+    });
+    document.querySelector('tfoot input').value = grandTotal;
+}
+
+//품목 추가
+function addItem() {
+    const tbody = document.getElementById('itemTableBody');
+    const newRow = document.createElement('tr');
+
+    newRow.innerHTML = `
+        <td></td>
+        <td><input type="text" class="form-control form-control-sm" name="productCodeList" readonly></td>
+        <td>
+            <select class="form-control form-control-sm select2" name="productNameList" onchange="fillProductInfo(this)">
+                <option value="">선택</option>
+            </select>
+        </td>
+        <td><input type="text" class="form-control form-control-sm" name="vendorNameList"></td>
+        <td><input type="date" class="form-control form-control-sm" name="quoteDateList"></td>
+        <td><input type="number" class="form-control form-control-sm" name="quantityList" onchange="calculateAmount(this)"></td>
+        <td><input type="number" class="form-control form-control-sm" name="unitPriceList" onchange="calculateAmount(this)"></td>
+        <td><input type="number" class="form-control form-control-sm" name="totalPriceList" readonly></td>
+    `;
+
+    //행 추가 후 번호 붙이기
+    tbody.appendChild(newRow);
+
+    Array.from(tbody.querySelectorAll('tr')).forEach((tr, idx) => {
+        tr.querySelector('td').textContent = idx + 1;
     });
 
-    // 탭 클릭 시 문서번호 미리보기 갱신
-    $('.nav-link').on('click', function (e) {
-        e.preventDefault();
-
-        const docType = $(this).text().trim();
-
-        $.ajax({
-            url: contextPath + '/purchase/peek-document-id.do',
-            type: 'GET',
-            data: { type: docType },
-            success: function (documentId) {
-                $('#documentIdInput').val(documentId);
-            },
-            error: function () {
-                alert('문서번호 조회 실패');
-            }
+    //드롭다운 옵션
+    $(newRow).find('select[name="productNameList"]').each(function() {
+        const select = $(this);
+        select.empty().append('<option value="">선택</option>');
+        productList.forEach(product => {
+            const option = $('<option>', {
+                value: product.productCode,
+                text: product.productName,
+                'data-saleprice': product.salePrice
+            });
+            select.append(option);
         });
-
-        $('.nav-link').removeClass('active');
-        $(this).addClass('active');
-        $(this).tab('show');
+        select.select2({
+            width: '100%',
+            placeholder: "물품명 검색",
+            allowClear: true
+        });
     });
-
-});
-
+}
 </script>
 </body>
 </html>
