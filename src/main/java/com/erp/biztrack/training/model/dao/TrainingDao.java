@@ -41,9 +41,14 @@ public class TrainingDao {
         return sqlSessionTemplate.insert("trainingMapper.insertTraining", training);
     }
     
+    // 새 교육 수정
+    public int updateTraining(Training training) {
+        return sqlSessionTemplate.update("trainingMapper.updateTraining", training);
+    }
+    
     // 교육 삭제 	
 	  public int deleteTraining(String trainingId) { 
-		  return sqlSessionTemplate.insert("trainingMapper.deleteTraining", trainingId); 
+		  return sqlSessionTemplate.delete("trainingMapper.deleteTraining", trainingId); 
 	  }
 	 
 
@@ -64,11 +69,6 @@ public class TrainingDao {
         List<Training> list = sqlSessionTemplate.selectList("trainingMapper.selectSearchInstructor", search);
         return (ArrayList<Training>) list;
     }
-
-
-	public int updateTraining(Training training) {
-		return 0;
-	}
 
 	public int selectSearchTitleCount(String keyword) {
 		return sqlSessionTemplate.selectOne("trainingMapper.selectSearchTitleCount", keyword);

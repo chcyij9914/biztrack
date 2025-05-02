@@ -1,7 +1,6 @@
 package com.erp.biztrack.training.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,17 +116,33 @@ public class TrainingController {
 
 	    if (result > 0) {
 	        // 삭제 성공 시 목록 페이지로 이동
-	        return "redirect:/training/list.do";
+	        return "redirect:/list.do";
 	    } else {
 	        model.addAttribute("message", "교육 삭제 실패!");
 	        return "common/error";
 	    }
 	}
+	
+	// 교육 수정 
+	@RequestMapping(value = "training/update.do", method = RequestMethod.POST)
+	public String updateTraining(@ModelAttribute Training training, Model model) {
+	    logger.info("update.do : " + training);
 
-	// 교육 분석 페이지로 이동
-	@GetMapping("/analysis.do")
-	public String analysisPage() {
-		return "training/analysis";
+	    int result = trainingService.updateTraining(training); // 전체 Training 객체로 수정
+
+	    if (result > 0) {
+	        return "redirect:/list.do"; // 수정 성공 시 목록 이동
+	    } else {
+	        model.addAttribute("message", "교육 수정 실패!");
+	        return "common/error";
+	    }
+	}
+
+	// 교육 평가 분석 페이지로 이동
+	@RequestMapping("training/analysis.do")
+	public String AnalysisPage(Model model) {
+	    // 분석 데이터 로딩 로직 작성
+	    return "training/analysis";
 	}
 
 	// 교육 검색 페이지

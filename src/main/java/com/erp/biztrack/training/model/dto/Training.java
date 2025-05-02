@@ -100,11 +100,11 @@ public class Training implements java.io.Serializable {
 			this.location = location;
 		}
 		
-		public String getdetailContent() {
+		public String getDetailContent() {
 			return detailContent;
 		}
 
-		public void setdetailContent(String detailContent) {
+		public void setDetailContent(String detailContent) {
 			this.detailContent = detailContent;
 		}
 

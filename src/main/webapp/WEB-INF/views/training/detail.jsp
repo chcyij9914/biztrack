@@ -63,115 +63,116 @@
 						<a href="#" class="text-primary small">수료 여부 확인</a>
 					</div> -->
 					</div>
-					
-				
 
-					<a href="${pageContext.request.contextPath}/training/update.do"
-						class="btn btn-primary btn-icon-split mr-2"> <span
-						class="icon text-white-50"><i class="fas fa-pen"></i></span> <span
-						class="text">수정</span>
-					</a>
 
-					<form method="post"
-						action="${pageContext.request.contextPath}/training/delete.do"
-						style="display: inline;">
-						<input type="hidden" name="trainingId"
-							value="${training.trainingId}" />
-						<button type="submit" class="btn btn-danger btn-icon-split mr-2">
-							<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
-							<span class="text">삭제</span>
-						</button>
-					</form>
+					<%-- <c:set var="isAdmin" value="${loginInfo.admin_YN eq 'Y'}" />
+					<c:set var="editMode" value="${param.editMode}" />
 
+					<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
+					<c:if test="${isAdmin}"> --%>
+
+					<div class="d-flex justify-content-end mb-3">
+
+						<form method="post"
+							action="${pageContext.request.contextPath}/training/delete.do"
+							style="display: inline;">
+							<input type="hidden" name="trainingId"
+								value="${training.trainingId}" />
+							<button type="submit" class="btn btn-danger btn-icon-split">
+								<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
+								<span class="text">삭제</span>
+							</button>
+						</form>
+						<%-- 	</c:if> --%>
+					</div>
 
 
 					<!-- 상세 정보 -->
 					<div class="card shadow mb-4">
 						<div class="card-body">
-							<form action="/biztrack/training/enroll.do" method="post">
-								<input type="hidden" name="training_id"
+							<form
+								action="${pageContext.request.contextPath}/training/update.do"
+								method="post">			
+								
+								<input type="hidden" name="trainingId"
 									value="${training.trainingId}" />
+									
 
 								<div class="form-group">
-									<p>
-										<strong>교육명:</strong>
-									</p>
-									<input type="text" class="form-control"
-										value="${training.title}" readonly />
+									<label>교육명</label> <input type="text" class="form-control"
+										name="title" value="${training.title}" />
 								</div>
 
 								<div class="form-group">
-									<p>
-										<strong>강사:</strong>
-									</p>
-									<input type="text" class="form-control"
-										value="${training.instructorName}" readonly />
+									<label>강사</label> <input type="text" class="form-control"
+										name="instructorName" value="${training.instructorName}" />
 								</div>
 
 								<div class="form-group">
-									<p>
-										<strong>교육 일정:</strong>
-									</p>
-									<input type="text" class="form-control"
-										value="${training.startDate} -${training.endDate}" readonly />
+									<label>시작일</label> <input type="date" class="form-control"
+										name="startDate" value="${training.startDate}" />
 								</div>
 
 								<div class="form-group">
-									<p>
-										<strong>교육 내용:</strong>
-									</p>
-									<input type="text" class="form-control"
-										value="${training.courseContent}" readonly />
+									<label>종료일</label> <input type="date" class="form-control"
+										name="endDate" value="${training.endDate}" />
 								</div>
 
 								<div class="form-group">
-									<p>
-										<strong>정원:</strong>
-									</p>
-									<input type="text" class="form-control"
-										value="${training.capacity} " readonly />
+									<label>교육내용</label> <input type="text" class="form-control"
+										name="courseContent" value="${training.courseContent}" />
 								</div>
 
 								<div class="form-group">
-									<p>
-										<strong>장소:</strong>
-									</p>
-									<input type="text" class="form-control"
-										value="${training.location}" readonly />
+									<label>정원</label> <input type="number" class="form-control"
+										name="capacity" value="${training.capacity}" />
 								</div>
 
 								<div class="form-group">
-									<p>
-										<strong>교육 목표:</strong>
-									</p>
-									<textarea class="form-control" rows="4" readonly>${training.detailContent}</textarea>
+									<label>장소</label> <input type="text" class="form-control"
+										name="location" value="${training.location}" />
 								</div>
+
+								<div class="form-group">
+									<label>교육 목표</label>
+									<textarea class="form-control" name="detailContent">${training.detailContent}</textarea>
+								</div>
+
 
 								<div class="d-flex justify-content-center mb-4">
 
-									<a
-										href="${pageContext.request.contextPath}"
-										class="btn btn-warning btn-icon-split mr-2"> <span
-										class="icon text-white-50"> <i class="fas fa-edit"></i>
-									</span> <span class="text"> 수강신청</span>
-									</a>
+								<%-- 	<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
+									<c:if test="${isAdmin}"> --%>
+									
+									<button type="submit"
+											class="btn btn-primary btn-icon-split mr-2">
+											<span class="icon text-white-50"><i class="fas fa-pen"></i></span>
+											<span class="text">수정</span>
+										</button>
+									&nbsp;&nbsp; 
+									<%-- </c:if>
+									 --%>
+									<a href="${pageContext.request.contextPath}"
+											class="btn btn-warning btn-icon-split mr-2"> <span
+											class="icon text-white-50"> <i class="fas fa-edit"></i>
+										</span> <span class="text"> 수강신청</span>
 
 
-									<button type="button"
-										class="btn btn-secondary btn-icon-split mr-2"
-										onclick="history.back();">
-										<span class="icon text-white-50"> <i
-											class="fas fa-arrow-left"></i>
+										</a>
+										<a href="javascript:history.back();"
+											class="btn btn-secondary btn-icon-split mr-2"> <span
+											class="icon text-white-50"> <i
+												class="fas fa-arrow-left"></i>
 										</span> <span class="text">이전페이지</span>
-									</button>
+										</a>
 
-									<!-- 목록으로 버튼 -->
-									<a href="${pageContext.request.contextPath}/list.do"
-										class="btn btn-info btn-icon-split"> <span
-										class="icon text-white-50"> <i class="fas fa-list"></i>
-									</span> <span class="text">목록으로</span>
-									</a>
 
+										<!-- 목록으로 버튼 -->
+										<a href="${pageContext.request.contextPath}/list.do"
+											class="btn btn-info btn-icon-split"> <span
+											class="icon text-white-50"> <i class="fas fa-list"></i>
+										</span> <span class="text">목록으로</span>
+										</a>
 								</div>
 
 							</form>
