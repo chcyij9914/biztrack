@@ -10,7 +10,7 @@ import com.erp.biztrack.training.model.dto.Training;
 public interface TrainingService {
 
 	
-	// 전체 교육 글 개수 조회
+	// 전체 교육 글 갯수 조회
 	int selectListCount();
 	// 페이징 적용된 교육 목록 조회
 	ArrayList<Training> selectList(Paging paging);
