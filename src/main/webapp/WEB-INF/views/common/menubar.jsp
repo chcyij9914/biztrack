@@ -83,7 +83,7 @@
       <div id="collapsePurchase" class="collapse" aria-labelledby="headingPurchase" data-parent="#accordionSidebar">
          <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="${pageContext.request.contextPath}/purchase/purchase-document.do">구매문서</a>
-            <a class="collapse-item" href="${pageContext.request.contextPath}/purchase/inbound-document.do">입고</a>
+            <a class="collapse-item" href="${pageContext.request.contextPath}/inbound/inbound-document.do">입고</a>
          </div>
       </div>
    </li>

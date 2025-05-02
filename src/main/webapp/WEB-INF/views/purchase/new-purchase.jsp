@@ -4,7 +4,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>새 문서 작성</title>
+<title>품의서 작성</title>
 
 <!-- Font Awesome -->
 <link

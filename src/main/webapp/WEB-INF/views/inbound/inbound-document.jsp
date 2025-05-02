@@ -95,11 +95,12 @@
 							<table class="table table-bordered" id="purchaseTable"
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
+									<col style="width: 15%;">
+									<col style="width: 10%;">
+									<col style="width: 25%;">
+									<col style="width: 10%;">
 									<col style="width: 20%;">
 									<col style="width: 10%;">
-									<col style="width: 30%;">
-									<col style="width: 10%;">
-									<col style="width: 20%;">
 									<col style="width: 10%;">
 								</colgroup>
 								<thead class="text-center bg-light">
@@ -110,6 +111,7 @@
 										<th>수량</th>
 										<th>구매처</th>
 										<th>상태</th>
+										<th>관리</th>
 									</tr>
 								</thead>
 								<tbody class="text-center bg-white">
@@ -122,6 +124,10 @@
 											<td>${inbound.inboundQuantity}</td>
 											<td>${inbound.vendorName}</td>
 											<td><span class="badge badge-primary">${inbound.approve1Status}</span></td>
+											<td><a href="#"
+												onclick="window.open('${pageContext.request.contextPath}/inbound/inbound-detail.do?documentId=${inbound.documentId}', 'detailWindow', 'width=800,height=600'); return false;"
+												class="btn btn-sm btn-outline-secondary"
+												width=1000,height=800'>상세</a></td>
 										</tr>
 									</c:forEach>
 								</tbody>

@@ -22,6 +22,9 @@ public class Inbound implements java.io.Serializable{
 	private String clientId;
 	private String documentWriterId;
 	private String documentManagerId;
+	private String title;
+	private String remarks;
+	private Date createdDate;
 	
 	private String productName; 	
 	private String categoryId;
@@ -46,10 +49,11 @@ public class Inbound implements java.io.Serializable{
 
 	public Inbound(String inboundId, String purchaseId, int inboundQuantity, Date receivedDate, String documentId,
 			String productCode, int purchaseQuantity, String vendorName, Date quoteDate, Date invoiceDate,
-			String documentType, String clientId, String documentWriterId, String documentManagerId, String productName,
-			String categoryId, String subcategoryId, int costPrice, int salePrice, String categoryName,
-			String subcategoryName, String approveId, String empId, String approver1Id, Date approve1Date,
-			String approve1Status, String approver2Id, Date approve2Date, String approve2Status) {
+			String documentType, String clientId, String documentWriterId, String documentManagerId, String title,
+			String remarks, Date createdDate, String productName, String categoryId, String subcategoryId,
+			int costPrice, int salePrice, String categoryName, String subcategoryName, String approveId, String empId,
+			String approver1Id, Date approve1Date, String approve1Status, String approver2Id, Date approve2Date,
+			String approve2Status) {
 		super();
 		this.inboundId = inboundId;
 		this.purchaseId = purchaseId;
@@ -65,6 +69,9 @@ public class Inbound implements java.io.Serializable{
 		this.clientId = clientId;
 		this.documentWriterId = documentWriterId;
 		this.documentManagerId = documentManagerId;
+		this.title = title;
+		this.remarks = remarks;
+		this.createdDate = createdDate;
 		this.productName = productName;
 		this.categoryId = categoryId;
 		this.subcategoryId = subcategoryId;
@@ -192,6 +199,30 @@ public class Inbound implements java.io.Serializable{
 
 	public void setDocumentManagerId(String documentManagerId) {
 		this.documentManagerId = documentManagerId;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public String getProductName() {
@@ -324,15 +355,15 @@ public class Inbound implements java.io.Serializable{
 				+ ", receivedDate=" + receivedDate + ", documentId=" + documentId + ", productCode=" + productCode
 				+ ", purchaseQuantity=" + purchaseQuantity + ", vendorName=" + vendorName + ", quoteDate=" + quoteDate
 				+ ", invoiceDate=" + invoiceDate + ", documentType=" + documentType + ", clientId=" + clientId
-				+ ", documentWriterId=" + documentWriterId + ", documentManagerId=" + documentManagerId
-				+ ", productName=" + productName + ", categoryId=" + categoryId + ", subcategoryId=" + subcategoryId
-				+ ", costPrice=" + costPrice + ", salePrice=" + salePrice + ", categoryName=" + categoryName
-				+ ", subcategoryName=" + subcategoryName + ", approveId=" + approveId + ", empId=" + empId
-				+ ", approver1Id=" + approver1Id + ", approve1Date=" + approve1Date + ", approve1Status="
-				+ approve1Status + ", approver2Id=" + approver2Id + ", approve2Date=" + approve2Date
-				+ ", approve2Status=" + approve2Status + "]";
+				+ ", documentWriterId=" + documentWriterId + ", documentManagerId=" + documentManagerId + ", title="
+				+ title + ", remarks=" + remarks + ", createdDate=" + createdDate + ", productName=" + productName
+				+ ", categoryId=" + categoryId + ", subcategoryId=" + subcategoryId + ", costPrice=" + costPrice
+				+ ", salePrice=" + salePrice + ", categoryName=" + categoryName + ", subcategoryName=" + subcategoryName
+				+ ", approveId=" + approveId + ", empId=" + empId + ", approver1Id=" + approver1Id + ", approve1Date="
+				+ approve1Date + ", approve1Status=" + approve1Status + ", approver2Id=" + approver2Id
+				+ ", approve2Date=" + approve2Date + ", approve2Status=" + approve2Status + "]";
 	}
-
-
+	
+	
 	
 }
