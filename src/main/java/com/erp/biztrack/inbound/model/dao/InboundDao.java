@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.inbound.model.dto.Inbound;
+import com.erp.biztrack.purchase.model.dto.Purchase;
 
 @Repository("inboundDao")
 public class InboundDao {
@@ -24,4 +25,9 @@ public class InboundDao {
 	public int selectListCount() {
 	    return sqlSessionTemplate.selectOne("inboundMapper.selectListCount");
 	}
+	
+	//입고 상세보기
+    public Inbound selectInboundDetail(String documentId) {
+        return sqlSessionTemplate.selectOne("inboundMapper.selectInboundDetail", documentId);
+    }
 }

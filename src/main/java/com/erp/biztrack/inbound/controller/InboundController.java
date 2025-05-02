@@ -15,7 +15,7 @@ import com.erp.biztrack.inbound.model.dto.Inbound;
 import com.erp.biztrack.inbound.model.service.InboundService;
 
 @Controller
-@RequestMapping("/purchase")
+@RequestMapping("/inbound")
 public class InboundController {
 	// 이 클래스 안의 메소드들이 잘 동작하는지, 매개변수 또는 리턴값을 확인하는 용도로 로그 객체를 생성함
 	private static final Logger logger = LoggerFactory.getLogger(InboundController.class);
@@ -67,9 +67,22 @@ public class InboundController {
 				mv.setViewName("common/error");
 			}
 
-			return mv;
-			
-			
+			return mv;	
+		}
+		
+		@RequestMapping("inbound-detail.do")
+		public ModelAndView inboundDetail(@RequestParam("documentId") String documentId, ModelAndView mv) {
+			Inbound detail = inboundService.selectInboundDetail(documentId);
+
+		    if (detail != null) {
+		        mv.addObject("inbound", detail);
+		        mv.setViewName("inbound/inbound-detail");
+		    } else {
+		        mv.addObject("message", "해당 문서 정보를 불러올 수 없습니다.");
+		        mv.setViewName("common/errorPage");
+		    }
+
+		    return mv;
 		}
 
 	
