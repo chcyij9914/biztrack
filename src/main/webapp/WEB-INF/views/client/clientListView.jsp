@@ -37,6 +37,12 @@
 .pagination .page-link:hover {
 	background-color: #f0f0f0;
 }
+
+td {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
 </style>
 </head>
 
@@ -132,9 +138,10 @@
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
 									<col style="width: 20%;">
+									<col style="width: 13%;">
 									<col style="width: 20%;">
 									<col style="width: 20%;">
-									<col style="width: 20%;">
+									<col style="width: 17%;">
 									<col style="width: 10%;">
 									<col style="width: 10%;">
 								</colgroup>
@@ -143,6 +150,7 @@
 										<th>거래처명</th>
 										<th>대표자</th>
 										<th>사업자번호</th>
+										<th>카테고리</th>
 										<th>연락처</th>
 										<th>상태</th>
 										<th>관리</th>
@@ -154,16 +162,22 @@
 											<td>${client.clientName}</td>
 											<td>${client.ceoName}</td>
 											<td>${client.businessNumber}</td>
+											<td>${client.categoryName}</td>
 											<td>${client.companyPhone}</td>
-											<td><span class="badge badge-secondary">${client.clientStatus}</span></td>
-											<td><a
-												href="${pageContext.request.contextPath}/client/cdetail.do?clientId=${client.clientId}"
+											<td><span class="badge 
+													<c:choose>
+														<c:when test="${client.clientStatus eq '계약중'}">badge-primary</c:when>
+														<c:otherwise>badge-secondary</c:otherwise>
+													</c:choose>
+												">${client.clientStatus}</span>
+											</td>
+											<td><a href="${pageContext.request.contextPath}/client/cdetail.do?clientId=${client.clientId}"
 												class="btn btn-sm btn-outline-secondary">상세</a></td>
 										</tr>
 									</c:forEach>
 									<c:if test="${empty clientList}">
 										<tr>
-											<td colspan="6" class="text-center text-muted">검색 결과가
+											<td colspan="7" class="text-center text-muted">검색 결과가
 												없습니다.</td>
 										</tr>
 									</c:if>
