@@ -1,0 +1,40 @@
+package com.erp.biztrack.graph.controller;
+
+import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.erp.biztrack.graph.model.dto.Graph;
+import com.erp.biztrack.graph.model.service.GraphService;
+
+@Controller
+@RequestMapping("/graph")
+public class GraphController {
+    private static final Logger logger = LoggerFactory.getLogger(GraphController.class);
+
+    @Autowired
+    private GraphService graphService;
+    
+    @RequestMapping(value = "/api/profitData.do", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public ArrayList<Graph> getProfitData() {
+        return graphService.getProfitByProduct();
+    }
+    
+    // 그래프 대시보드 화면 이동
+    @RequestMapping("/dashBoard.do")
+    public String showDashBoardViewPage() {
+        return "graph/graphDashBoardView"; 
+    }
+    
+    // 영업이익 실적그래프 화면 이동
+    @RequestMapping("/profitGraphView.do")
+    public String showGraphPage() {
+        return "graph/profitGraphView"; 
+    }
+}
