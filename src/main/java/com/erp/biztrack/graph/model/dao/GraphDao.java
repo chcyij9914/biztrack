@@ -1,6 +1,7 @@
 package com.erp.biztrack.graph.model.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,13 @@ public class GraphDao {
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 	
+	public ArrayList<Graph> getProfitByProduct() {
+	    return (ArrayList) sqlSessionTemplate.selectList("graphMapper.ProfitGraphData");
+	}
+	
 	// 제품별 영업이익 데이터 조회
-	 public ArrayList<Graph> getProfitByProduct() {
-	        return (ArrayList) sqlSessionTemplate.selectList("graphMapper.getProfitByProduct");
-	 
+	public List<Graph> selectProfitGraphData() {
+        return sqlSessionTemplate.selectList("graphMapper.ProfitGraphData");
 	 }
+
 }

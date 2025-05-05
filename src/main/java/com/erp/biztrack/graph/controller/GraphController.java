@@ -1,11 +1,13 @@
 package com.erp.biztrack.graph.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -29,12 +31,14 @@ public class GraphController {
     // 그래프 대시보드 화면 이동
     @RequestMapping("/dashBoard.do")
     public String showDashBoardViewPage() {
-        return "graph/graphDashBoardView"; 
+        return "/graph/graphDashBoardView"; 
     }
     
-    // 영업이익 실적그래프 화면 이동
-    @RequestMapping("/profitGraphView.do")
-    public String showGraphPage() {
-        return "graph/profitGraphView"; 
+    // 영업이익 분석 그래프 뷰
+    @RequestMapping("/profitGraph.do")
+    public String showProfitGraph(Model model) {
+        List<Graph> profitGraphList = graphService.selectProfitGraphData();
+        model.addAttribute("profitGraphList", profitGraphList);
+        return "/graph/profitGraphView"; 
     }
 }

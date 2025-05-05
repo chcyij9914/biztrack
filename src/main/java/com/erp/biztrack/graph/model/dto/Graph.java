@@ -113,6 +113,15 @@ public class Graph implements java.io.Serializable{
 	public void setProfitMargin(double profitMargin) {
 		this.profitMargin = profitMargin;
 	}
+	
+	
+	 public int getTotalRevenue() {
+	        return salePrice * outboundQuantity;
+	    }
+
+	    public int getTotalCost() {
+	        return costPrice * outboundQuantity;
+	    }
 
 
 	public static long getSerialversionuid() {
@@ -120,12 +129,19 @@ public class Graph implements java.io.Serializable{
 	}
 
 
-	@Override
-	public String toString() {
-		return "Graph [productCode=" + productCode + ", productName=" + productName + ", costPrice=" + costPrice
-				+ ", salePrice=" + salePrice + ", outboundQuantity=" + outboundQuantity + ", profitPerUnit="
-				+ profitPerUnit + ", totalProfit=" + totalProfit + ", profitMargin=" + profitMargin + "]";
-	}
-	
-    
+	 // toString()
+    @Override
+    public String toString() {
+        return "Graph [productCode=" + productCode +
+               ", productName=" + productName +
+               ", costPrice=" + costPrice +
+               ", salePrice=" + salePrice +
+               ", outboundQuantity=" + outboundQuantity +
+               ", profitPerUnit=" + profitPerUnit +
+               ", totalProfit=" + totalProfit +
+               ", profitMargin=" + profitMargin +
+               ", totalRevenue=" + getTotalRevenue() +
+               ", totalCost=" + getTotalCost() +
+               "]";
+    }
 }
