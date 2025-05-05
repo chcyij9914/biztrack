@@ -1,6 +1,7 @@
 package com.erp.biztrack.graph.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,17 @@ public class GraphServiceImpl implements GraphService {
 	
 	@Autowired
 	private GraphDao graphDao;
-
+	
 	@Override
 	public ArrayList<Graph> getProfitByProduct() {
 		return graphDao.getProfitByProduct();
 	}
+
+	@Override
+	public List<Graph> selectProfitGraphData() {
+		return graphDao.selectProfitGraphData();
+	}
+
+
 	
 }
