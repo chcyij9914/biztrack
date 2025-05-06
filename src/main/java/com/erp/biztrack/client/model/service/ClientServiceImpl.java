@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.erp.biztrack.client.model.dao.ClientDao;
 import com.erp.biztrack.client.model.dto.Client;
+import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -168,5 +169,15 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public int deleteClient(String clientId) {
 		return clientDao.deleteClient(clientId);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentList(Paging paging) {
+		return clientDao.selectDocumentList(paging);
+	}
+
+	@Override
+	public int selectDocumentListCount() {
+		return clientDao.selectDocumentListCount();
 	}
 }

@@ -131,4 +131,15 @@ public class ClientDao {
     public int deleteClient(String clientId) {
         return sqlSessionTemplate.delete("clientMapper.deleteClient", clientId);
     }
+    
+    // 거래처 문서 목록 조회
+    public ArrayList<DocumentDTO> selectDocumentList(Paging paging) {
+    	List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentList", paging);
+		return (ArrayList<DocumentDTO>) list;
+    }
+    
+    // 거래처 문서 전체 수
+    public int selectDocumentListCount() {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentListCount");
+    }
 }
