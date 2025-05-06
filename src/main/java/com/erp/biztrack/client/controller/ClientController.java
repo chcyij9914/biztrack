@@ -23,6 +23,7 @@ import com.erp.biztrack.admin.model.service.AdminService;
 import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.client.model.service.ClientService;
 import com.erp.biztrack.common.ClovaOcrService;
+import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.FileRenameUtil;
 import com.erp.biztrack.common.Paging;
@@ -414,6 +415,32 @@ public class ClientController {
 	    }
 
 	    return "redirect:/client/clist.do";
+	}
+	
+	//문서 관리 목록 조회
+	// 문서 목록 조회
+	@RequestMapping("documentList.do")
+	public ModelAndView selectDocumentList(@RequestParam(name = "page", required = false) String page,
+	                                       @RequestParam(name = "limit", required = false) String slimit,
+	                                       ModelAndView mv) {
+	    int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+	    int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
+
+	    int listCount = clientService.selectDocumentListCount();
+	    Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+	    paging.calculate();
+
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("startRow", paging.getStartRow());
+	    param.put("endRow", paging.getEndRow());
+
+	    ArrayList<DocumentDTO> documentList = clientService.selectDocumentList(paging);
+
+	    mv.addObject("documentList", documentList);
+	    mv.addObject("paging", paging);
+	    mv.setViewName("client/documentListView");
+
+	    return mv;
 	}
 
 }

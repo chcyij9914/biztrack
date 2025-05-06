@@ -38,5 +38,8 @@ public interface ClientService {
     ArrayList<Client> selectCategoryList();
     // 거래처 삭제
     int deleteClient(String clientId);
+    //거래처 문서 목록 조회 관련 ---------------------------------------------
+    ArrayList<DocumentDTO> selectDocumentList(Paging paging);
+    int selectDocumentListCount();
 }
 
