@@ -28,17 +28,32 @@ public class GraphController {
         return graphService.getProfitByProduct();
     }
     
+    @RequestMapping(value = "/api/transactionCountGraph.do", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public ArrayList<Graph> getTransactionCountData() {
+        return (ArrayList<Graph>) graphService.getTransactionCountData();
+    }
+    
     // 그래프 대시보드 화면 이동
     @RequestMapping("/dashBoard.do")
     public String showDashBoardViewPage() {
         return "/graph/graphDashBoardView"; 
     }
     
-    // 영업이익 분석 그래프 뷰
+    // 영업이익 분석 그래프 
     @RequestMapping("/profitGraph.do")
     public String showProfitGraph(Model model) {
         List<Graph> profitGraphList = graphService.selectProfitGraphData();
         model.addAttribute("profitGraphList", profitGraphList);
         return "/graph/profitGraphView"; 
     }
+    
+    // 거래건수 그래프 
+    @RequestMapping("/transactionCountGraph.do")
+    public String showTransactionCount(Model model) {
+        List<Graph> list = graphService.getTransactionCountData();
+        model.addAttribute("transactionCountList", list); 
+        return "graph/transactionCountGraphView";
+    }
+
 }

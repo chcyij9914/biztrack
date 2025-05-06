@@ -8,4 +8,5 @@ import com.erp.biztrack.graph.model.dto.Graph;
 public interface GraphService {
 	ArrayList<Graph> getProfitByProduct();
 	List<Graph> selectProfitGraphData();
+	List<Graph> getTransactionCountData();
 }
