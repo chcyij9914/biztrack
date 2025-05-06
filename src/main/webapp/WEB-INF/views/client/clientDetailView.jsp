@@ -46,6 +46,13 @@
 
 						<!-- 버튼 영역 (오른쪽) -->
 						<div>
+							<c:if test="${loginInfo.adminYN == 'Y'}">
+								<a href="${pageContext.request.contextPath}/client/delete.do?clientId=${client.clientId}" 
+								   class="btn btn-danger btn-sm mr-1"
+								   onclick="return confirm('정말 삭제하시겠습니까?');">
+								   <i class="fas fa-trash-alt"></i> 삭제
+								</a>
+							</c:if>
 						    <c:if test="${(loginInfo.adminYN == 'Y' && loginInfo.deptId == clientDeptId)
 						           || ((loginInfo.roleId == 'A2' || loginInfo.roleId == 'A3')
 						                && loginInfo.deptId == clientDeptId)

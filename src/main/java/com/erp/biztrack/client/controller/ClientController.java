@@ -401,5 +401,19 @@ public class ClientController {
 
 		return mv;
 	}
+	
+	//거래처 삭제
+	@RequestMapping("delete.do")
+	public String deleteClient(@RequestParam("clientId") String clientId, RedirectAttributes redirectAttr) {
+	    int result = clientService.deleteClient(clientId);
+
+	    if (result > 0) {
+	        redirectAttr.addFlashAttribute("msg", "거래처가 성공적으로 삭제되었습니다.");
+	    } else {
+	        redirectAttr.addFlashAttribute("msg", "거래처 삭제에 실패했습니다.");
+	    }
+
+	    return "redirect:/client/clist.do";
+	}
 
 }

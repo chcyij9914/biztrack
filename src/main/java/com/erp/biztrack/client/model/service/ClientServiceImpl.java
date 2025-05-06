@@ -164,4 +164,9 @@ public class ClientServiceImpl implements ClientService {
 	public ArrayList<Client> selectCategoryList() {
 		return clientDao.selectCategoryList();
 	}
+
+	@Override
+	public int deleteClient(String clientId) {
+		return clientDao.deleteClient(clientId);
+	}
 }

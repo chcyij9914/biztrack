@@ -126,4 +126,9 @@ public class ClientDao {
         List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectCategoryList");
         return (ArrayList<Client>) list;
     }
+    
+    // 거래처 삭제
+    public int deleteClient(String clientId) {
+        return sqlSessionTemplate.delete("clientMapper.deleteClient", clientId);
+    }
 }
