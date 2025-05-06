@@ -24,7 +24,7 @@
 		<!-- Content Wrapper -->
 		<div id="content-wrapper" class="d-flex flex-column">
 			<div id="content">
-			
+
 				<!-- Topbar -->
 				<c:import url="/WEB-INF/views/common/topbar.jsp" />
 
@@ -34,13 +34,37 @@
 						등록된 <strong>${client.clientName}</strong> 거래처의 상세 내용을 확인합니다.
 					</p>
 
-					<!-- 탭 버튼 -->
-					<ul class="nav nav-tabs mb-4" id="clientTab">
-						<li class="nav-item"><a class="nav-link active" id="info-tab"
-							data-toggle="tab" href="#info">상세보기</a></li>
-						<li class="nav-item"><a class="nav-link" id="contract-tab"
-							data-toggle="tab" href="#contract">계약서 보기</a></li>
-					</ul>
+					<!-- 탭 버튼 + 버튼 오른쪽 배치 -->
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<!-- 탭 버튼 -->
+						<ul class="nav nav-tabs" id="clientTab">
+							<li class="nav-item"><a class="nav-link active"
+								id="info-tab" data-toggle="tab" href="#info">상세보기</a></li>
+							<li class="nav-item"><a class="nav-link" id="contract-tab"
+								data-toggle="tab" href="#contract">계약서 보기</a></li>
+						</ul>
+
+						<!-- 버튼 영역 (오른쪽) -->
+						<div>
+						    <c:if test="${(loginInfo.adminYN == 'Y' && loginInfo.deptId == clientDeptId)
+						           || ((loginInfo.roleId == 'A2' || loginInfo.roleId == 'A3')
+						                && loginInfo.deptId == clientDeptId)
+						           || loginInfo.empId == client.currentManagerId}">
+						        <a href="${pageContext.request.contextPath}/client/cupdate.do?clientId=${client.clientId}" 
+						           class="btn btn-primary btn-sm mr-1">
+						           <i class="fas fa-edit"></i> 수정하기
+						        </a>
+						    </c:if>
+						
+						    <button type="button" class="btn btn-secondary btn-sm mr-1" onclick="history.back();">
+						        <i class="fas fa-arrow-left"></i> 이전페이지
+						    </button>
+						
+						    <a href="${pageContext.request.contextPath}/client/clist.do" class="btn btn-info btn-sm">
+						        <i class="fas fa-list"></i> 목록으로
+						    </a>
+						</div>
+					</div>
 
 					<!-- 탭 콘텐츠 -->
 					<div class="tab-content">
@@ -147,36 +171,8 @@
 								</div>
 							</div>
 						</div>
-
 					</div>
-
 				</div>
-				<!-- 버튼 영역 (가운데 정렬) -->
-				<div class="d-flex justify-content-center mb-4">
-					<!-- 수정하기 버튼 -->
-					<a
-						href="${pageContext.request.contextPath}/client/cupdate.do?clientId=${client.clientId}"
-						class="btn btn-warning btn-icon-split mr-2"> <span
-						class="icon text-white-50"> <i class="fas fa-edit"></i>
-					</span> <span class="text">수정하기</span>
-					</a>
-
-					<!-- 이전페이지 버튼 -->
-					<button type="button" class="btn btn-secondary btn-icon-split mr-2"
-						onclick="history.back();">
-						<span class="icon text-white-50"> <i
-							class="fas fa-arrow-left"></i>
-						</span> <span class="text">이전페이지</span>
-					</button>
-
-					<!-- 목록으로 버튼 -->
-					<a href="${pageContext.request.contextPath}/client/clist.do"
-						class="btn btn-info btn-icon-split"> <span
-						class="icon text-white-50"> <i class="fas fa-list"></i>
-					</span> <span class="text">목록으로</span>
-					</a>
-				</div>
-
 			</div>
 		</div>
 	</div>

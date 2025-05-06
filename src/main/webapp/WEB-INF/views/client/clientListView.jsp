@@ -86,12 +86,13 @@ td {
 									<option value="status">계약상태</option>
 									<option value="category">카테고리명</option>
 								</select>
-								
+
 								<form id="searchForm" method="get" class="form-inline"
 									action="csearchName.do">
 									<input type="text" name="keyword" class="form-control mr-2"
 										placeholder="거래처명을 입력하세요."> <select name="statusParam"
 										class="form-control mr-2 d-none">
+										<option value="예정">예정</option>
 										<option value="계약중">계약중</option>
 										<option value="만료">만료</option>
 									</select> <select name="categoryId" class="form-control mr-2 d-none">
@@ -105,34 +106,105 @@ td {
 
 							</div>
 							<script>
-							$(function() {
-							    $('#searchType').on('change', function() {
-							        const type = $(this).val();
-							        const $form = $('#searchForm');
+								$(function() {
+									$('#searchType')
+											.on(
+													'change',
+													function() {
+														const type = $(this).val();
+														const $form = $('#searchForm');
 
-							        // 모든 입력/선택 필드 숨기기
-							        $form.find('input[name="keyword"]').addClass('d-none');
-							        $form.find('select[name="statusParam"]').addClass('d-none');
-							        $form.find('select[name="categoryId"]').addClass('d-none');
+														// 모든 입력/선택 필드 숨기기
+														$form
+																.find(
+																		'input[name="keyword"]')
+																.addClass(
+																		'd-none');
+														$form
+																.find(
+																		'select[name="statusParam"]')
+																.addClass(
+																		'd-none');
+														$form
+																.find(
+																		'select[name="categoryId"]')
+																.addClass(
+																		'd-none');
 
-							        // 타입별로 폼 액션 및 필드 표시 설정
-							        if (type === 'name') {
-							            $form.attr('action', 'csearchName.do');
-							            $form.find('input[name="keyword"]').removeClass('d-none');
-							        } else if (type === 'status') {
-							            $form.attr('action', 'csearchStatus.do');
-							            $form.find('select[name="statusParam"]').removeClass('d-none');
-							        } else if (type === 'category') {
-							            $form.attr('action', 'csearchCategory.do');
-							            $form.find('select[name="categoryId"]').removeClass('d-none');
-							        }
-							    });
-							});
+														// 타입별로 폼 액션 및 필드 표시 설정
+														if (type === 'name') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchName.do');
+															$form
+																	.find(
+																			'input[name="keyword"]')
+																	.removeClass(
+																			'd-none');
+														} else if (type === 'status') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchStatus.do');
+															$form
+																	.find(
+																			'select[name="statusParam"]')
+																	.removeClass(
+																			'd-none');
+														} else if (type === 'category') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchCategory.do');
+															$form
+																	.find(
+																			'select[name="categoryId"]')
+																	.removeClass(
+																			'd-none');
+														}
+													});
+								});
 							</script>
 						</div>
 					</div>
 					<!-- Table -->
 					<div class="card-body">
+					<!-- 조건 요약 + 버튼 묶기 -->
+						<c:if test="${not empty action}">
+							<div class="d-flex justify-content-between align-items-center mb-3">
+								<!-- 왼쪽: 조건 요약 -->
+								<div>
+									<span class="badge badge-light border text-dark px-3 py-2">
+										검색 조건: 
+										<c:choose>
+											<c:when test="${action eq 'name'}">거래처명 = "${param.keyword}"</c:when>
+											<c:when test="${action eq 'status'}">계약상태 = "${param.statusParam}"</c:when>
+											<c:when test="${action eq 'category'}">
+												<c:set var="catName" value="" />
+												<c:forEach var="cat" items="${categoryList}">
+													<c:if test="${cat.categoryId == param.categoryId}">
+														<c:set var="catName" value="${cat.categoryName}" />
+													</c:if>
+												</c:forEach>
+												카테고리명 = "${catName}"
+											</c:when>
+										</c:choose>
+									</span>
+									<span class="ml-2 small text-muted">총 ${paging.listCount}건 검색됨</span>
+								</div>
+						
+								<!-- 오른쪽: 버튼 -->
+								<div>
+									<button type="button" class="btn btn-secondary btn-sm mr-1" onclick="history.back();">
+										<i class="fas fa-arrow-left"></i> 이전페이지
+									</button>
+									<a href="${pageContext.request.contextPath}/client/clist.do" class="btn btn-info btn-sm">
+										<i class="fas fa-list"></i> 목록으로
+									</a>
+								</div>
+							</div>
+						</c:if>
 						<div class="table-responsive">
 							<table class="table table-bordered"
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
