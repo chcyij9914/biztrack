@@ -45,15 +45,26 @@ public class ClientDao {
 	public int insertFile(FileDTO file) {
 		return sqlSessionTemplate.insert("clientMapper.insertFile", file);
 	}
-
-	// 문서 저장 (계약서용)
-	public int insertDocument(DocumentDTO document) {
-		return sqlSessionTemplate.insert("clientMapper.insertDocument", document);
+	
+	// 새 카테고리 등록
+	public int insertCategoryClient(Client client) {
+	    return sqlSessionTemplate.insert("clientMapper.insertCategoryClient", client);
 	}
 
-	// 최신 문서 ID 조회 (계약서)
-	public String selectLatestDocumentId() {
-		return sqlSessionTemplate.selectOne("clientMapper.selectLatestDocumentId");
+	// 최신 카테고리 ID 조회
+	public String selectLatestCategoryId() {
+	    return sqlSessionTemplate.selectOne("clientMapper.selectLatestCategoryId");
+	}
+	
+	// 거래 계약 상태 갱신
+	public int updateClientStatus(Client client) {
+		return sqlSessionTemplate.update("clientMapper.updateClientStatus", client);
+	}
+	
+	//거래처 계약 상태 => 거래처 전체 조회
+	public ArrayList<Client> selectAllClients() {
+		List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectAllClients");
+		return (ArrayList<Client>) list;
 	}
 
 	// 거래처 상세 조회

@@ -17,8 +17,10 @@ public interface ClientService {
 	int insertClient(Client client);
     String selectLastClientId();
     int insertFile(FileDTO file);
-    int insertDocument(DocumentDTO document);
-    String selectLatestDocumentId();
+    int insertCategoryClient(Client client);
+    String selectLatestCategoryId();
+    int updateClientStatus(Client client);
+    ArrayList<Client> selectAllClients();
     //거래처 상세보기 관련 --------------------------------
     Client selectClientDetail(String clientId);
     String selectContractFilePath(String clientId);
