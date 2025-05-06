@@ -36,5 +36,7 @@ public interface ClientService {
     int selectSearchClientCategoryCount(String categoryId);
     ArrayList<Client> selectSearchClientCategoryList(Search search);
     ArrayList<Client> selectCategoryList();
+    // 거래처 삭제
+    int deleteClient(String clientId);
 }
 
