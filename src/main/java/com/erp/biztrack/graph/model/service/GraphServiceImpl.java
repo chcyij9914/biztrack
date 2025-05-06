@@ -26,6 +26,11 @@ public class GraphServiceImpl implements GraphService {
 		return graphDao.selectProfitGraphData();
 	}
 
+	@Override
+	public List<Graph> getTransactionCountData() {
+		return graphDao.getTransactionCountData();
+	}
+
 
 	
 }

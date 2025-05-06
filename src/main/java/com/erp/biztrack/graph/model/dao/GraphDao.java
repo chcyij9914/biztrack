@@ -23,5 +23,10 @@ public class GraphDao {
 	public List<Graph> selectProfitGraphData() {
         return sqlSessionTemplate.selectList("graphMapper.ProfitGraphData");
 	 }
+	
+	// 거래건수 그래프 데이터 조회
+    public List<Graph> getTransactionCountData() {
+        return sqlSessionTemplate.selectList("graphMapper.TransactionCountGraph");
+    }
 
 }
