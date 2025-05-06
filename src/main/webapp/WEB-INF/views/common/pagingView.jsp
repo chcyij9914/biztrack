@@ -1,58 +1,287 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>거래처 관리</title>
 
-<c:set var="paging" value="${ requestScope.paging }"/>
-<c:set var="queryParams" value="action=${ requestScope.action }&keyword=${ requestScope.keyword }&begin=${ requestScope.begin }&end=${ end }" />
+<!-- Fonts & Styles -->
+<link
+	href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,400,700,900"
+	rel="stylesheet">
+<link
+	href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css"
+	rel="stylesheet">
 
-<!-- Bootstrap 스타일 페이지네이션 -->
-<nav aria-label="Page navigation example">
-   <ul class="pagination justify-content-center">
+<style>
+.pagination .page-link {
+	border: none;
+	background-color: transparent;
+}
 
-      <!-- [맨처음] -->
-      <li class="page-item ${paging.currentPage == 1 ? 'disabled' : ''}">
-         <a class="page-link" href="${paging.urlMapping}?page=1&${queryParams}">«</a>
-      </li>
+.pagination .page-item.active .page-link {
+	background-color: transparent;
+	color: #4e73df;
+	font-weight: bold;
+	border: none;
+}
 
-      <!-- [이전그룹] -->
-      <c:choose>
-         <c:when test="${(paging.currentPage - 10) >= 1}">
-            <li class="page-item">
-               <a class="page-link" href="${paging.urlMapping}?page=${paging.startPage - 10}&${queryParams}">‹</a>
-            </li>
-         </c:when>
-         <c:otherwise>
-            <li class="page-item disabled">
-               <a class="page-link" href="#">‹</a>
-            </li>
-         </c:otherwise>
-      </c:choose>
+.pagination .page-link:hover {
+	background-color: #f0f0f0;
+}
 
-      <!-- 페이지 번호 -->
-      <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="p">
-         <li class="page-item ${p == paging.currentPage ? 'active' : ''}">
-            <a class="page-link" href="${paging.urlMapping}?page=${p}&${queryParams}">${p}</a>
-         </li>
-      </c:forEach>
+td {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+</style>
+</head>
 
-      <!-- [다음그룹] -->
-      <c:choose>
-         <c:when test="${(paging.startPage + 10) <= paging.maxPage}">
-            <li class="page-item">
-               <a class="page-link" href="${paging.urlMapping}?page=${paging.startPage + 10}&${queryParams}">›</a>
-            </li>
-         </c:when>
-         <c:otherwise>
-            <li class="page-item disabled">
-               <a class="page-link" href="#">›</a>
-            </li>
-         </c:otherwise>
-      </c:choose>
+<body id="page-top">
+	<div id="wrapper">
 
-      <!-- [맨끝] -->
-      <li class="page-item ${paging.currentPage == paging.maxPage ? 'disabled' : ''}">
-         <a class="page-link" href="${paging.urlMapping}?page=${paging.maxPage}&${queryParams}">»</a>
-      </li>
+		<!-- Sidebar -->
+		<c:import url="/WEB-INF/views/common/menubar.jsp" />
 
-   </ul>
-</nav>
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+
+				<!-- Topbar -->
+				<c:import url="/WEB-INF/views/common/topbar.jsp" />
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<div>
+							<h1 class="h3 text-gray-800 mb-1">거래처 관리</h1>
+							<p class="text-muted small mb-0">거래처 목록</p>
+						</div>
+
+						<div class="d-flex align-items-center">
+
+							<!-- 거래처 검색 필터 (한 줄 정렬) -->
+							<div class="d-flex align-items-center mb-3">
+
+								<!-- 등록 버튼 -->
+								<a href="#" class="btn btn-primary px-3 py-2 mr-3"
+									onclick="window.open('${pageContext.request.contextPath}/client/insertForm.do', 'insertClientWindow', 'width=800,height=900'); return false;">
+									+ 거래처 등록 </a>
+
+								<!-- 검색 기준 -->
+								<label class="mr-2 mb-0">검색 기준</label> <select id="searchType"
+									class="form-control mr-2" style="width: 120px;">
+									<option value="name">거래처명</option>
+									<option value="status">계약상태</option>
+									<option value="category">카테고리명</option>
+								</select>
+
+								<form id="searchForm" method="get" class="form-inline"
+									action="csearchName.do">
+									<input type="text" name="keyword" class="form-control mr-2"
+										placeholder="거래처명을 입력하세요."> <select name="statusParam"
+										class="form-control mr-2 d-none">
+										<option value="예정">예정</option>
+										<option value="계약중">계약중</option>
+										<option value="만료">만료</option>
+									</select> <select name="categoryId" class="form-control mr-2 d-none">
+										<c:forEach var="cat" items="${categoryList}">
+											<option value="${cat.categoryId}">${cat.categoryName}</option>
+										</c:forEach>
+									</select>
+
+									<button type="submit" class="btn btn-primary">검색</button>
+								</form>
+
+							</div>
+							<script>
+								$(function() {
+									$('#searchType')
+											.on(
+													'change',
+													function() {
+														const type = $(this).val();
+														const $form = $('#searchForm');
+
+														// 모든 입력/선택 필드 숨기기
+														$form
+																.find(
+																		'input[name="keyword"]')
+																.addClass(
+																		'd-none');
+														$form
+																.find(
+																		'select[name="statusParam"]')
+																.addClass(
+																		'd-none');
+														$form
+																.find(
+																		'select[name="categoryId"]')
+																.addClass(
+																		'd-none');
+
+														// 타입별로 폼 액션 및 필드 표시 설정
+														if (type === 'name') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchName.do');
+															$form
+																	.find(
+																			'input[name="keyword"]')
+																	.removeClass(
+																			'd-none');
+														} else if (type === 'status') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchStatus.do');
+															$form
+																	.find(
+																			'select[name="statusParam"]')
+																	.removeClass(
+																			'd-none');
+														} else if (type === 'category') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchCategory.do');
+															$form
+																	.find(
+																			'select[name="categoryId"]')
+																	.removeClass(
+																			'd-none');
+														}
+													});
+								});
+							</script>
+						</div>
+					</div>
+					<!-- Table -->
+					<div class="card-body">
+					<!-- 조건 요약 + 버튼 묶기 -->
+						<c:if test="${not empty action}">
+							<div class="d-flex justify-content-between align-items-center mb-3">
+								<!-- 왼쪽: 조건 요약 -->
+								<div>
+									<span class="badge badge-light border text-dark px-3 py-2">
+										검색 조건: 
+										<c:choose>
+											<c:when test="${action eq 'name'}">거래처명 = "${param.keyword}"</c:when>
+											<c:when test="${action eq 'status'}">계약상태 = "${param.statusParam}"</c:when>
+											<c:when test="${action eq 'category'}">
+												<c:set var="catName" value="" />
+												<c:forEach var="cat" items="${categoryList}">
+													<c:if test="${cat.categoryId == param.categoryId}">
+														<c:set var="catName" value="${cat.categoryName}" />
+													</c:if>
+												</c:forEach>
+												카테고리명 = "${catName}"
+											</c:when>
+										</c:choose>
+									</span>
+									<span class="ml-2 small text-muted">총 ${paging.listCount}건 검색됨</span>
+								</div>
+						
+								<!-- 오른쪽: 버튼 -->
+								<div>
+									<button type="button" class="btn btn-secondary btn-sm mr-1" onclick="history.back();">
+										<i class="fas fa-arrow-left"></i> 이전페이지
+									</button>
+									<a href="${pageContext.request.contextPath}/client/clist.do" class="btn btn-info btn-sm">
+										<i class="fas fa-list"></i> 목록으로
+									</a>
+								</div>
+							</div>
+						</c:if>
+						<div class="table-responsive">
+							<table class="table table-bordered"
+								style="table-layout: fixed; width: 100%;" cellspacing="0">
+								<colgroup>
+									<col style="width: 20%;">
+									<col style="width: 13%;">
+									<col style="width: 20%;">
+									<col style="width: 20%;">
+									<col style="width: 17%;">
+									<col style="width: 10%;">
+									<col style="width: 10%;">
+								</colgroup>
+								<thead class="text-center bg-light">
+									<tr>
+										<th>거래처명</th>
+										<th>대표자</th>
+										<th>사업자번호</th>
+										<th>카테고리</th>
+										<th>연락처</th>
+										<th>상태</th>
+										<th>관리</th>
+									</tr>
+								</thead>
+								<tbody class="text-center bg-white">
+									<c:forEach var="client" items="${clientList}">
+										<tr>
+											<td>${client.clientName}</td>
+											<td>${client.ceoName}</td>
+											<td>${client.businessNumber}</td>
+											<td>${client.categoryName}</td>
+											<td>${client.companyPhone}</td>
+											<td><span class="badge 
+													<c:choose>
+														<c:when test="${client.clientStatus eq '계약중'}">badge-primary</c:when>
+														<c:otherwise>badge-secondary</c:otherwise>
+													</c:choose>
+												">${client.clientStatus}</span>
+											</td>
+											<td><a href="${pageContext.request.contextPath}/client/cdetail.do?clientId=${client.clientId}"
+												class="btn btn-sm btn-outline-secondary">상세</a></td>
+										</tr>
+									</c:forEach>
+									<c:if test="${empty clientList}">
+										<tr>
+											<td colspan="7" class="text-center text-muted">검색 결과가
+												없습니다.</td>
+										</tr>
+									</c:if>
+								</tbody>
+							</table>
+						</div>
+
+						<!-- 페이징 영역 -->
+						<c:import url="/WEB-INF/views/common/pagingView.jsp" />
+					</div>
+
+				</div>
+				<!-- End Page Content -->
+
+				<c:import url="/WEB-INF/views/common/footer.jsp" />
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"><i
+		class="fas fa-angle-up"></i></a>
+
+	<!-- JS -->
+	<script
+		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
+</body>
+</html>

@@ -37,6 +37,12 @@
 .pagination .page-link:hover {
 	background-color: #f0f0f0;
 }
+
+td {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
 </style>
 </head>
 
@@ -80,12 +86,13 @@
 									<option value="status">계약상태</option>
 									<option value="category">카테고리명</option>
 								</select>
-								
+
 								<form id="searchForm" method="get" class="form-inline"
 									action="csearchName.do">
 									<input type="text" name="keyword" class="form-control mr-2"
 										placeholder="거래처명을 입력하세요."> <select name="statusParam"
 										class="form-control mr-2 d-none">
+										<option value="예정">예정</option>
 										<option value="계약중">계약중</option>
 										<option value="만료">만료</option>
 									</select> <select name="categoryId" class="form-control mr-2 d-none">
@@ -99,42 +106,114 @@
 
 							</div>
 							<script>
-							$(function() {
-							    $('#searchType').on('change', function() {
-							        const type = $(this).val();
-							        const $form = $('#searchForm');
+								$(function() {
+									$('#searchType')
+											.on(
+													'change',
+													function() {
+														const type = $(this).val();
+														const $form = $('#searchForm');
 
-							        // 모든 입력/선택 필드 숨기기
-							        $form.find('input[name="keyword"]').addClass('d-none');
-							        $form.find('select[name="statusParam"]').addClass('d-none');
-							        $form.find('select[name="categoryId"]').addClass('d-none');
+														// 모든 입력/선택 필드 숨기기
+														$form
+																.find(
+																		'input[name="keyword"]')
+																.addClass(
+																		'd-none');
+														$form
+																.find(
+																		'select[name="statusParam"]')
+																.addClass(
+																		'd-none');
+														$form
+																.find(
+																		'select[name="categoryId"]')
+																.addClass(
+																		'd-none');
 
-							        // 타입별로 폼 액션 및 필드 표시 설정
-							        if (type === 'name') {
-							            $form.attr('action', 'csearchName.do');
-							            $form.find('input[name="keyword"]').removeClass('d-none');
-							        } else if (type === 'status') {
-							            $form.attr('action', 'csearchStatus.do');
-							            $form.find('select[name="statusParam"]').removeClass('d-none');
-							        } else if (type === 'category') {
-							            $form.attr('action', 'csearchCategory.do');
-							            $form.find('select[name="categoryId"]').removeClass('d-none');
-							        }
-							    });
-							});
+														// 타입별로 폼 액션 및 필드 표시 설정
+														if (type === 'name') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchName.do');
+															$form
+																	.find(
+																			'input[name="keyword"]')
+																	.removeClass(
+																			'd-none');
+														} else if (type === 'status') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchStatus.do');
+															$form
+																	.find(
+																			'select[name="statusParam"]')
+																	.removeClass(
+																			'd-none');
+														} else if (type === 'category') {
+															$form
+																	.attr(
+																			'action',
+																			'csearchCategory.do');
+															$form
+																	.find(
+																			'select[name="categoryId"]')
+																	.removeClass(
+																			'd-none');
+														}
+													});
+								});
 							</script>
 						</div>
 					</div>
 					<!-- Table -->
 					<div class="card-body">
+					<!-- 조건 요약 + 버튼 묶기 -->
+						<c:if test="${not empty action}">
+							<div class="d-flex justify-content-between align-items-center mb-3">
+								<!-- 왼쪽: 조건 요약 -->
+								<div>
+									<span class="badge badge-light border text-dark px-3 py-2">
+										검색 조건: 
+										<c:choose>
+											<c:when test="${action eq 'name'}">거래처명 = "${param.keyword}"</c:when>
+											<c:when test="${action eq 'status'}">계약상태 = "${param.statusParam}"</c:when>
+											<c:when test="${action eq 'category'}">
+												<c:set var="catName" value="" />
+												<c:forEach var="cat" items="${categoryList}">
+													<c:if test="${cat.categoryId == param.categoryId}">
+														<c:set var="catName" value="${cat.categoryName}" />
+													</c:if>
+												</c:forEach>
+												카테고리명 = "${catName}"
+											</c:when>
+										</c:choose>
+									</span>
+									<span class="ml-2 small text-muted">총 ${paging.listCount}건 검색됨</span>
+								</div>
+						
+								<!-- 오른쪽: 버튼 -->
+								<div>
+									<button type="button" class="btn btn-secondary btn-sm mr-1" onclick="history.back();">
+										<i class="fas fa-arrow-left"></i> 이전페이지
+									</button>
+									<a href="${pageContext.request.contextPath}/client/clist.do" class="btn btn-info btn-sm">
+										<i class="fas fa-list"></i> 목록으로
+									</a>
+								</div>
+							</div>
+						</c:if>
 						<div class="table-responsive">
 							<table class="table table-bordered"
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
 									<col style="width: 20%;">
+									<col style="width: 13%;">
 									<col style="width: 20%;">
 									<col style="width: 20%;">
-									<col style="width: 20%;">
+									<col style="width: 17%;">
 									<col style="width: 10%;">
 									<col style="width: 10%;">
 								</colgroup>
@@ -143,6 +222,7 @@
 										<th>거래처명</th>
 										<th>대표자</th>
 										<th>사업자번호</th>
+										<th>카테고리</th>
 										<th>연락처</th>
 										<th>상태</th>
 										<th>관리</th>
@@ -154,16 +234,22 @@
 											<td>${client.clientName}</td>
 											<td>${client.ceoName}</td>
 											<td>${client.businessNumber}</td>
+											<td>${client.categoryName}</td>
 											<td>${client.companyPhone}</td>
-											<td><span class="badge badge-secondary">${client.clientStatus}</span></td>
-											<td><a
-												href="${pageContext.request.contextPath}/client/cdetail.do?clientId=${client.clientId}"
+											<td><span class="badge 
+													<c:choose>
+														<c:when test="${client.clientStatus eq '계약중'}">badge-primary</c:when>
+														<c:otherwise>badge-secondary</c:otherwise>
+													</c:choose>
+												">${client.clientStatus}</span>
+											</td>
+											<td><a href="${pageContext.request.contextPath}/client/cdetail.do?clientId=${client.clientId}"
 												class="btn btn-sm btn-outline-secondary">상세</a></td>
 										</tr>
 									</c:forEach>
 									<c:if test="${empty clientList}">
 										<tr>
-											<td colspan="6" class="text-center text-muted">검색 결과가
+											<td colspan="7" class="text-center text-muted">검색 결과가
 												없습니다.</td>
 										</tr>
 									</c:if>

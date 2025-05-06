@@ -62,10 +62,46 @@
                   <tr>
                     <th>현재 담당자</th>
                     <td colspan="3">
-                      <input type="text" class="form-control mb-2" name="currentManagerId" value="${client.currentManagerId}" placeholder="사번">
-                      <input type="text" class="form-control mb-2" value="${client.currentManagerName}" readonly placeholder="이름">
-                      <input type="text" class="form-control" value="${client.currentManagerJob}" readonly placeholder="직급">
-                    </td>
+					  <div class="input-group mb-2">
+					    <input type="text" class="form-control" id="currentManagerId" name="currentManagerId"
+					           value="${client.currentManagerId}" placeholder="사번 입력" />
+					    <div class="input-group-append">
+					      <button type="button" class="btn btn-outline-primary" id="fetchManagerBtn">조회</button>
+					    </div>
+					  </div>
+					  <input type="text" class="form-control mb-2" id="currentManagerName"
+					         value="${client.currentManagerName}" readonly placeholder="이름" />
+					  <input type="text" class="form-control" id="currentManagerJob"
+					         value="${client.currentManagerJob}" readonly placeholder="직급" />
+					</td>
+					<script>
+					  $("#fetchManagerBtn").on("click", function () {
+					    let empId = $("#currentManagerId").val().trim();
+					    if (empId === "") {
+					      alert("사번을 입력해주세요.");
+					      return;
+					    }
+					
+					    $.ajax({
+					      url: "${pageContext.request.contextPath}/client/fetchEmpInfo.do",
+					      type: "GET",
+					      data: { empId: empId },
+					      success: function (res) {
+					        if (res && res.empName) {
+					          $("#currentManagerName").val(res.empName);
+					          $("#currentManagerJob").val(res.jobName); // 서버에서 jobId → jobName으로 변환되어 와야 함
+					        } else {
+					          alert("존재하지 않는 사원입니다.");
+					          $("#currentManagerName").val("");
+					          $("#currentManagerJob").val("");
+					        }
+					      },
+					      error: function () {
+					        alert("직원 정보를 불러오는 데 실패했습니다.");
+					      }
+					    });
+					  });
+					</script>
                   </tr>
                 </tbody>
               </table>
