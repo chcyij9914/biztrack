@@ -2,13 +2,14 @@ package com.erp.biztrack.client.model.service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.erp.biztrack.client.model.dao.ClientDao;
 import com.erp.biztrack.client.model.dto.Client;
-import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -31,22 +32,21 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public int insertClient(Client client) {
-		// 계약상태 계산
-		Date today = new Date(System.currentTimeMillis()); // 현재 날짜를 sql.Date로
+		Date today = new Date(System.currentTimeMillis());
 
 		if (client.getContractStartDate() != null && client.getContractEndDate() != null) {
-			if (today.compareTo(client.getContractStartDate()) >= 0
-					&& today.compareTo(client.getContractEndDate()) <= 0) {
-				client.setClientStatus("계약중");
+			if (today.before(client.getContractStartDate())) {
+				client.setClientStatus("예정"); // 시작 전
+			} else if (!today.after(client.getContractEndDate())) {
+				client.setClientStatus("계약중"); // 시작 <= today <= 종료
 			} else {
-				client.setClientStatus("만료");
+				client.setClientStatus("만료"); // 종료일 이후
 			}
 		} else {
-			client.setClientStatus("계약중");
+			client.setClientStatus("예정"); // 날짜 정보가 부족한 경우도 예정 처리
 		}
-		
-		return clientDao.insertClient(client);
 
+		return clientDao.insertClient(client);
 	}
 
 	@Override
@@ -58,15 +58,51 @@ public class ClientServiceImpl implements ClientService {
 	public int insertFile(FileDTO file) {
 		return clientDao.insertFile(file);
 	}
-
+	
 	@Override
-	public int insertDocument(DocumentDTO document) {
-		return clientDao.insertDocument(document);
+	public int insertCategoryClient(Client client) {
+		return clientDao.insertCategoryClient(client);
 	}
 
 	@Override
-	public String selectLatestDocumentId() {
-		return clientDao.selectLatestDocumentId();
+	public String selectLatestCategoryId() {
+		return clientDao.selectLatestCategoryId();
+	}
+	
+	@Override
+	public int updateClientStatus(Client client) {
+		return clientDao.updateClientStatus(client);
+	}
+	
+	@Override
+	public ArrayList<Client> selectAllClients() {
+		return clientDao.selectAllClients();
+	}
+
+	@Scheduled(fixedRate = 1800000) // 1000ms = 1초마다 실행 => 30분마다
+	public void updateClientStatusesDaily() {
+		List<Client> allClients = clientDao.selectAllClients(); // 전체 조회
+		Date today = new Date(System.currentTimeMillis());
+
+		for (Client client : allClients) {
+			String newStatus = null;
+
+			if (client.getContractStartDate() != null && client.getContractEndDate() != null) {
+				if (today.before(client.getContractStartDate())) {
+					newStatus = "예정";
+				} else if (!today.after(client.getContractEndDate())) {
+					newStatus = "계약중";
+				} else {
+					newStatus = "만료";
+				}
+			}
+
+			// 상태가 변경된 경우만 업데이트
+			if (newStatus != null && !newStatus.equals(client.getClientStatus())) {
+				client.setClientStatus(newStatus);
+				clientDao.updateClientStatus(client);
+			}
+		}
 	}
 
 	@Override
@@ -128,7 +164,4 @@ public class ClientServiceImpl implements ClientService {
 	public ArrayList<Client> selectCategoryList() {
 		return clientDao.selectCategoryList();
 	}
-
-	
-
 }
