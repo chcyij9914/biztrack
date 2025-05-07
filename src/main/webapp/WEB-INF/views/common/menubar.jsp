@@ -41,7 +41,7 @@
       </a>
       <div id="collapseNotice" class="collapse" aria-labelledby="headingNotice" data-parent="#accordionSidebar">
          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#">공지 목록 </a>
+            <a class="collapse-item" href="${ pageContext.servletContext.contextPath }/nlist.do?page=1">공지 목록 </a>
             <a class="collapse-item" href="#">공지 작성 </a>
             <a class="collapse-item" href="#">공지 수정 </a>
             <a class="collapse-item" href="#">공지 상세보기 </a>
