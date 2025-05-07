@@ -11,13 +11,13 @@ public class Notice implements java.io.Serializable {
 	private String noticeTitle;		//NOTICETITLE	VARCHAR2(50 BYTE)
 	
 	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul") //날짜시간 직렬화 (Long 정수형 밀리초 출력) 해결 방법임
-	private Date noticeDate;	//NOTICEDATE	DATE, 날짜가 Jackson 을 사용시 Date 객체가 직렬화되어서 밀리초로 표시됨
+	private java.sql.Date noticeDate;	//NOTICEDATE	DATE, 날짜가 Jackson 을 사용시 Date 객체가 직렬화되어서 밀리초로 표시됨
 	private String noticeWriter;		//NOTICEWRITER	VARCHAR2(50 BYTE)
 	private String noticeContent;		//NOTICECONTENT	VARCHAR2(2000 BYTE)
 	private String importance;		//IMPORTANCE	CHAR(1 BYTE);
 	
 	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-	private Date impEndDate;	//IMP_END_DATE	DATE
+	private java.sql.Date impEndDate;	//IMP_END_DATE	DATE
 	private int readCount;			//READCOUNT	NUMBER
 	
 	public Notice() {
@@ -95,11 +95,11 @@ public class Notice implements java.io.Serializable {
 		this.importance = importance;
 	}
 
-	public Date getImpEndDate() {
+	public java.sql.Date getImpEndDate() {
 		return impEndDate;
 	}
 
-	public void setImpEndDate(Date impEndDate) {
+	public void setImpEndDate(java.sql.Date impEndDate) {
 		this.impEndDate = impEndDate;
 	}
 

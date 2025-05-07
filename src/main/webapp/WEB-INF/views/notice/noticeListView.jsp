@@ -10,7 +10,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>training list</title>
+<title>notice list</title>
 
 <!-- Fonts & Styles -->
 <link
@@ -45,29 +45,25 @@
 
 <script>
 	$(function() {
-		$('#detailBtn')
-				.on(
-						'click',
-						function() {
-							const selected = $('input[name="selectedId"]:checked');
-							if (selected.length === 0) {
-								alert('교육을 하나 선택해주세요.');
-								return;
-							}
+		$('#detailBtn').on('click', function() {
+			// 1) 선택된 라디오 찾기
+			const $sel = $('input[name="selectedId"]:checked');
+			if ($sel.length === 0) {
+				alert('공지사항을 하나 선택해주세요.');
+				return;
+			}
 
-							const trainingId = selected.val();
-							const url = '${pageContext.request.contextPath}/training/detail.do?id='
-									+ trainingId;
-							window.location.href = url;
-						});
+			// 2) noticeNo 값 꺼내서 URL 생성
+			const noticeNo = $sel.val();
+			const ctx = '${pageContext.request.contextPath}';
+			const url = ctx + '/detail.do?no=' + noticeNo;
+
+			// 3) 페이지 이동
+			window.location.href = url;
+		});
 	});
 </script>
-
-
-
 </head>
-
-
 <body id="page-top">
 	<div id="wrapper">
 
@@ -92,27 +88,97 @@
 
 						<div class="d-flex align-items-center">
 
+							<%-- <c:if
+								test="${ !empty sessionScope.loginUser and loginUser.adminYN eq 'Y' }"> --%>
+							<button type="button" class="btn btn-primary" id="writeBtn"
+								onclick="location.href='${pageContext.servletContext.contextPath}/moveWrite.do';">
+								+ 새 공지글 등록</button>
+							&nbsp;&nbsp;
+							<%-- </c:if> --%>
+
+
 							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
 							&nbsp;&nbsp;
 							<!-- <button type="submit" class="btn btn-danger">삭제</button>&nbsp;&nbsp; -->
 
 
-							<form class="form-inline"
-								action="${pageContext.request.contextPath}/notice/searchAll.do"
-								method="get">
-								<select class="form-control mr-2" name="action">
+							<form id="searchForm" class="form-inline" method="get">
+								<!-- 1) 검색 옵션: action 파라미터로 넘길 값(title, writer, content, date) -->
+								<select id="searchAction" name="action"
+									class="form-control mr-2">
 									<option value="title">공지 제목</option>
-									<option value="Writer">작성자</option>
+									<option value="writer">작성자</option>
 									<option value="content">공지 내용</option>
 									<option value="date">공지 등록일</option>
-								</select> <input type="search" name="keyword" placeholder=" 검색"
-									class="form-control mr-2" /> 
-									<input type="date" name="begin" class="form-control mr-2" style="display: none" /> 
-									<input type="date" name="end" class="form-control mr-2" style="display: none" /> 
-									<input type="submit" class="btn btn-outline-primary" value="검색">
+								</select>
+
+								<!-- 2) 키워드 입력: 기본 노출 -->
+								<input type="search" id="keywordInput" name="keyword"
+									placeholder="검색 " class="form-control mr-2" />
+
+								<!-- 3) 날짜 입력: 기본 숨김, date 옵션일 때만 보임 -->
+								<input type="date" id="beginInput" name="begin"
+									class="form-control mr-2" style="display: none" /> <input
+									type="date" id="endInput" name="end" class="form-control mr-2"
+									style="display: none" />
+
+								<button type="submit" class="btn btn-outline-primary">검색</button>
 							</form>
-							
-							
+
+							<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+							<script>
+								$(function() {
+									// 옵션 변경 시: 입력창 토글
+									$('#searchAction').change(
+											function() {
+												if (this.value === 'date') {
+													$('#keywordInput').hide()
+															.prop('disabled',
+																	true);
+													$('#beginInput, #endInput')
+															.show().prop(
+																	'disabled',
+																	false);
+												} else {
+													$('#keywordInput').show()
+															.prop('disabled',
+																	false);
+													$('#beginInput, #endInput')
+															.hide().prop(
+																	'disabled',
+																	true);
+												}
+											}).trigger('change');
+
+									// 폼 제출 직전: 실제 매핑된 URL로 action 덮어쓰기
+									$('#searchForm')
+											.submit(
+													function() {
+														const ctx = '${pageContext.request.contextPath}';
+														const act = $(
+																'#searchAction')
+																.val();
+														let target = '/nsearchTitle.do';
+
+														switch (act) {
+														case 'title':
+															target = '/nsearchTitle.do';
+															break;
+														case 'writer':
+															target = '/nsearchWriter.do';
+															break;
+														case 'content':
+															target = '/nsearchContent.do';
+															break;
+														case 'date':
+															target = '/nsearchDate.do';
+															break;
+														}
+														this.action = ctx
+																+ target;
+													});
+								});
+							</script>
 						</div>
 					</div>
 
@@ -181,7 +247,7 @@
 
 											<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
 
-											<a href="${pageContext.request.contextPath}/list.do"
+											<a href="${pageContext.request.contextPath}/nlist.do"
 												class="btn btn-info btn-icon-split"> <span
 												class="icon text-white-50"> <i class="fas fa-list"></i>
 											</span> <span class="text">목록으로</span>
