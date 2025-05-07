@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Notice implements java.io.Serializable {
 	private static final long serialVersionUID = -8269302835859129601L;
 
-	private int noticeNo;			//NOTICENO	NUMBER
+	private int noticeNo ;			//NOTICENO	NUMBER
 	private String noticeTitle;		//NOTICETITLE	VARCHAR2(50 BYTE)
 	
 	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul") //날짜시간 직렬화 (Long 정수형 밀리초 출력) 해결 방법임

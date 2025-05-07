@@ -76,8 +76,8 @@
 						<form method="post"
 							action="${pageContext.request.contextPath}/notice/delete.do"
 							style="display: inline;">
-							<input type="hidden" name="noticeno"
-								value="${notice.noticeno}" />
+							<input type="hidden" name="no"
+								value="${notice.noticeNo}" />
 							<button type="submit" class="btn btn-danger btn-icon-split">
 								<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
 								<span class="text">삭제</span>
@@ -144,23 +144,26 @@
 
 								<%-- 	<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
 									<c:if test="${isAdmin}"> --%>
-									
-									<button type="submit"
+									<form method="post"
+										action="${pageContext.request.contextPath}/notice/update.do"
+										style="display: inline;">
+										<input type="hidden" name="no" value="${notice.noticeNo}" />
+										<button type="submit"
 											class="btn btn-primary btn-icon-split mr-2">
 											<span class="icon text-white-50"><i class="fas fa-pen"></i></span>
 											<span class="text">수정</span>
 										</button>
-									&nbsp;&nbsp; 
-									<%-- </c:if>
+										</form>
+										&nbsp;&nbsp;
+										<%-- </c:if>
 									 --%>
-									<%-- <a href="${pageContext.request.contextPath}"
+										<%-- <a href="${pageContext.request.contextPath}"
 											class="btn btn-warning btn-icon-split mr-2"> <span
 											class="icon text-white-50"> <i class="fas fa-edit"></i>
 										</span> <span class="text"> 수강신청</span>
  --%>
 
-										</a>
-										<a href="javascript:history.back();"
+										</a> <a href="javascript:history.back();"
 											class="btn btn-secondary btn-icon-split mr-2"> <span
 											class="icon text-white-50"> <i
 												class="fas fa-arrow-left"></i>

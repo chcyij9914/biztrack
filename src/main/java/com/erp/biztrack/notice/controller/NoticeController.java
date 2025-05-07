@@ -1,8 +1,5 @@
 package com.erp.biztrack.notice.controller;
 
-import java.io.File;
-import java.lang.reflect.Member;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,23 +7,22 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.erp.biztrack.common.FileNameChange;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.notice.model.dto.Notice;
 import com.erp.biztrack.notice.model.service.NoticeService;
+import com.erp.biztrack.training.model.dto.Training;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -192,24 +188,53 @@ public class NoticeController {
 	// dml ****************************************************
 
 	// 공지글 삭제 요청 처리용
-	@RequestMapping("ndelete.do")
-	public String noticeDeleteMethod(Model model, @RequestParam("no") int noticeNo,
-			@RequestParam(name = "rfile", required = false) String renameFileName, HttpServletRequest request) {
-		if (noticeService.deleteNotice(noticeNo) > 0) { // 공지글 삭제 성공시
-			// 공지글 삭제 성공시 저장 폴더에 있는 첨부파일도 삭제 처리함
-			if (renameFileName != null && renameFileName.length() > 0) {
-				// 공지사항 첨부파일 저장 폴더 경로 지정
-				String savePath = request.getSession().getServletContext().getRealPath("resources/notice_upfiles");
-				// 저장 폴더에서 파일 삭제함
-				new File(savePath + "\\" + renameFileName).delete();
-			}
-
-			return "redirect:nlist.do";
-		} else { // 공지글 삭제 실패시
-			model.addAttribute("message", noticeNo + "번 공지글 삭제 실패!");
-			return "common/error";
-		}
+	@RequestMapping("notice/delete.do")
+	public String noticedeleteMethod(Model model, 
+			@RequestParam("no") int noticeNo, RedirectAttributes ra,
+			 HttpServletRequest request) {
+		
+		int result = noticeService.deleteNotice(noticeNo);
+		
+		 if (result > 0) {
+			 ra.addFlashAttribute("msg", "공지사항이 삭제되었습니다.");
+			 
+			  return "redirect:/nlist.do";
+	        } else {
+	            ra.addFlashAttribute("msg", "삭제에 실패했습니다.");
+	            // 실패 시 상세 페이지로 되돌아가기
+	            return "redirect:/notice/detail.do?no=" + noticeNo;
+	        }
+	           
+		        // 삭제 성공 시 목록 페이지로 이동
+		
+		/*
+		 * if (noticeService.deleteNotice(noticeNo) > 0) { // 공지글 삭제 성공시 // 공지글 삭제 성공시
+		 * 저장 폴더에 있는 첨부파일도 삭제 처리함 if (renameFileName != null && renameFileName.length()
+		 * > 0) { // 공지사항 첨부파일 저장 폴더 경로 지정 String savePath =
+		 * request.getSession().getServletContext().getRealPath(
+		 * "resources/notice_upfiles"); // 저장 폴더에서 파일 삭제함 new File(savePath + "\\" +
+		 * renameFileName).delete(); }
+		 */
+		/*
+		 * return "redirect:nlist.do"; } else { // 공지글 삭제 실패시
+		 * model.addAttribute("message", noticeNo + "번 공지글 삭제 실패!"); return
+		 * "common/error"; }
+		 */
 	}
+	
+	@RequestMapping(value = "notice/update.do", method = RequestMethod.POST)
+	 public String updateNotice(@ModelAttribute Notice notice, Model model) {
+        logger.info("notice/update.do : {}", notice);
+
+        int result = noticeService.updateNotice(notice);
+        if (result > 0) {
+            // 수정 성공 시 공지사항 목록으로 리다이렉트
+            return "redirect:/nlist.do";
+        } else {
+            model.addAttribute("message", "공지사항 수정 실패!");
+            return "common/error";
+        }
+    }
 
 	// 공지글 검색 관련 **********************************************
 
