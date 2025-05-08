@@ -108,13 +108,13 @@
 								</div>
 
 
-								<!-- 첨부파일 -->
+								<!-- 첨부파일
 								<div class="form-group row">
 									<label class="col-sm-2 col-form-label">첨부파일 : </label>
 									<div class="col-sm-10">
 										<input type="file" name="ofile" class="form-control-file" />
 									</div>
-								</div>
+								</div> -->
 
 								
 								<!-- 버튼 그룹 -->
