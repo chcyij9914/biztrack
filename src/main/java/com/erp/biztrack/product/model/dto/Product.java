@@ -1,7 +1,5 @@
 package com.erp.biztrack.product.model.dto;
 
-import java.sql.Date;
-
 public class Product implements java.io.Serializable{
 
 	private static final long serialVersionUID = 900705517172374203L;

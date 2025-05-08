@@ -365,24 +365,7 @@ function addItem() {
         tr.querySelector('td').textContent = idx + 1;
     });
 
-    //드롭다운 옵션
-    $(newRow).find('select[name="productNameList"]').each(function() {
-        const select = $(this);
-        select.empty().append('<option value="">선택</option>');
-        productList.forEach(product => {
-            const option = $('<option>', {
-                value: product.productCode,
-                text: product.productName,
-                'data-saleprice': product.salePrice
-            });
-            select.append(option);
-        });
-        select.select2({
-            width: '100%',
-            placeholder: "물품명 검색",
-            allowClear: true
-        });
-    });
+
 }
 </script>
 </body>

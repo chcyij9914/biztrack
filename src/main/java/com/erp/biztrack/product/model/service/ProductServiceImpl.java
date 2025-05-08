@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.inbound.model.dto.Inbound;
 import com.erp.biztrack.product.model.dao.ProductDao;
 import com.erp.biztrack.product.model.dto.Product;
 
@@ -32,5 +33,11 @@ public class ProductServiceImpl implements ProductService {
 	public ArrayList<Product> selectAll() {
 		return productDao.selectAll();
 
+	}
+
+	// 상품 상세보기
+	@Override
+	public Product selectProductDetail(String productCode) {
+		return productDao.selectProductDetail(productCode);
 	}
 }
