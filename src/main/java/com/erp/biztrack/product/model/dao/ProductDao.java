@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.inbound.model.dto.Inbound;
 import com.erp.biztrack.product.model.dto.Product;
 
 @Repository("productDao")
@@ -27,10 +28,14 @@ public class ProductDao {
 	    return sqlSessionTemplate.selectOne("productMapper.selectListCount");
 	}
 	
-
 	//구매문서 작성 시 상품목록 가져옴
-	public ArrayList<Product> selectAll() {
-	    List<Product> list = sqlSessionTemplate.selectList("productMapper.selectAll");
-	    return (ArrayList<Product>) list;
-	}
+		public ArrayList<Product> selectAll() {
+		    List<Product> list = sqlSessionTemplate.selectList("productMapper.selectAll");
+		    return (ArrayList<Product>) list;
+		}
+
+	//상품 상세보기
+    public Product selectProductDetail(String productCode) {
+        return sqlSessionTemplate.selectOne("productMapper.selectProductDetail", productCode);
+    }
 }

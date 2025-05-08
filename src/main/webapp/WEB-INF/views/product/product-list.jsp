@@ -69,8 +69,8 @@
 
 						<div class="d-flex align-items-center">
 							<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-								onclick="window.open('${pageContext.request.contextPath}/purchase/purchase-document-new.do', 'newWindow', 'width=800,height=600'); return false;">
-								+ 새문서 </a>
+								onclick="window.open('${pageContext.request.contextPath}/product/new-product.do', 'newWindow', 'width=800,height=600'); return false;">
+								+ 상품추가 </a>
 
 							<form class="form-inline"
 								action="${pageContext.request.contextPath}/purchase/search.do"
@@ -96,10 +96,11 @@
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
 									<col style="width: 10%;">
-									<col style="width: 30%;">
+									<col style="width: 20%;">
 									<col style="width: 15%;">
 									<col style="width: 15%;">
 									<col style="width: 20%;">
+									<col style="width: 10%;">
 									<col style="width: 10%;">
 								</colgroup>
 								<thead class="text-center bg-light">
@@ -108,8 +109,9 @@
 										<th>물품명</th>
 										<th>카테고리</th>
 										<th>세부 카테고리</th>
-										<th>원가</th>
+										<th>수량</th>
 										<th>판매가</th>
+										<th>관리</th>
 									</tr>
 								</thead>
 								<tbody class="text-center bg-white">
@@ -120,8 +122,12 @@
 											<td>${product.productName}</td>
 											<td>${product.categoryName}</td>
 											<td>${product.subcategoryName}</td>
-											<td>${product.costPrice}</td>
+											<td>입고수량-출고수량</td>
 											<td>${product.salePrice}</td>
+											<td><a href="#"
+												onclick="window.open('${pageContext.request.contextPath}/product/product-detail.do?productCode=${product.productCode}', 'detailWindow', 'width=800,height=600'); return false;"
+												class="btn btn-sm btn-outline-secondary"
+												width=1000,height=800'>상세</a></td>
 										</tr>
 									</c:forEach>
 								</tbody>

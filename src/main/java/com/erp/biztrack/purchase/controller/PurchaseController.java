@@ -96,7 +96,7 @@ public class PurchaseController {
 		    return "purchase/new-payment";
 		}
 		
-		// 물품 리스트 반환용 (Ajax로 호출됨)
+		// 물품 리스트 반환용 
 	    @RequestMapping("/product-list.do")
 	    @ResponseBody
 	    public ArrayList<Product> getProductList() {

@@ -69,8 +69,8 @@
 
 						<div class="d-flex align-items-center">
 							<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-								onclick="window.open('${pageContext.request.contextPath}/purchase/purchase-document-new.do', 'newWindow', 'width=800,height=600'); return false;">
-								+ 새문서 </a>
+								onclick="window.open('${pageContext.request.contextPath}/inbound/new-inbound.do', 'newWindow', 'width=800,height=600'); return false;">
+								+ 입고 </a>
 
 							<form class="form-inline"
 								action="${pageContext.request.contextPath}/purchase/search.do"
