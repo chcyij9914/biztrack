@@ -14,6 +14,7 @@ import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
+import com.erp.biztrack.product.model.dto.Product;
 
 @Service("clientService")
 public class ClientServiceImpl implements ClientService {

@@ -5,28 +5,34 @@ import java.sql.Date;
 public class DocumentDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -7970793635367626682L;
 
-	private String documentId; 					// DOCUMENT_ID VARCHAR2(30 BYTE)
-	private String documentType; 				// DOCUMENT_TYPE VARCHAR2(30 BYTE)
-	private String clientId; 						// CLIENT_ID VARCHAR2(30 BYTE)
-	private String clientName; 					// CLIENT_NAME VARCHAR2(30 BYTE)
-	private String documentWriter; 				// DOCUMENT_WRITER_ID VARCHAR2(30 BYTE)
-	private String documentManagerId; 		// DOCUMENT_MANAGER_ID VARCHAR2(30 BYTE)
-	private String title;								//	TITLE	VARCHAR2(100 BYTE)
-	private String remarks;						//	REMARKS	VARCHAR2(4000 BYTE)
-	private java.sql.Date createdDate;			//	CREATED_DATE	DATE
-	private String status;  						// 문서 결재 상태 (작성중, 반려됨 등)
+	private String documentId;              // DOCUMENT_ID VARCHAR2(30)
+	private String documentTypeId;          // DOCUMENT_TYPE_ID VARCHAR2(30)
+	private String documentName;            // DOCUMENT_NAME (조인된 문서 이름)
+	private String transactionType;         // TRANSACTION_TYPE (출고, 입고, 구매 등)
+	private String clientId;                // CLIENT_ID VARCHAR2(30)
+	private String clientName;              // CLIENT_NAME VARCHAR2(30)
+	private String documentWriter;          // DOCUMENT_WRITER_ID VARCHAR2(30)
+	private String documentManagerId;       // DOCUMENT_MANAGER_ID VARCHAR2(30)
+	private String title;                   // TITLE VARCHAR2(100)
+	private String remarks;                 // REMARKS VARCHAR2(1000)
+	private java.sql.Date createdDate;      // CREATED_DATE DATE
+	private java.sql.Date documentDate;     // DOCUMENT_DATE DATE
+	private String paymentMethod;           // PAYMENT_METHOD VARCHAR2(30)
+	private String status;                  // 결재 상태 (작성중, 승인 등)
 
 	// Constructor
 	public DocumentDTO() {
 		super();
 	}
-	
-	public DocumentDTO(String documentId, String documentType, String clientId, String clientName,
-			String documentWriter, String documentManagerId, String title, String remarks, Date createdDate,
-			String status) {
+
+	public DocumentDTO(String documentId, String documentTypeId, String documentName, String transactionType,
+			String clientId, String clientName, String documentWriter, String documentManagerId, String title,
+			String remarks, Date createdDate, Date documentDate, String paymentMethod, String status) {
 		super();
 		this.documentId = documentId;
-		this.documentType = documentType;
+		this.documentTypeId = documentTypeId;
+		this.documentName = documentName;
+		this.transactionType = transactionType;
 		this.clientId = clientId;
 		this.clientName = clientName;
 		this.documentWriter = documentWriter;
@@ -34,10 +40,11 @@ public class DocumentDTO implements java.io.Serializable {
 		this.title = title;
 		this.remarks = remarks;
 		this.createdDate = createdDate;
+		this.documentDate = documentDate;
+		this.paymentMethod = paymentMethod;
 		this.status = status;
 	}
 
-	// getters and setters
 	public String getDocumentId() {
 		return documentId;
 	}
@@ -46,12 +53,28 @@ public class DocumentDTO implements java.io.Serializable {
 		this.documentId = documentId;
 	}
 
-	public String getDocumentType() {
-		return documentType;
+	public String getDocumentTypeId() {
+		return documentTypeId;
 	}
 
-	public void setDocumentType(String documentType) {
-		this.documentType = documentType;
+	public void setDocumentTypeId(String documentTypeId) {
+		this.documentTypeId = documentTypeId;
+	}
+
+	public String getDocumentName() {
+		return documentName;
+	}
+
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
+	}
+
+	public String getTransactionType() {
+		return transactionType;
+	}
+
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
 	}
 
 	public String getClientId() {
@@ -110,6 +133,22 @@ public class DocumentDTO implements java.io.Serializable {
 		this.createdDate = createdDate;
 	}
 
+	public java.sql.Date getDocumentDate() {
+		return documentDate;
+	}
+
+	public void setDocumentDate(java.sql.Date documentDate) {
+		this.documentDate = documentDate;
+	}
+
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -124,9 +163,10 @@ public class DocumentDTO implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "DocumentDTO [documentId=" + documentId + ", documentType=" + documentType + ", clientId=" + clientId
-				+ ", clientName=" + clientName + ", documentWriter=" + documentWriter + ", documentManagerId="
-				+ documentManagerId + ", title=" + title + ", remarks=" + remarks + ", createdDate=" + createdDate
-				+ ", status=" + status + "]";
+		return "DocumentDTO [documentId=" + documentId + ", documentTypeId=" + documentTypeId + ", documentName="
+				+ documentName + ", transactionType=" + transactionType + ", clientId=" + clientId + ", clientName="
+				+ clientName + ", documentWriter=" + documentWriter + ", documentManagerId=" + documentManagerId
+				+ ", title=" + title + ", remarks=" + remarks + ", createdDate=" + createdDate + ", documentDate="
+				+ documentDate + ", paymentMethod=" + paymentMethod + ", status=" + status + "]";
 	}
 }

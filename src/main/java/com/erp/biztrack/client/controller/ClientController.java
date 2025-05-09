@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +33,8 @@ import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.login.model.dto.LoginDto;
 import com.erp.biztrack.login.model.service.LoginService;
+import com.erp.biztrack.product.model.dto.Product;
+import com.erp.biztrack.product.model.service.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,6 +58,9 @@ public class ClientController {
 
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private ProductService productService;
 
 	// 뷰 페이지 내보내기용 메소드
 	// --------------------------------------------------------------
@@ -442,5 +450,18 @@ public class ClientController {
 
 	    return mv;
 	}
+	
+	@RequestMapping("documentInsertForm.do")
+	public String showDocumentInsertForm(Model model) {
 
+
+	    // 거래처 목록 (거래처 ID, 이름)
+	    List<Client> clientList = clientService.selectAllClients();
+
+	    model.addAttribute("clientList", clientList);
+
+	    return "client/documentInsertForm";  // JSP 파일 경로
+	}
+
+	
 }

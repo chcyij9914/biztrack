@@ -8,6 +8,7 @@ import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
+import com.erp.biztrack.product.model.dto.Product;
 
 public interface ClientService {
 	//거래처 목록 조회 관련 ----------------------
@@ -41,5 +42,6 @@ public interface ClientService {
     //거래처 문서 목록 조회 관련 ---------------------------------------------
     ArrayList<DocumentDTO> selectDocumentList(Paging paging);
     int selectDocumentListCount();
+    //문서등록관련---------------------------------
 }
 

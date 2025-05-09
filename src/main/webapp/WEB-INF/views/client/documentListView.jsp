@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:if test="${empty sessionScope.loginInfo}">
+    <c:redirect url="/login.do" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -39,9 +42,9 @@
                             <p class="small text-muted mb-0">문서 목록</p>
                         </div>
                         <a href="#" class="btn btn-primary"
-                           onclick="window.open('${pageContext.request.contextPath}/document/insertForm.do', 'insertDocWindow', 'width=800,height=900'); return false;">
-                            + 문서 등록
-                        </a>
+						   onclick="window.open('${pageContext.request.contextPath}/client/documentInsertForm.do', 'insertDocWindow', 'width=1000,height=800'); return false;">
+						   + 문서 등록
+						</a>
                     </div>
 
                     <!-- Table -->
@@ -66,8 +69,8 @@
                                                 <td>${doc.documentId}</td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${doc.documentType eq '계약서'}">계약서</c:when>
-                                                        <c:when test="${doc.documentType eq '제안서'}">제안서</c:when>
+                                                        <c:when test="${doc.documentTypeId eq 'C'}">계약서</c:when>
+                                                        <c:when test="${doc.documentTypeId eq 'D'}">제안서</c:when>
                                                         <c:otherwise>기타</c:otherwise>
                                                     </c:choose>
                                                 </td>
