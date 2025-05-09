@@ -38,8 +38,8 @@ public class ProductServiceImpl implements ProductService {
 
 	// 상품 상세보기
 	@Override
-	public Product selectProductDetail(String productCode) {
-		return productDao.selectProductDetail(productCode);
+	public Product selectProductDetail(String productId) {
+		return productDao.selectProductDetail(productId);
 	}
 
 	//상품 등록
@@ -54,8 +54,8 @@ public class ProductServiceImpl implements ProductService {
 	
 	//상품 코드 자동 생성
 	@Override
-	public String getNextProductCode() {
-	    return productDao.getNextProductCode();
+	public String getNextProductId() {
+	    return productDao.getNextProductId();
 	}
 	
 	//검색기능

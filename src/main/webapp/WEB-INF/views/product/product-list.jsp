@@ -146,10 +146,10 @@
 								style="table-layout: fixed; width: 100%;" cellspacing="0">
 								<colgroup>
 									<col style="width: 10%;">
-									<col style="width: 20%;">
+									<col style="width: 30%;">
 									<col style="width: 15%;">
 									<col style="width: 15%;">
-									<col style="width: 20%;">
+									<col style="width: 10%;">
 									<col style="width: 10%;">
 									<col style="width: 10%;">
 								</colgroup>
@@ -159,7 +159,7 @@
 										<th>물품명</th>
 										<th>카테고리</th>
 										<th>세부 카테고리</th>
-										<th>수량</th>
+										<th>재고</th>
 										<th>판매가</th>
 										<th>관리</th>
 									</tr>
@@ -168,14 +168,14 @@
 
 									<c:forEach var="product" items="${requestScope.list}">
 										<tr>
-											<td>${product.productCode}</td>
+											<td>${product.productId}</td>
 											<td>${product.productName}</td>
 											<td>${product.categoryName}</td>
 											<td>${product.subCategoryName}</td>
-											<td>입고수량-출고수량</td>
+											<td>${product.stock}</td>
 											<td>${product.salePrice}</td>
 											<td><a href="#"
-												onclick="window.open('${pageContext.request.contextPath}/product/product-detail.do?productCode=${product.productCode}', 'detailWindow', 'width=800,height=600'); return false;"
+												onclick="window.open('${pageContext.request.contextPath}/product/product-detail.do?productId=${product.productId}', 'detailWindow', 'width=800,height=600'); return false;"
 												class="btn btn-sm btn-outline-secondary"
 												width=1000,height=800'>상세</a></td>
 										</tr>
