@@ -89,8 +89,8 @@ public class ProductController {
 
 	// 상품 상세보기
 	@RequestMapping("product-detail.do")
-	public ModelAndView productDetail(@RequestParam("productCode") String productCode, ModelAndView mv) {
-		Product detail = productService.selectProductDetail(productCode);
+	public ModelAndView productDetail(@RequestParam("productId") String productId, ModelAndView mv) {
+		Product detail = productService.selectProductDetail(productId);
 
 		if (detail != null) {
 			mv.addObject("product", detail);
@@ -129,8 +129,8 @@ public class ProductController {
 	public String insertProduct(@RequestBody Product product) {
 		try {
 			// 상품코드 자동 생성
-	        String productCode = productService.getNextProductCode();
-	        product.setProductCode(productCode);
+	        String productId = productService.getNextProductId();
+	        product.setProductId(productId);
 			
 	     // 1. 새로운 카테고리 입력 시 DB에 먼저 insert
 	        if ("NEW".equals(product.getCategoryId()) && product.getNewCategoryName() != null) {
@@ -165,10 +165,9 @@ public class ProductController {
 	@RequestMapping("csearchCategory.do")
 	public String searchProductByCategory(@RequestParam("categoryId") String categoryId, Model model) {
 		List<Product> result = productService.searchByCategory(categoryId);
-	    List<Category> categoryList = categoryService.selectAll(); // ✅ 추가
+	    List<Category> categoryList = categoryService.selectAll(); 
 	    model.addAttribute("list", result);
-	    model.addAttribute("categoryList", categoryList); // ✅ 추가
-
+	    model.addAttribute("categoryList", categoryList); 
 	    return "product/product-list";
 	}
 }

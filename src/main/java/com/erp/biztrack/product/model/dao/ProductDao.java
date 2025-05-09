@@ -35,8 +35,8 @@ public class ProductDao {
 	}
 
 	// 상품 상세보기
-	public Product selectProductDetail(String productCode) {
-		return sqlSessionTemplate.selectOne("productMapper.selectProductDetail", productCode);
+	public Product selectProductDetail(String productId) {
+		return sqlSessionTemplate.selectOne("productMapper.selectProductDetail", productId);
 	}
 
 	// 상품 등록
@@ -45,8 +45,8 @@ public class ProductDao {
 	}
 	
 	//상품 코드 자동 생성
-	public String getNextProductCode() {
-	    return sqlSessionTemplate.selectOne("productMapper.getNextProductCode");
+	public String getNextProductId() {
+	    return sqlSessionTemplate.selectOne("productMapper.getNextProductId");
 	}
 	
 	//검색기능

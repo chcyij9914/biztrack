@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -119,10 +121,16 @@
 									<c:forEach var="purchase" items="${requestScope.list}">
 										<tr>
 											<td>${purchase.createdDate}</td>
-											<td>${purchase.documentType}</td>
+											<td><c:choose>
+													<c:when
+														test="${fn:startsWith(purchase.documentTypeId, 'R')}">품의서</c:when>
+													<c:when
+														test="${fn:startsWith(purchase.documentTypeId, 'T')}">지출결의서</c:when>
+													<c:otherwise>기타 문서</c:otherwise>
+												</c:choose></td>
 											<td>${purchase.documentId}</td>
 											<td>${purchase.title}</td>
-											<td>${purchase.vendorName}</td>
+											<td>${purchase.clientName}</td>
 											<td><span class="badge badge-primary">${purchase.approve1Status}</span></td>
 											<td><a href="#"
 												onclick="window.open('${pageContext.request.contextPath}/purchase/purchase-detail.do?documentId=${purchase.documentId}', 'detailWindow', 'width=800,height=600'); return false;"

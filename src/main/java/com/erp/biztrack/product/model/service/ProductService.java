@@ -15,13 +15,13 @@ public interface ProductService {
 	ArrayList<Product> selectAll();
 
 	// 상품 상세보기
-	Product selectProductDetail(String productCode);
+	Product selectProductDetail(String productId);
 
 	// 상품 등록
 	public int insertProduct(Product product) throws ProductException;
 
 	//상품 코드 자동 생성
-	String getNextProductCode();
+	String getNextProductId();
 	
 	//검색기능
 	List<Product> searchByName(String keyword);
