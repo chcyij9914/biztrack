@@ -7,6 +7,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import com.erp.biztrack.reminder.model.dto.Reminder;
 
 public interface ReminderService {
-	
-	 ArrayList<Reminder> selectReminderList();
+    ArrayList<Reminder> selectReminderList();
+    String sendSms(String reminderId, String phone, String content);
+    int updateReminderSmsContent(Reminder reminder);
 }
+

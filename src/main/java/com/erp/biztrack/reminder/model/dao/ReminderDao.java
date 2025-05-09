@@ -12,12 +12,15 @@ import com.erp.biztrack.reminder.model.dto.Reminder;
 @Repository("reminderDao")
 public class ReminderDao {
 
-	@Autowired
-	private SqlSessionTemplate sqlSessionTemplate;
-	
-	// 리마인더 목록 조회
-    public ArrayList<Reminder> selectReminderList(SqlSessionTemplate session) {
-        List<Reminder> list = session.selectList("reminderMapper.selectReminderList");
+    @Autowired
+    private SqlSessionTemplate sqlSessionTemplate;
+
+    public ArrayList<Reminder> selectReminderList() {
+        List<Reminder> list = sqlSessionTemplate.selectList("reminderMapper.selectReminderList");
         return (ArrayList<Reminder>) list;
+    }
+    
+    public int updateReminderSmsContent(Reminder reminder) {
+        return sqlSessionTemplate.update("reminderMapper.updateReminderSmsContent", reminder);
     }
 }
