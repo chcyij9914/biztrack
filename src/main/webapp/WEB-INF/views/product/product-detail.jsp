@@ -103,26 +103,6 @@ request.setAttribute("today", today);
 	</div>
 
 
-	<!-- 비고란 -->
-	<div class="mb-4">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.8rem;">
-			<thead style="background-color: #fdfdfe;">
-				<tr>
-					<th>비고</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td style="background-color: #ffffff;"><div
-							contenteditable="true"
-							style="min-height: 80px; text-align: left;"></div></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-
 
 	<!-- JS -->
 	<script
