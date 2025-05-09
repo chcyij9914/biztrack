@@ -72,21 +72,71 @@
 								onclick="window.open('${pageContext.request.contextPath}/product/new-product.do', 'newWindow', 'width=800,height=600'); return false;">
 								+ 상품추가 </a>
 
-							<form class="form-inline"
-								action="${pageContext.request.contextPath}/purchase/search.do"
-								method="get">
-								<input type="date" class="form-control mr-2" name="date" /> <input
-									type="text" class="form-control mr-2" name="content"
-									placeholder="내용 검색" /> <select class="form-control mr-2"
-									name="status">
-									<option value="">결재상태</option>
-									<option value="결재중">결재중</option>
-									<option value="결재완료">결재완료</option>
-									<option value="반려">반려</option>
+							<!-- 검색 기준 -->
+							<label class="mr-2 mb-0">검색 기준</label> <select id="searchType"
+								class="form-control mr-2" style="width: 120px;">
+								<option value="name">물품명</option>
+								<option value="category">카테고리명</option>
+							</select>
+
+							<form id="searchForm" method="get" class="form-inline"
+								action="csearchName.do">
+								<input type="text" name="keyword" class="form-control mr-2"
+									placeholder="물품명을 입력하세요."> <select name="statusParam"
+									class="form-control mr-2 d-none">
+
+								</select> <select name="categoryId" class="form-control mr-2 d-none">
+									<c:forEach var="cat" items="${categoryList}">
+										<option value="${cat.categoryId}">${cat.categoryName}</option>
+									</c:forEach>
 								</select>
-								<button type="submit" class="btn btn-outline-primary">검색</button>
+
+								<button type="submit" class="btn btn-primary">검색</button>
 							</form>
 						</div>
+						<script>
+							$(function() {
+								$('#searchType')
+										.on(
+												'change',
+												function() {
+													const type = $(this).val();
+													const $form = $('#searchForm');
+
+													// 모든 입력/선택 필드 숨기기
+													$form
+															.find(
+																	'input[name="keyword"]')
+															.addClass('d-none');
+													$form
+															.find(
+																	'select[name="categoryId"]')
+															.addClass('d-none');
+
+													// 타입별로 폼 액션 및 필드 표시 설정
+													if (type === 'name') {
+														$form
+																.attr('action',
+																		'csearchName.do');
+														$form
+																.find(
+																		'input[name="keyword"]')
+																.removeClass(
+																		'd-none');
+
+													} else if (type === 'category') {
+														$form
+																.attr('action',
+																		'csearchCategory.do');
+														$form
+																.find(
+																		'select[name="categoryId"]')
+																.removeClass(
+																		'd-none');
+													}
+												});
+							});
+						</script>
 					</div>
 
 					<!-- Table -->
@@ -121,7 +171,7 @@
 											<td>${product.productCode}</td>
 											<td>${product.productName}</td>
 											<td>${product.categoryName}</td>
-											<td>${product.subcategoryName}</td>
+											<td>${product.subCategoryName}</td>
 											<td>입고수량-출고수량</td>
 											<td>${product.salePrice}</td>
 											<td><a href="#"

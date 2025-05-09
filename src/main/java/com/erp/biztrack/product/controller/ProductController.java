@@ -1,19 +1,27 @@
 package com.erp.biztrack.product.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.erp.biztrack.category.model.dto.Category;
+import com.erp.biztrack.category.service.CategoryService;
 import com.erp.biztrack.common.Paging;
-import com.erp.biztrack.inbound.model.dto.Inbound;
+import com.erp.biztrack.product.exception.ProductException;
 import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
+import com.erp.biztrack.subcategory.model.dto.SubCategory;
+import com.erp.biztrack.subcategory.model.service.SubCategoryService;
 
 @Controller
 @RequestMapping("/product")
@@ -23,6 +31,12 @@ public class ProductController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private CategoryService categoryService;
+
+	@Autowired
+	private SubCategoryService subcategoryService;
 
 	/*
 	 * @Autowired 가 내부에서 자동 의존성 주입하고 서비스와 연결해 줌, 생성 코드 필요없음 public
@@ -54,18 +68,21 @@ public class ProductController {
 
 		// 서비스 모델로 페이징 적용된 목록 조회 요청하고 결과받기
 		ArrayList<Product> list = productService.selectList(paging);
+	    
+		//카테고리 리스트 조회(검색필터)
+		ArrayList<Category> categoryList = categoryService.selectAll(); 
 
 		if (list != null && list.size() > 0) { // 조회 성공시
 			// ModelAndView : Model + View
 			mv.addObject("list", list); // request.setAttribute("list", list) 와 같음
 			mv.addObject("paging", paging);
+	        mv.addObject("categoryList", categoryList); 
 			mv.setViewName("product/product-list");
 
 		} else { // 조회 실패시
 			mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
 			mv.setViewName("common/error");
 		}
-
 		return mv;
 
 	}
@@ -85,10 +102,73 @@ public class ProductController {
 
 		return mv;
 	}
+
+	// 상품 추가페이지
+	@RequestMapping("new-product.do")
+	public String moveNewProductPage() {
+		return "product/new-product";
+	}
+
+	// 카테고리 리스트 가져오기
+	@RequestMapping("category-list.do")
+	@ResponseBody
+	public ArrayList<Category> getCategoryList() {
+		return categoryService.selectAll();
+	}
+
+	// 서브카테고리 리스트 가져오기
+	@RequestMapping("subcategory-list.do")
+	@ResponseBody
+	public ArrayList<SubCategory> getSubCategoryList() {
+		return subcategoryService.selectAll();
+	}
+
+	//상품 등록
+	@RequestMapping("insert.do")
+	@ResponseBody
+	public String insertProduct(@RequestBody Product product) {
+		try {
+			// 상품코드 자동 생성
+	        String productCode = productService.getNextProductCode();
+	        product.setProductCode(productCode);
+			
+	     // 1. 새로운 카테고리 입력 시 DB에 먼저 insert
+	        if ("NEW".equals(product.getCategoryId()) && product.getNewCategoryName() != null) {
+	            String newCategoryId = categoryService.insertAndGetId(product.getNewCategoryName());
+	            product.setCategoryId(newCategoryId);
+	        }
+
+	        // 2. 새로운 서브카테고리 입력 시 DB에 먼저 insert
+	        if ("NEW".equals(product.getSubCategoryId()) && product.getNewSubCategoryName() != null) {
+	            String newSubCategoryId = subcategoryService.insertAndGetId(product.getNewSubCategoryName(), product.getCategoryId());
+	            product.setSubCategoryId(newSubCategoryId);
+	        }
+
+	        int result = productService.insertProduct(product);
+	        return (result > 0) ? "success" : "fail";
+
+	    } catch (ProductException e) {
+	        logger.error("상품 등록 중 오류 발생", e);
+	        return "error: " + e.getMessage();
+	    }
+	}
 	
-	// 상품 추가
-		@RequestMapping("new-product.do")
-		public String moveNewProductPage() {
-			return "product/new-product";
-		}
+	//검색기능-이름
+	@RequestMapping("csearchName.do")
+	public String searchProductByName(@RequestParam("keyword") String keyword, Model model) {
+		List<Product> result = productService.searchByName(keyword);
+		model.addAttribute("list", result); 
+		return "product/product-list";
+	}
+
+	//검색기능-카테고리
+	@RequestMapping("csearchCategory.do")
+	public String searchProductByCategory(@RequestParam("categoryId") String categoryId, Model model) {
+		List<Product> result = productService.searchByCategory(categoryId);
+	    List<Category> categoryList = categoryService.selectAll(); // ✅ 추가
+	    model.addAttribute("list", result);
+	    model.addAttribute("categoryList", categoryList); // ✅ 추가
+
+	    return "product/product-list";
+	}
 }

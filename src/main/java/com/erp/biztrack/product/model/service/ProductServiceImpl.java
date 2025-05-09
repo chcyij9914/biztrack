@@ -1,12 +1,13 @@
 package com.erp.biztrack.product.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.biztrack.common.Paging;
-import com.erp.biztrack.inbound.model.dto.Inbound;
+import com.erp.biztrack.product.exception.ProductException;
 import com.erp.biztrack.product.model.dao.ProductDao;
 import com.erp.biztrack.product.model.dto.Product;
 
@@ -39,5 +40,32 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Product selectProductDetail(String productCode) {
 		return productDao.selectProductDetail(productCode);
+	}
+
+	//상품 등록
+	@Override
+	public int insertProduct(Product product) throws ProductException {
+		int result = productDao.insertProduct(product);
+		if (result <= 0) {
+			throw new ProductException("상품 등록 실패");
+		}
+		return result;
+	}
+	
+	//상품 코드 자동 생성
+	@Override
+	public String getNextProductCode() {
+	    return productDao.getNextProductCode();
+	}
+	
+	//검색기능
+	@Override
+	public List<Product> searchByName(String keyword) {
+	    return productDao.searchByName(keyword);
+	}
+
+	@Override
+	public List<Product> searchByCategory(String categoryId) {
+	    return productDao.searchByCategory(categoryId);
 	}
 }
