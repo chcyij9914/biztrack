@@ -74,6 +74,15 @@
 								</div>
 							</form>
 
+							<!-- 목록 버튼 -->
+							<form
+								action="${pageContext.request.contextPath}/schedule/ListSchedule.do"
+								method="get" class="mr-2">
+								<button type="submit" class="btn btn-primary shadow-sm"
+									style="font-size: 15px; font-weight: 600; padding: 10px 20px; border-radius: 10px;">
+									목록</button>
+							</form>
+							<!-- 일정 등록 버튼 -->
 							<button type="button" class="btn btn-primary shadow-sm"
 								style="font-size: 15px; font-weight: 600; padding: 10px 20px; border-radius: 10px;"
 								onclick="openSchedulePopup();">일정 등록</button>
@@ -82,34 +91,36 @@
 
 					<!-- 수정된 스크립트 (날짜 검색 초기 렌더링 포함) -->
 					<script>
-                  const searchType = document.getElementById("searchType");
-                  const searchInputs = document.getElementById("searchInputs");
+						const searchType = document
+								.getElementById("searchType");
+						const searchInputs = document
+								.getElementById("searchInputs");
 
-                  function updateInputs() {
-                    const selected = searchType.value;
-                    let html = '';
-                    if (selected === 'title') {
-                      html = '<input type="text" name="keyword" class="form-control" placeholder="제목을 입력하세요">';
-                    } else if (selected === 'type') {
-                      html = '<select name="keyword" class="form-control">' +
-                             '<option value="PUBLIC">공적</option>' +
-                             '<option value="PRIVATE">사적</option>' +
-                             '</select>';
-                    } else if (selected === 'date') {
-                      html = '<input type="date" name="beginDate" class="form-control mr-1"> ~ ' +
-                             '<input type="date" name="endDate" class="form-control ml-1">';
-                    }
-                    searchInputs.innerHTML = html;
-                  }
+						function updateInputs() {
+							const selected = searchType.value;
+							let html = '';
+							if (selected === 'title') {
+								html = '<input type="text" name="keyword" class="form-control" placeholder="제목을 입력하세요">';
+							} else if (selected === 'type') {
+								html = '<select name="keyword" class="form-control">'
+										+ '<option value="PUBLIC">공적</option>'
+										+ '<option value="PRIVATE">사적</option>'
+										+ '</select>';
+							} else if (selected === 'date') {
+								html = '<input type="date" name="beginDate" class="form-control mr-1"> ~ '
+										+ '<input type="date" name="endDate" class="form-control ml-1">';
+							}
+							searchInputs.innerHTML = html;
+						}
 
-                  updateInputs(); // 초기화
-                  searchType.addEventListener("change", updateInputs);
-                </script>
+						updateInputs(); // 초기화
+						searchType.addEventListener("change", updateInputs);
+					</script>
 
-					<!-- 캘린더 + 목록 -->
+					<!-- 캘린더 + 일정 목록 나란히 배치 -->
 					<div class="row">
 						<!-- 캘린더 -->
-						<div class="col-md-6 mb-4">
+						<div class="col-md-5 mb-4">
 							<div class="card shadow">
 								<div class="card-header py-3">
 									<h6 class="m-0 font-weight-bold text-primary">캘린더</h6>
@@ -121,15 +132,14 @@
 						</div>
 
 						<!-- 일정 목록 -->
-						<div class="col-md-6 mb-4">
+						<div class="col-md-7 mb-4">
 							<div class="card shadow">
 								<div class="card-header py-3">
 									<h6 class="m-0 font-weight-bold text-primary">일정 목록</h6>
 								</div>
 								<div class="card-body">
 									<div class="table-responsive">
-										<table class="table table-bordered text-center" width="100%"
-											cellspacing="0">
+										<table class="table table-bordered text-center" width="100%">
 											<thead class="thead-light">
 												<tr>
 													<th>일정 번호</th>
@@ -160,12 +170,17 @@
 														<td><span
 															class="badge ${schedule.scType eq 'PUBLIC' ? 'badge-danger' : 'badge-primary'}">
 																${schedule.scType} </span></td>
-														<td><a
-															href="${pageContext.request.contextPath}/schedule/UpdateForm.do?scId=${schedule.scId}"
-															class="btn btn-sm btn-outline-info">수정</a> <a
-															href="${pageContext.request.contextPath}/schedule/DeleteSchedule.do?scId=${schedule.scId}"
-															class="btn btn-sm btn-outline-danger"
-															onclick="return confirm('삭제하시겠습니까?');">삭제</a></td>
+														<td>
+															<div
+																class="d-flex justify-content-center align-items-center gap-1">
+																<a
+																	href="${pageContext.request.contextPath}/schedule/UpdateForm.do?scId=${schedule.scId}"
+																	class="btn btn-sm btn-outline-info">수정</a> <a
+																	href="${pageContext.request.contextPath}/schedule/DeleteSchedule.do?scId=${schedule.scId}"
+																	class="btn btn-sm btn-outline-danger"
+																	onclick="return confirm('삭제하시겠습니까?');">삭제</a>
+															</div>
+														</td>
 													</tr>
 												</c:forEach>
 											</tbody>
@@ -221,27 +236,29 @@
 
 	<!-- 팝업 오픈 -->
 	<script>
-function openSchedulePopup() {
-    const url = '${pageContext.request.contextPath}/schedule/AddForm.do';
-    const width = 1000;
-    const height = 800;
-    const left = (window.screenLeft || window.screenX || 0) + (window.innerWidth - width) / 2;
-    const top = (window.screenTop || window.screenY || 0) + (window.innerHeight - height) / 2;
-    const popupName = 'schedulePopup_' + new Date().getTime();
+			function openSchedulePopup() {
+				const url = '${pageContext.request.contextPath}/schedule/AddForm.do';
+				const width = 1000;
+				const height = 800;
+				const left = (window.screenLeft || window.screenX || 0)
+						+ (window.innerWidth - width) / 2;
+				const top = (window.screenTop || window.screenY || 0)
+						+ (window.innerHeight - height) / 2;
+				const popupName = 'schedulePopup_' + new Date().getTime();
 
-    const popupWindow = window.open(
-        url,
-        popupName,
-        `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no`
-    );
+				const popupWindow = window
+						.open(
+								url,
+								popupName,
+								`width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no`);
 
-    if (popupWindow) {
-        popupWindow.focus();
-    } else {
-        alert('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
-    }
-}
-</script>
+				if (popupWindow) {
+					popupWindow.focus();
+				} else {
+					alert('팝업이 차단되었습니다. 브라우저 설정에서 팝업을 허용해주세요.');
+				}
+			}
+		</script>
 
 	<!-- 필수 JS -->
 	<script
@@ -259,44 +276,63 @@ function openSchedulePopup() {
 
 	<!-- 캘린더 초기화 -->
 	<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'ko',
-        events: '${pageContext.request.contextPath}/schedule/events.do',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth'
-        },
-        buttonText: {
-            today: '오늘',
-            month: '월'
-        },
-        navLinks: true,
-        editable: false,
-        eventClick: function(info) {
-            const event = info.event;
-            const ext = event.extendedProps;
-            const isPublic = ext.scType === 'PUBLIC';
+			document
+					.addEventListener(
+							'DOMContentLoaded',
+							function() {
+								var calendarEl = document
+										.getElementById('calendar');
+								var calendar = new FullCalendar.Calendar(
+										calendarEl,
+										{
+											initialView : 'dayGridMonth',
+											locale : 'ko',
+											events : '${pageContext.request.contextPath}/schedule/events.do',
+											headerToolbar : {
+												left : 'prev,next today',
+												center : 'title',
+												right : 'dayGridMonth'
+											},
+											buttonText : {
+												today : '오늘',
+												month : '월'
+											},
+											navLinks : true,
+											editable : false,
+											eventClick : function(info) {
+												const event = info.event;
+												const ext = event.extendedProps;
+												const isPublic = ext.scType === 'PUBLIC';
 
-            document.getElementById('modalTitle').innerText = event.title;
-            document.getElementById('modalScId').innerText = ext.scId || '-';
-            document.getElementById('modalPlace').innerText = ext.place || '-';
-            document.getElementById('modalType').innerText = ext.scType || '-';
-            document.getElementById('modalType').className = isPublic ? 'badge badge-danger' : 'badge badge-primary';
-            document.getElementById('modalStart').innerText = ext.startDatetime || '-';
-            document.getElementById('modalEnd').innerText = ext.endDatetime || '-';
+												document
+														.getElementById('modalTitle').innerText = event.title;
+												document
+														.getElementById('modalScId').innerText = ext.scId
+														|| '-';
+												document
+														.getElementById('modalPlace').innerText = ext.place
+														|| '-';
+												document
+														.getElementById('modalType').innerText = ext.scType
+														|| '-';
+												document
+														.getElementById('modalType').className = isPublic ? 'badge badge-danger'
+														: 'badge badge-primary';
+												document
+														.getElementById('modalStart').innerText = ext.startDatetime
+														|| '-';
+												document
+														.getElementById('modalEnd').innerText = ext.endDatetime
+														|| '-';
 
-            $('#eventDetailModal').modal('show');
-            info.jsEvent.preventDefault();
-        }
-    });
+												$('#eventDetailModal').modal(
+														'show');
+												info.jsEvent.preventDefault();
+											}
+										});
 
-    calendar.render();
-});
-</script>
-
+								calendar.render();
+							});
+		</script>
 </body>
 </html>
