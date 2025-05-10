@@ -189,7 +189,7 @@ public class ScheduleController {
         }
 
         model.addAttribute("scheduleList", scheduleList);
-        return "redirect:/schedule/ListSchedule.do";
+        return "schedule/scheduleListView";
     }
 
 }
