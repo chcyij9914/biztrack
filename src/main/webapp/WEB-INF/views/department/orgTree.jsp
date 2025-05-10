@@ -16,12 +16,13 @@ $(function() {
       const node = data.node;
       if (!node.folder) {
         const empId = node.key.replace(/^E/, '');
-        const empName = node.empName || '';
-        const roleName = node.roleName || '';
-        const label = '${empId} / ${empName} / ${roleName}';
+        const empName = node.data.empName || '';
+        const roleName = node.data.roleName || '';
+        const deptName = node.data.deptName || '';
+        const label = empId + ' / ' + empName + ' / ' + deptName + ' / ' + roleName;
 
         const choice = window.prompt(
-          `'${label}'을(를) 어떤 결재자로 지정할까요?\n1: 1차 결재자\n2: 2차 결재자`, "1"
+          label + '\n어떤 결재자로 지정할까요?\n1: 1차 결재자\n2: 2차 결재자', "1"
         );
 
         if (choice === "1") {
@@ -41,5 +42,3 @@ $(function() {
   });
 });
 </script>
-
-<!-- ✅ applyToParent()는 approverPopup에서 정의됨 -->

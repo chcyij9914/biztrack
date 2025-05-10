@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.erp.biztrack.client.model.dao.ClientDao;
 import com.erp.biztrack.client.model.dto.Client;
+import com.erp.biztrack.common.ApproveDTO;
 import com.erp.biztrack.common.DocumentDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -180,5 +182,35 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public int selectDocumentListCount() {
 		return clientDao.selectDocumentListCount();
+	}
+
+	@Override
+	public int insertDocument(DocumentDTO document) {
+		return clientDao.insertDocument(document);
+	}
+
+	@Override
+	public int insertDocumentItem(DocumentItemDTO item) {
+		return clientDao.insertDocumentItem(item);
+	}
+
+	@Override
+	public int insertApproval(ApproveDTO approval) {
+		return clientDao.insertApproval(approval);
+	}
+
+	@Override
+	public String selectNextDocumentIdD() {
+		return clientDao.selectNextDocumentIdD();
+	}
+
+	@Override
+	public String selectNextApproveId() {
+		return clientDao.selectNextApproveId();
+	}
+
+	@Override
+	public String selectNextItemId() {
+		return clientDao.selectNextItemId();
 	}
 }

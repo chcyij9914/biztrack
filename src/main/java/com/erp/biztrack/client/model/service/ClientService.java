@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.erp.biztrack.client.model.dto.Client;
+import com.erp.biztrack.common.ApproveDTO;
 import com.erp.biztrack.common.DocumentDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -43,5 +45,11 @@ public interface ClientService {
     ArrayList<DocumentDTO> selectDocumentList(Paging paging);
     int selectDocumentListCount();
     //문서등록관련---------------------------------
+    int insertDocument(DocumentDTO document);
+    int insertDocumentItem(DocumentItemDTO item);
+    int insertApproval(ApproveDTO approval);
+    String selectNextDocumentIdD();
+    String selectNextApproveId();
+    String selectNextItemId();
 }
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,15 +26,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.erp.biztrack.admin.model.service.AdminService;
 import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.client.model.service.ClientService;
+import com.erp.biztrack.common.ApproveDTO;
 import com.erp.biztrack.common.ClovaOcrService;
 import com.erp.biztrack.common.DocumentDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.FileRenameUtil;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.login.model.dto.LoginDto;
 import com.erp.biztrack.login.model.service.LoginService;
-import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -451,17 +453,87 @@ public class ClientController {
 	    return mv;
 	}
 	
-	@RequestMapping("documentInsertForm.do")
+	//제안서 등록 관련 -------------------------------------------
+	//제안서 등록(GET)
+	@GetMapping("documentInsertForm.do")
 	public String showDocumentInsertForm(Model model) {
-
-
-	    // 거래처 목록 (거래처 ID, 이름)
-	    List<Client> clientList = clientService.selectAllClients();
-
-	    model.addAttribute("clientList", clientList);
-
-	    return "client/documentInsertForm";  // JSP 파일 경로
+	    model.addAttribute("clientList", clientService.selectAllClients());      // 거래처 목록
+	    model.addAttribute("productList", productService.selectAll());		// 상품 목록
+	    return "client/documentInsertForm"; // JSP 경로
 	}
+	
+	//제안서 등록(POST)
+	@PostMapping("documentInsert.do")
+	public String insertDocument(@ModelAttribute DocumentDTO document,
+	                             @RequestParam("approver1Info") String approver1Id,
+	                             @RequestParam("approver2Info") String approver2Id,
+	                             @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
+	                             HttpServletRequest request,
+	                             HttpSession session,
+	                             RedirectAttributes redirectAttributes) {
+
+	    // 1. 문서 ID 생성
+	    String documentId = clientService.selectNextDocumentIdD();
+	    document.setDocumentId(documentId);
+	    document.setDocumentTypeId("D"); // 제안서 고정
+	    
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    String empId = loginInfo.getEmpId();
+
+	    // 2. 작성자/담당자 ID 설정
+	    document.setDocumentWriter(empId);
+	    document.setDocumentManagerId(empId);
+
+	    // 3. 문서 등록
+	    clientService.insertDocument(document);
+
+	    // 4. 품목 목록 등록
+	    for (DocumentItemDTO item : document.getItems()) {
+	        item.setDocumentId(documentId);
+	        item.setItemId(clientService.selectNextItemId());
+	        clientService.insertDocumentItem(item);
+	    }
+
+	    // 5. 결재 정보 등록
+	    ApproveDTO approve = new ApproveDTO();
+	    approve.setApproveId(clientService.selectNextApproveId());
+	    approve.setDocumentId(documentId);
+	    approve.setEmpId(empId);
+	    approve.setFirstApproverId(approver1Id);
+	    approve.setSecondApproverId(approver2Id);
+	    approve.setFirstApproveStatus("결재 대기");
+	    approve.setSecondApproveStatus("결재 대기");
+	    clientService.insertApproval(approve);
+
+	    // 6. 파일 업로드 처리 (제안서 전용)
+	    if (uploadFile != null && !uploadFile.isEmpty()) {
+	        String path = request.getServletContext().getRealPath("/resources/upload/proposal");
+	        new File(path).mkdirs();
+
+	        String originalName = uploadFile.getOriginalFilename();
+	        String renameName = FileRenameUtil.changeFileName(originalName);
+	        File saveFile = new File(path, renameName);
+	        try {
+	            uploadFile.transferTo(saveFile);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+
+	        FileDTO file = new FileDTO();
+	        file.setDocumentId(documentId);
+	        file.setFilePath("/resources/upload/proposal/" + renameName);
+	        file.setOriginalFileName(originalName);
+	        file.setRenameFileName(renameName);
+	        file.setUploadFileSize((int) saveFile.length());
+
+	        clientService.insertFile(file);
+	    }
+
+	    // 7. 완료 후 메시지 및 리다이렉트
+	    redirectAttributes.addFlashAttribute("msg", "문서 " + documentId + "가 성공적으로 등록되었습니다.");
+	    return "redirect:/client/documentList.do";
+	}
+
 
 	
 }

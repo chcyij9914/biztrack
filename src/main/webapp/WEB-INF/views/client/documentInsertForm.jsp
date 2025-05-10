@@ -35,64 +35,6 @@
     }
   </style>
   <script>
-  // 품목 선택 시 단가 및 금액 계산
-  function updatePrice(select, idx) {
-    const option = select.options[select.selectedIndex];
-    const row = select.closest('tr');
-    row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
-    row.querySelector('[name="items[' + idx + '].unitPrice"]').value = option.getAttribute('data-price');
-    calculateAmount(idx);
-  }
-
-  function calculateAmount(idx) {
-    const row = document.querySelectorAll('#itemTable tbody tr')[idx];
-    const qty = parseInt(row.querySelector('[name="items[' + idx + '].quantity"]').value || 0);
-    const price = parseInt(row.querySelector('[name="items[' + idx + '].unitPrice"]').value || 0);
-    row.querySelector('[name="items[' + idx + '].amount"]').value = qty * price;
-  }
-
-  // 행 추가/삭제
-  function addItemRow() {
-    const table = document.querySelector('#itemTable tbody');
-    const rowCount = table.rows.length;
-    const clone = table.rows[0].cloneNode(true);
-    clone.querySelectorAll('input, select').forEach(el => {
-      const name = el.name.replace(/\[\d+\]/, '[' + rowCount + ']');
-      el.name = name;
-      if (el.tagName === 'INPUT') el.value = (el.type === 'number' || el.type === 'text') ? '' : el.value;
-    });
-    table.appendChild(clone);
-  }
-
-  function removeRow(btn) {
-    const table = document.querySelector('#itemTable tbody');
-    if (table.rows.length > 1) btn.closest('tr').remove();
-  }
-
-  // 거래처별 상품 필터링
-  function filterProductsByClient(clientId) {
-    $('#itemTable tbody tr').each(function () {
-      const $select = $(this).find('.product-select');
-      const backup = $select.data('original-options');
-      const options = $('<div>' + backup + '</div>').find('option');
-      const filtered = options.filter(function () {
-        return $(this).data('client') === clientId;
-      });
-      $select.empty().append(filtered).trigger('change');
-    });
-  }
-
-  $(document).on('change', '#clientId', function () {
-    const clientId = $(this).val();
-    filterProductsByClient(clientId);
-  });
-
-  $(function () {
-    $('.product-select').each(function () {
-      $(this).data('original-options', $(this).html());
-    });
-  });
-
   // 결재자 적용
   function applyApprovers(approver1Id, approver2Id) {
     const a1 = document.getElementById("approver1Info");
@@ -131,12 +73,12 @@
           <div class="col-md-2">
             <label>문서유형</label>
             <label>문서유형</label>
-		    <input type="hidden" name="documentType" value="D" />
+		    <input type="hidden" name="documentTypeId" value="D" />
 		    <input type="text" class="form-control" value="제안서" readonly />
           </div>
           <div class="col-md-2">
             <label>문서번호</label>
-            <input type="text" name="documentId" class="form-control" value="${documentId}" readonly />
+            <input type="text" class="form-control" value="자동 생성됨" readonly />
           </div>
           <div class="col-md-4">
             <label>제목</label>
@@ -176,7 +118,7 @@
 		  </div>
 		</div>
 
-        <div class="form-row mb-3">
+        <!-- <div class="form-row mb-3">
           <div class="col-md-3">
             <label>1차 결재일자</label>
             <input type="date" name="approve1Date" class="form-control" />
@@ -185,7 +127,7 @@
             <label>2차 결재일자</label>
             <input type="date" name="approve2Date" class="form-control" />
           </div>
-        </div>
+        </div> -->
 
         <!-- 품목 리스트 테이블 -->
         <table class="table table-bordered mb-3" id="itemTable">
@@ -205,42 +147,56 @@
             <tr>
               <td>1</td>
               <td>
-                <select name="items[0].productCode" class="form-control product-select" onchange="updatePrice(this, 0)">
-                  <c:forEach var="p" items="${productList}">
-                    <option value="${p.productCode}" data-name="${p.productName}" data-price="${p.unitPrice}">${p.productCode} - ${p.productName}</option>
-                  </c:forEach>
-                </select>
+                <select name="items[0].productId" class="form-control product-select" onchange="updatePrice(this)">
+				  <option value="" disabled selected>-- 품목 선택 --</option>  
+				  <c:forEach var="p" items="${productList}">
+					  <option value="${p.productId}"
+					          data-name="${p.productName}"
+					          data-price="${p.salePrice}"
+					          data-category="${p.categoryId}">
+					    ${p.productId} - ${p.productName}
+					  </option>
+					</c:forEach>
+				</select>
               </td>
               <td><input type="text" name="items[0].productName" class="form-control" readonly></td>
               <td><input type="number" name="items[0].quantity" class="form-control" oninput="calculateAmount(0)"></td>
-              <td><input type="number" name="items[0].unitPrice" class="form-control" readonly></td>
+              <td><input type="number" name="items[0].salePrice" class="form-control" readonly></td>
               <td><input type="number" name="items[0].amount" class="form-control" readonly></td>
               <td>
-                <select name="items[0].paymentMethod" class="form-control payment-select">
-                  <option value="카드">신용카드</option>
-                  <option value="계좌">계좌이체</option>
-                  <option value="현금">현금</option>
-                </select>
+                <select name="items[0].paymentMethod" class="form-control payment-select" required>
+				  <option value="" disabled selected>-- 결제수단 선택 --</option>
+				  <option value="신용카드">신용카드</option>
+				  <option value="계좌이제">계좌이체</option>
+				  <option value="현금">현금</option>
+				</select>
               </td>
               <td><button type="button" class="btn btn-danger btn-sm btn-delete" onclick="removeRow(this)">삭제</button></td>
             </tr>
           </tbody>
         </table>
         <button type="button" class="btn btn-outline-primary mb-3" onclick="addItemRow()">+ 품목 추가</button>
+        <!-- 총합계 표시 -->
+		<div class="text-right mb-3">
+		  <strong>총합계:</strong> <span id="totalAmountDisplay">0</span>원
+		</div>
 
         <!-- 거래처 및 거래일자 -->
         <div class="form-row mb-3">
           <div class="col-md-4">
             <label>거래처</label>
-            <select name="clientId" id="clientId" class="form-control">
-              <c:forEach var="c" items="${clientList}">
-                <option value="${c.clientId}">${c.clientId} - ${c.clientName}</option>
-              </c:forEach>
-            </select>
+            <select name="clientId" id="clientId" class="form-control" required>
+			  <option value="" disabled selected>-- 거래처 선택 --</option>
+			  <c:forEach var="c" items="${clientList}">
+				  <option value="${c.clientId}" data-category="${c.categoryId}">
+				    ${c.clientId} - ${c.clientName}
+				  </option>
+				</c:forEach>
+			</select>
           </div>
           <div class="col-md-4">
             <label>거래일자</label>
-            <input type="date" name="transactionDate" class="form-control" required />
+            <input type="date" name="documentDate" class="form-control" required />
           </div>
         </div>
 
@@ -260,43 +216,147 @@
         <div class="text-right">
           <button type="submit" class="btn btn-primary">상신</button>
         </div>
+        <c:if test="${not empty msg}">
+		  <div class="alert alert-success">${msg}</div>
+		</c:if>
       </form>
     </div>
   </div>
 </div>
 
 <script>
-  function updatePrice(select, idx) {
-    const option = select.options[select.selectedIndex];
-    const row = select.closest('tr');
-    row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
-    row.querySelector('[name="items[' + idx + '].unitPrice"]').value = option.getAttribute('data-price');
-    calculateAmount(idx);
-  }
+$(function () {
+	  // 최초 로딩 시 상품 select 옵션 백업
+	  $('.product-select').each(function () {
+	    $(this).data('original-options', $(this).html());
+	  });
 
-  function calculateAmount(idx) {
-    const row = document.querySelectorAll('#itemTable tbody tr')[idx];
-    const qty = parseInt(row.querySelector('[name="items[' + idx + '].quantity"]').value || 0);
-    const price = parseInt(row.querySelector('[name="items[' + idx + '].unitPrice"]').value || 0);
-    row.querySelector('[name="items[' + idx + '].amount"]').value = qty * price;
-  }
+	  // 거래처 선택 시: 같은 카테고리의 상품만 필터링
+	  $('#clientId').on('change', function () {
+	    const selectedCategoryId = $(this).find('option:selected').data('category');
 
-  function addItemRow() {
-    const table = document.querySelector('#itemTable tbody');
-    const rowCount = table.rows.length;
-    const clone = table.rows[0].cloneNode(true);
-    clone.querySelectorAll('input, select').forEach(el => {
-      const name = el.name.replace(/\[\d+\]/, '[' + rowCount + ']');
-      el.name = name;
-      if (el.tagName === 'INPUT') el.value = (el.type === 'number' || el.type === 'text') ? '' : el.value;
-    });
-    table.appendChild(clone);
-  }
+	    $('#itemTable tbody tr').each(function () {
+	    	  const $select = $(this).find('.product-select');
+	    	  const backup = $select.data('original-options');
+	    	  if (!backup) return;
 
-  function removeRow(btn) {
-    const table = document.querySelector('#itemTable tbody');
-    if (table.rows.length > 1) btn.closest('tr').remove();
-  }
+	    	  const selectedValue = $select.val(); // 선택된 값 저장
+
+	    	  const options = $('<div>' + backup + '</div>').find('option');
+	    	  const filtered = options.filter(function () {
+	    	    return $(this).data('category') == selectedCategoryId;
+	    	  });
+
+	    	  $select.empty().append('<option value="">-- 품목 선택 --</option>').append(filtered);
+
+	    	  // 다시 선택 복원 (있을 경우만)
+	    	  if (filtered.filter('[value="' + selectedValue + '"]').length > 0) {
+	    	    $select.val(selectedValue);
+	    	  }
+	    	});
+	  });
+
+	  // 상품 선택 시: 같은 카테고리의 거래처만 표시
+	  $(document).on('change', '.product-select', function () {
+	    const selectedCategory = $(this).find('option:selected').data('category');
+	    if (!selectedCategory) return;
+
+	    $('#clientId option').each(function () {
+	      const catId = $(this).data('category');
+	      if ($(this).val() === "" || catId == selectedCategory) {
+	        $(this).show();
+	      } else {
+	        $(this).hide();
+	      }
+	    });
+	  });
+	});
+
+	// 품목 행 추가 시: 거래처 필터 유지
+	function addItemRow() {
+	  const table = document.querySelector('#itemTable tbody');
+	  const rowCount = table.rows.length;
+	  const clone = table.rows[0].cloneNode(true);
+	
+	  clone.querySelectorAll('input, select').forEach(el => {
+	    const name = el.name.replace(/\[\d+\]/, '[' + rowCount + ']');
+	    el.name = name;
+	
+	    if (el.tagName === 'INPUT') {
+	      el.value = (el.type === 'number' || el.type === 'text') ? '' : el.value;
+	    }
+	
+	    if (el.classList.contains('payment-select')) {
+	      el.innerHTML = `
+	        <option value="" disabled selected>-- 결제수단 선택 --</option>
+	        <option value="카드">신용카드</option>
+	        <option value="계좌">계좌이체</option>
+	        <option value="현금">현금</option>
+	      `;
+	    }
+	  });
+	
+	  table.appendChild(clone);
+
+	  // 거래처 카테고리 기준 필터링
+	  const selectedCategoryId = $('#clientId option:selected').data('category');
+	  const $select = $(clone).find('.product-select');
+	  const backup = $select.data('original-options') || $select.html();
+	  $select.data('original-options', backup);
+
+	  const options = $('<div>' + backup + '</div>').find('option');
+	  const filtered = options.filter(function () {
+	    return $(this).data('category') == selectedCategoryId;
+	  });
+
+	  $select.empty().append('<option value="">-- 품목 선택 --</option>').append(filtered);
+	}
+
+	// 행 삭제
+	function removeRow(btn) {
+	  const table = document.querySelector('#itemTable tbody');
+	  if (table.rows.length > 1) btn.closest('tr').remove();
+	  updateTotalAmount(); // ← 총합 업데이트 호출
+	}
+
+	// 금액 계산
+	function updatePrice(select) {
+	  const row = select.closest('tr');
+	  const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
+	
+	  const option = select.options[select.selectedIndex];
+	  row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
+	  row.querySelector('[name="items[' + idx + '].salePrice"]').value = option.getAttribute('data-price');
+	  calculateAmount(idx);
+	}
+
+	function calculateAmount(idx) {
+		  const row = document.querySelectorAll('#itemTable tbody tr')[idx];
+		  const qty = parseInt(row.querySelector('[name="items[' + idx + '].quantity"]').value || 0);
+		  const price = parseInt(row.querySelector('[name="items[' + idx + '].salePrice"]').value || 0);
+		  row.querySelector('[name="items[' + idx + '].amount"]').value = qty * price;
+
+		  updateTotalAmount(); // ← 총합 업데이트 호출
+		}
+	
+	document.addEventListener('input', function (e) {
+		  if (e.target && e.target.name.endsWith('.quantity')) {
+		    const row = e.target.closest('tr');
+		    const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
+		    calculateAmount(idx);
+		    updateTotalAmount();
+		  }
+		});
+	
+	function updateTotalAmount() {
+		  let total = 0;
+		  document.querySelectorAll('[name$=".amount"]').forEach(el => {
+		    const val = parseInt(el.value || 0);
+		    total += isNaN(val) ? 0 : val;
+		  });
+		  document.getElementById('totalAmountDisplay').innerText = total.toLocaleString();
+		}
+	updateTotalAmount(); // 페이지 로딩 시 총합 초기 표시
 </script>
 </body>
 </html>
