@@ -1,6 +1,7 @@
 package com.erp.biztrack.common;
 
 import java.sql.Date;
+import java.util.List;
 
 public class DocumentDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -7970793635367626682L;
@@ -19,6 +20,7 @@ public class DocumentDTO implements java.io.Serializable {
 	private java.sql.Date documentDate;     // DOCUMENT_DATE DATE
 	private String paymentMethod;           // PAYMENT_METHOD VARCHAR2(30)
 	private String status;                  // 결재 상태 (작성중, 승인 등)
+	private List<DocumentItemDTO> items;
 
 	// Constructor
 	public DocumentDTO() {
@@ -27,7 +29,8 @@ public class DocumentDTO implements java.io.Serializable {
 
 	public DocumentDTO(String documentId, String documentTypeId, String documentName, String transactionType,
 			String clientId, String clientName, String documentWriter, String documentManagerId, String title,
-			String remarks, Date createdDate, Date documentDate, String paymentMethod, String status) {
+			String remarks, Date createdDate, Date documentDate, String paymentMethod, String status,
+			List<DocumentItemDTO> items) {
 		super();
 		this.documentId = documentId;
 		this.documentTypeId = documentTypeId;
@@ -43,6 +46,7 @@ public class DocumentDTO implements java.io.Serializable {
 		this.documentDate = documentDate;
 		this.paymentMethod = paymentMethod;
 		this.status = status;
+		this.items = items;
 	}
 
 	public String getDocumentId() {
@@ -157,6 +161,14 @@ public class DocumentDTO implements java.io.Serializable {
 		this.status = status;
 	}
 
+	public List<DocumentItemDTO> getItems() {
+		return items;
+	}
+
+	public void setItems(List<DocumentItemDTO> items) {
+		this.items = items;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -167,6 +179,6 @@ public class DocumentDTO implements java.io.Serializable {
 				+ documentName + ", transactionType=" + transactionType + ", clientId=" + clientId + ", clientName="
 				+ clientName + ", documentWriter=" + documentWriter + ", documentManagerId=" + documentManagerId
 				+ ", title=" + title + ", remarks=" + remarks + ", createdDate=" + createdDate + ", documentDate="
-				+ documentDate + ", paymentMethod=" + paymentMethod + ", status=" + status + "]";
+				+ documentDate + ", paymentMethod=" + paymentMethod + ", status=" + status + ", items=" + items + "]";
 	}
 }

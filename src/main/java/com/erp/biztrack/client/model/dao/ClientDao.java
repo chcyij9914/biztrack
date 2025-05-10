@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.erp.biztrack.client.model.dto.Client;
+import com.erp.biztrack.common.ApproveDTO;
 import com.erp.biztrack.common.DocumentDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -142,5 +144,35 @@ public class ClientDao {
     // 거래처 문서 전체 수
     public int selectDocumentListCount() {
         return sqlSessionTemplate.selectOne("clientMapper.selectDocumentListCount");
+    }
+    
+    // 문서 등록
+    public int insertDocument(DocumentDTO document) {
+    	return sqlSessionTemplate.insert("clientMapper.insertDocument", document);
+    }
+
+    // 문서 품목 등록
+    public int insertDocumentItem(DocumentItemDTO item) {
+    	return sqlSessionTemplate.insert("clientMapper.insertDocumentItem", item);
+    }
+
+    // 결재 등록
+    public int insertApproval(ApproveDTO approval) {
+    	return sqlSessionTemplate.insert("clientMapper.insertApproval", approval);
+    }
+
+    // 제안서 문서번호 시퀀스
+    public String selectNextDocumentIdD() {
+    	return sqlSessionTemplate.selectOne("clientMapper.selectNextDocumentIdD");
+    }
+    
+    // 결재 ID 시퀀스 조회
+    public String selectNextApproveId() {
+    	return sqlSessionTemplate.selectOne("clientMapper.selectNextApproveId");
+    }
+
+    // 품목 ID 시퀀스 조회
+    public String selectNextItemId() {
+    	return sqlSessionTemplate.selectOne("clientMapper.selectNextItemId");
     }
 }
