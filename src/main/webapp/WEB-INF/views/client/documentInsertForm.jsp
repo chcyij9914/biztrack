@@ -289,8 +289,8 @@ $(function () {
 	    if (el.classList.contains('payment-select')) {
 	      el.innerHTML = `
 	        <option value="" disabled selected>-- 결제수단 선택 --</option>
-	        <option value="카드">신용카드</option>
-	        <option value="계좌">계좌이체</option>
+	        <option value="신용카드">신용카드</option>
+	        <option value="계좌이제">계좌이체</option>
 	        <option value="현금">현금</option>
 	      `;
 	    }
