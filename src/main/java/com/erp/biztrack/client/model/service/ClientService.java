@@ -51,5 +51,10 @@ public interface ClientService {
     String selectNextDocumentIdD();
     String selectNextApproveId();
     String selectNextItemId();
+    //문서 상세정보 관련 -------------------------------------
+    FileDTO selectFileByDocumentId(String documentId);
+    DocumentDTO selectOneDocument(String documentId);
+    ArrayList<DocumentItemDTO> selectDocumentItemList(String documentId);
+    ApproveDTO selectApprovalByDocumentId(String documentId);
 }
 

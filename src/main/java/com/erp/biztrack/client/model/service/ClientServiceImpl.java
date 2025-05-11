@@ -213,4 +213,24 @@ public class ClientServiceImpl implements ClientService {
 	public String selectNextItemId() {
 		return clientDao.selectNextItemId();
 	}
+
+	@Override
+	public FileDTO selectFileByDocumentId(String documentId) {
+		return clientDao.selectFileByDocumentId(documentId);
+	}
+	
+	@Override
+    public DocumentDTO selectOneDocument(String documentId) {
+        return clientDao.selectOneDocument(documentId);
+    }
+
+    @Override
+    public ArrayList<DocumentItemDTO> selectDocumentItemList(String documentId) {
+        return clientDao.selectDocumentItemList(documentId);
+    }
+
+    @Override
+    public ApproveDTO selectApprovalByDocumentId(String documentId) {
+        return clientDao.selectApprovalByDocumentId(documentId);
+    }
 }

@@ -175,4 +175,25 @@ public class ClientDao {
     public String selectNextItemId() {
     	return sqlSessionTemplate.selectOne("clientMapper.selectNextItemId");
     }
+    
+    // 문서 파일 다운로드 & 상세정보 조회
+    public FileDTO selectFileByDocumentId(String documentId) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectFileByDocumentId", documentId);
+    }
+    
+    // 문서 상세정보 조회
+    public DocumentDTO selectOneDocument(String documentId) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectOneDocument", documentId);
+    }
+
+    // 품목 상세정보 조회
+    public ArrayList<DocumentItemDTO> selectDocumentItemList(String documentId) {
+        List<DocumentItemDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentItemList", documentId);
+        return (ArrayList<DocumentItemDTO>) list;
+    }
+
+    // 문서 결재자 상세정보 조회
+    public ApproveDTO selectApprovalByDocumentId(String documentId) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectApprovalByDocumentId", documentId);
+    }
 }
