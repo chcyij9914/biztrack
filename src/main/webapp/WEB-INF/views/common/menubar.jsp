@@ -111,7 +111,7 @@
             <a class="collapse-item" href="${pageContext.request.contextPath}/schedule/ListSchedule.do">일정</a>
             <a class="collapse-item" href="${pageContext.request.contextPath}/graph/dashBoard.do">그래프</a>
              <a class="collapse-item" href="${pageContext.request.contextPath}/reminder/ReminderList.do">리마인더</a>
-              <a class="collapse-item" href="${pageContext.request.contextPath}/Business/Business-document.do">영업문서</a>
+              <a class="collapse-item" href="${pageContext.request.contextPath}/businessdocument/BusinessDocumentList.do">영업문서</a>
          </div>
       </div>
    </li>
