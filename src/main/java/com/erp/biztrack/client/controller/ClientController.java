@@ -481,7 +481,7 @@ public class ClientController {
 	    String empId = loginInfo.getEmpId();
 
 	    // 2. 작성자/담당자 ID 설정
-	    document.setDocumentWriter(empId);
+	    document.setDocumentWriterId(empId);
 	    document.setDocumentManagerId(empId);
 
 	    // 3. 문서 등록
@@ -533,7 +533,56 @@ public class ClientController {
 	    redirectAttributes.addFlashAttribute("msg", "문서 " + documentId + "가 성공적으로 등록되었습니다.");
 	    return "redirect:/client/documentList.do";
 	}
+	
+	// 제안서 상세보기 관련 -----------------------------------------------------------------
+	// 문서 상세보기 이동용 컨트롤러
+	@GetMapping("documentDetail.do")
+	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
 
+	    // 1. 문서 기본 정보 조회
+	    DocumentDTO document = clientService.selectOneDocument(documentId);
+
+	    // 2. 품목 목록 + 금액 계산
+	    List<DocumentItemDTO> itemList = clientService.selectDocumentItemList(documentId);
+	    int totalAmount = 0;
+	    for (DocumentItemDTO item : itemList) {
+	        int amount = item.getQuantity() * item.getSalePrice();
+	        item.setAmount(amount);
+	        totalAmount += amount;
+	    }
+	    document.setItems(itemList);
+	    document.setTotalAmount(totalAmount); // ✅ 핵심: document 객체에 총합 저장
+
+	    // 3. 첨부파일 정보
+	    FileDTO file = clientService.selectFileByDocumentId(documentId);
+	    model.addAttribute("file", file);
+
+	    // 4. 결재 정보
+	    ApproveDTO approval = clientService.selectApprovalByDocumentId(documentId);
+	    model.addAttribute("approval", approval);
+
+	    // 5. 문서 모델 등록
+	    model.addAttribute("document", document);
+
+	    return "client/documentDetailView";
+	}
 
 	
+	// 문서 파일 다운로드
+	@RequestMapping("documentDownload.do")
+	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
+			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
+
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/proposal");
+
+		File downFile = new File(savePath + File.separator + renameFileName);
+		File originFile = new File(originalFileName);
+
+		mv.setViewName("filedown");
+		mv.addObject("originFile", originFile);
+		mv.addObject("renameFile", downFile);
+
+		return mv;
+	}
+
 }

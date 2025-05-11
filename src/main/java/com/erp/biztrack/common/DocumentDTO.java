@@ -6,21 +6,27 @@ import java.util.List;
 public class DocumentDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -7970793635367626682L;
 
-	private String documentId;              // DOCUMENT_ID VARCHAR2(30)
-	private String documentTypeId;          // DOCUMENT_TYPE_ID VARCHAR2(30)
-	private String documentName;            // DOCUMENT_NAME (조인된 문서 이름)
-	private String transactionType;         // TRANSACTION_TYPE (출고, 입고, 구매 등)
-	private String clientId;                // CLIENT_ID VARCHAR2(30)
-	private String clientName;              // CLIENT_NAME VARCHAR2(30)
-	private String documentWriter;          // DOCUMENT_WRITER_ID VARCHAR2(30)
-	private String documentManagerId;       // DOCUMENT_MANAGER_ID VARCHAR2(30)
-	private String title;                   // TITLE VARCHAR2(100)
-	private String remarks;                 // REMARKS VARCHAR2(1000)
-	private java.sql.Date createdDate;      // CREATED_DATE DATE
-	private java.sql.Date documentDate;     // DOCUMENT_DATE DATE
-	private String paymentMethod;           // PAYMENT_METHOD VARCHAR2(30)
-	private String status;                  // 결재 상태 (작성중, 승인 등)
+	private String documentId;              			// DOCUMENT_ID VARCHAR2(30)
+	private String documentTypeId;          		// DOCUMENT_TYPE_ID VARCHAR2(30)
+	private String documentName;           	 	// DOCUMENT_NAME (조인된 문서 이름)
+	private String transactionType;         			// TRANSACTION_TYPE (출고, 입고, 구매 등)
+	private String clientId;                				// CLIENT_ID VARCHAR2(30)
+	private String clientName;              			// CLIENT_NAME VARCHAR2(30)
+	private String documentWriterId;          		// DOCUMENT_WRITER_ID VARCHAR2(30)
+	private String documentWriterJobTitle;
+	private String documentWriterName;
+	private String documentManagerId;       		// DOCUMENT_MANAGER_ID VARCHAR2(30)
+	private String documentManagerJobTitle;
+	private String documentManagerName;
+	private String title;                   				// TITLE VARCHAR2(100)
+	private String remarks;                 			// REMARKS VARCHAR2(1000)
+	private java.sql.Date createdDate;      			// CREATED_DATE DATE
+	private java.sql.Date documentDate;     		// DOCUMENT_DATE DATE
+	private String paymentMethod;           		// PAYMENT_METHOD VARCHAR2(30)
+	private String status;                 		 		// 결재 상태 (작성중, 승인 등)
 	private List<DocumentItemDTO> items;
+	private Integer totalAmount;						//총합계
+	private java.sql.Date updatedDate;				//수정일
 
 	// Constructor
 	public DocumentDTO() {
@@ -28,9 +34,10 @@ public class DocumentDTO implements java.io.Serializable {
 	}
 
 	public DocumentDTO(String documentId, String documentTypeId, String documentName, String transactionType,
-			String clientId, String clientName, String documentWriter, String documentManagerId, String title,
-			String remarks, Date createdDate, Date documentDate, String paymentMethod, String status,
-			List<DocumentItemDTO> items) {
+			String clientId, String clientName, String documentWriterId, String documentWriterJobTitle,
+			String documentWriterName, String documentManagerId, String documentManagerJobTitle,
+			String documentManagerName, String title, String remarks, Date createdDate, Date documentDate,
+			String paymentMethod, String status, List<DocumentItemDTO> items, Integer totalAmount, Date updatedDate) {
 		super();
 		this.documentId = documentId;
 		this.documentTypeId = documentTypeId;
@@ -38,8 +45,12 @@ public class DocumentDTO implements java.io.Serializable {
 		this.transactionType = transactionType;
 		this.clientId = clientId;
 		this.clientName = clientName;
-		this.documentWriter = documentWriter;
+		this.documentWriterId = documentWriterId;
+		this.documentWriterJobTitle = documentWriterJobTitle;
+		this.documentWriterName = documentWriterName;
 		this.documentManagerId = documentManagerId;
+		this.documentManagerJobTitle = documentManagerJobTitle;
+		this.documentManagerName = documentManagerName;
 		this.title = title;
 		this.remarks = remarks;
 		this.createdDate = createdDate;
@@ -47,6 +58,8 @@ public class DocumentDTO implements java.io.Serializable {
 		this.paymentMethod = paymentMethod;
 		this.status = status;
 		this.items = items;
+		this.totalAmount = totalAmount;
+		this.updatedDate = updatedDate;
 	}
 
 	public String getDocumentId() {
@@ -97,12 +110,28 @@ public class DocumentDTO implements java.io.Serializable {
 		this.clientName = clientName;
 	}
 
-	public String getDocumentWriter() {
-		return documentWriter;
+	public String getDocumentWriterId() {
+		return documentWriterId;
 	}
 
-	public void setDocumentWriter(String documentWriter) {
-		this.documentWriter = documentWriter;
+	public void setDocumentWriterId(String documentWriterId) {
+		this.documentWriterId = documentWriterId;
+	}
+
+	public String getDocumentWriterJobTitle() {
+		return documentWriterJobTitle;
+	}
+
+	public void setDocumentWriterJobTitle(String documentWriterJobTitle) {
+		this.documentWriterJobTitle = documentWriterJobTitle;
+	}
+
+	public String getDocumentWriterName() {
+		return documentWriterName;
+	}
+
+	public void setDocumentWriterName(String documentWriterName) {
+		this.documentWriterName = documentWriterName;
 	}
 
 	public String getDocumentManagerId() {
@@ -111,6 +140,22 @@ public class DocumentDTO implements java.io.Serializable {
 
 	public void setDocumentManagerId(String documentManagerId) {
 		this.documentManagerId = documentManagerId;
+	}
+
+	public String getDocumentManagerJobTitle() {
+		return documentManagerJobTitle;
+	}
+
+	public void setDocumentManagerJobTitle(String documentManagerJobTitle) {
+		this.documentManagerJobTitle = documentManagerJobTitle;
+	}
+
+	public String getDocumentManagerName() {
+		return documentManagerName;
+	}
+
+	public void setDocumentManagerName(String documentManagerName) {
+		this.documentManagerName = documentManagerName;
 	}
 
 	public String getTitle() {
@@ -169,6 +214,22 @@ public class DocumentDTO implements java.io.Serializable {
 		this.items = items;
 	}
 
+	public Integer getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(Integer totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
+	public java.sql.Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(java.sql.Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -177,8 +238,11 @@ public class DocumentDTO implements java.io.Serializable {
 	public String toString() {
 		return "DocumentDTO [documentId=" + documentId + ", documentTypeId=" + documentTypeId + ", documentName="
 				+ documentName + ", transactionType=" + transactionType + ", clientId=" + clientId + ", clientName="
-				+ clientName + ", documentWriter=" + documentWriter + ", documentManagerId=" + documentManagerId
-				+ ", title=" + title + ", remarks=" + remarks + ", createdDate=" + createdDate + ", documentDate="
-				+ documentDate + ", paymentMethod=" + paymentMethod + ", status=" + status + ", items=" + items + "]";
+				+ clientName + ", documentWriterId=" + documentWriterId + ", documentWriterJobTitle="
+				+ documentWriterJobTitle + ", documentWriterName=" + documentWriterName + ", documentManagerId="
+				+ documentManagerId + ", documentManagerJobTitle=" + documentManagerJobTitle + ", documentManagerName="
+				+ documentManagerName + ", title=" + title + ", remarks=" + remarks + ", createdDate=" + createdDate
+				+ ", documentDate=" + documentDate + ", paymentMethod=" + paymentMethod + ", status=" + status
+				+ ", items=" + items + ", totalAmount=" + totalAmount + ", updatedDate=" + updatedDate + "]";
 	}
 }
