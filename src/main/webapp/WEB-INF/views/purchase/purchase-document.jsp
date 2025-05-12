@@ -71,7 +71,7 @@
 
 						<div class="d-flex align-items-center">
 							<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-								onclick="window.open('${pageContext.request.contextPath}/purchase/new-purchase.do', 'newWindow', 'width=800,height=600'); return false;">
+								onclick="window.open('${pageContext.request.contextPath}/purchase/new-purchase.do', 'newWindow', 'width=1000,height=800'); return false;">
 								+ 새문서 </a>
 
 							<form class="form-inline"
