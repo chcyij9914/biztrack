@@ -7,12 +7,18 @@ import com.erp.biztrack.inbound.model.dto.Inbound;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 
 public interface InboundService {
-	//목록 카운트
+	// 목록 카운트
 	int selectListCount();
-	
-	//목록 조회
+
+	// 목록 조회
 	ArrayList<Inbound> selectList(Paging paging);
-	
-	//문서 상세보기
+
+	// 문서 상세보기
 	Inbound selectInboundDetail(String documentId);
-	 }
+
+	void insertInbound(Inbound inbound);
+	
+	//재고 수량 변경
+	void updateInbound(Inbound inbound);
+
+}

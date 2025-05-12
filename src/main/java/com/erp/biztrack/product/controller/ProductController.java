@@ -2,12 +2,15 @@ package com.erp.biztrack.product.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,17 +93,24 @@ public class ProductController {
 	// 상품 상세보기
 	@RequestMapping("product-detail.do")
 	public ModelAndView productDetail(@RequestParam("productId") String productId, ModelAndView mv) {
-		Product detail = productService.selectProductDetail(productId);
-
-		if (detail != null) {
-			mv.addObject("product", detail);
-			mv.setViewName("product/product-detail");
-		} else {
-			mv.addObject("message", "해당 문서 정보를 불러올 수 없습니다.");
-			mv.setViewName("common/errorPage");
-		}
-
-		return mv;
+	    Product detail = productService.selectProductDetail(productId);
+	    List<Map<String, Object>> historyList = productService.getProductHistory(productId);
+	    
+	    if (detail != null) {
+	        detail.setHistoryList(historyList);
+	        mv.addObject("product", detail);
+	        mv.addObject("list", historyList); 
+	        mv.setViewName("product/product-detail");
+	    } else {
+	        mv.addObject("message", "해당 상품 정보를 불러올 수 없습니다.");
+	        mv.setViewName("common/errorPage");
+	    }
+	    System.out.println("입출고 내역 수: " + historyList.size());
+	    for (Map<String, Object> row : historyList) {
+	        System.out.println(row);
+	    }
+	    return mv;
+	    
 	}
 
 	// 상품 추가페이지
@@ -169,5 +179,25 @@ public class ProductController {
 	    model.addAttribute("list", result);
 	    model.addAttribute("categoryList", categoryList); 
 	    return "product/product-list";
+	}
+	
+	//수정기능
+	@PostMapping("update.do")
+	public String updateProduct(@ModelAttribute Product product) {
+	    productService.updateProduct(product);
+	    return "redirect:/product/product-detail.do?productId=" + product.getProductId();
+	}
+	
+	//상품 삭제
+	@RequestMapping("delete.do")
+	@ResponseBody
+	public String deleteProduct(@RequestParam String productId) {
+	    try {
+	        int result = productService.deleteProduct(productId);
+	        return (result > 0) ? "success" : "fail";
+	    } catch (ProductException e) {
+	        logger.error("상품 삭제 실패", e);
+	        return "error: " + e.getMessage();
+	    }
 	}
 }

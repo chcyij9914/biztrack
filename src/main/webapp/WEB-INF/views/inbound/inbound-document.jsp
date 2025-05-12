@@ -118,11 +118,11 @@
 									<!-- 예시 데이터 반복 -->
 									<c:forEach var="inbound" items="${requestScope.list}">
 										<tr>
-											<td>${inbound.receivedDate}</td>
-											<td>${inbound.productCode}</td>
+											<td>${inbound.documentDate}</td>
+											<td>${inbound.productId}</td>
 											<td>${inbound.productName}</td>
-											<td>${inbound.inboundQuantity}</td>
-											<td>${inbound.vendorName}</td>
+											<td>${inbound.quantity}</td>
+											<td>${inbound.clientName}</td>
 											<td><span class="badge badge-primary">${inbound.approve1Status}</span></td>
 											<td><a href="#"
 												onclick="window.open('${pageContext.request.contextPath}/inbound/inbound-detail.do?documentId=${inbound.documentId}', 'detailWindow', 'width=800,height=600'); return false;"

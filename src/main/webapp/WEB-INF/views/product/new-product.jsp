@@ -69,16 +69,20 @@ request.setAttribute("today", today);
 		<table class="table table-bordered text-center"
 			style="width: 100%; font-size: 0.7rem;">
 			<colgroup>
+				<col style="width: 20%;">
 				<col style="width: 25%;">
 				<col style="width: 25%;">
-				<col style="width: 25%;">
-				<col style="width: 25%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
 			</colgroup>
 			<thead style="background-color: #fdfdfe;">
 				<tr>
 					<th>물품명</th>
 					<th>카테고리</th>
 					<th>세부카테고리</th>
+					<th>재고</th>
+					<th>단가</th>
 					<th>판매가</th>
 				</tr>
 			</thead>
@@ -92,24 +96,21 @@ request.setAttribute("today", today);
 					<td><select class="form-control subcategory-select"
 						name="subCategoryList"></select> <input type="hidden"
 						name="subCategoryId"></td>
+						<td><input type="number" class="form-control form-control-sm"
+						name="stock"></td>
 					<td><input type="number" class="form-control form-control-sm"
 						name="unitPriceList"></td>
+					<td><input type="number" class="form-control form-control-sm"
+						name="salePriceList"></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 
-
-
-	<!-- 새 카테고리 입력 -->
 	<input type="text" id="newCategoryInput"
 		class="form-control mt-2 d-none" placeholder="새 카테고리명 입력" />
-
-	<!-- 새 서브카테고리 입력 -->
 	<input type="text" id="newSubCategoryInput"
 		class="form-control mt-2 d-none" placeholder="새 세부카테고리명 입력" />
-
-
 
 	<!-- JS -->
 	<script
@@ -118,94 +119,81 @@ request.setAttribute("today", today);
 		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script
 		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
-
-	<!-- Select2 JS 추가 -->
 	<script
 		src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 	<script>
-	let categoryList = [];
-	let subcategoryList = [];
+let categoryList = [];
+let subcategoryList = [];
 
-	$(document).ready(function () {
-		const contextPath = '${pageContext.request.contextPath}';
+$(document).ready(function () {
+	const contextPath = '${pageContext.request.contextPath}';
 
-		// 서브카테고리 먼저 로드
-		$.get(contextPath + '/product/subcategory-list.do', function (subcategoryData) {
-			subcategoryList = subcategoryData;
-
-			//카테고리 로드 및 초기화
-			$.get(contextPath + '/product/category-list.do', function (categoryData) {
-				categoryList = categoryData;
-				initializeCategorySelect(categoryData);
-			});
-		});
-
-		// 직접입력 필드 변경 시 hidden input 설정
-		$('#newCategoryInput').on('input', function () {
-			const $row = $('#itemTableBody tr').first();
-			$row.find('input[name="categoryId"]').val('NEW');
-		});
-
-		$('#newSubCategoryInput').on('input', function () {
-			const $row = $('#itemTableBody tr').first();
-			$row.find('input[name="subCategoryId"]').val('NEW');
+	$.get(contextPath + '/product/subcategory-list.do', function (subcategoryData) {
+		subcategoryList = subcategoryData;
+		$.get(contextPath + '/product/category-list.do', function (categoryData) {
+			categoryList = categoryData;
+			initializeCategorySelect(categoryData);
 		});
 	});
-	
-	// 카테고리 select2 초기화
-	function initializeCategorySelect(list) {
-		$('.category-select').each(function () {
-			const $select = $(this).empty().append('<option></option>');
 
-			list.forEach(item => {
-				$select.append(new Option(item.categoryName, item.categoryId));
-			});
-			
-			$select.append(new Option('새 카테고리 직접 입력...', 'NEW_INPUT')); 
+	$('#newCategoryInput').on('input', function () {
+		const $row = $('#itemTableBody tr').first();
+		$row.find('input[name="categoryId"]').val('NEW');
+	});
 
-			$select.select2({
-				width: '100%',
-				placeholder: '카테고리 선택',
-				allowClear: true,
-				closeOnSelect: true
-			});
+	$('#newSubCategoryInput').on('input', function () {
+		const $row = $('#itemTableBody tr').first();
+		$row.find('input[name="subCategoryId"]').val('NEW');
+	});
+});
 
-			$select.on('change', function () {
-				const selectedCategoryId = $(this).val();
-				const $row = $(this).closest('tr');
-				const $subSelect = $row.find('.subcategory-select');
-
-				if (selectedCategoryId === 'NEW_INPUT') {
-					$('#newCategoryInput').removeClass('d-none');
-					$row.find('input[name="categoryId"]').val('NEW');
-					$row.find('input[name="subCategoryId"]').val('');
-					$('#newSubCategoryInput').removeClass('d-none');
-					$subSelect.empty().trigger('change');
-				} else {
-					$('#newCategoryInput').addClass('d-none');
-					$row.find('input[name="categoryId"]').val(selectedCategoryId);
-					updateSubcategoryOptions($subSelect, selectedCategoryId);
-				}
-			});
+function initializeCategorySelect(list) {
+	$('.category-select').each(function () {
+		const $select = $(this).empty().append('<option></option>');
+		list.forEach(item => {
+			$select.append(new Option(item.categoryName, item.categoryId));
 		});
-	}
-	// 서브카테고리 옵션 동적 업데이트
-	function updateSubcategoryOptions($select, categoryId) {
-    $select.empty().append('<option></option>');
+		$select.append(new Option('새 카테고리 직접 입력...', 'NEW_INPUT'));
 
-    const filteredList = subcategoryList.filter(item => item.categoryId === categoryId);
-    filteredList.forEach(item => {
-        $select.append(new Option(item.subCategoryName, item.subCategoryId));
-    });
+		$select.select2({
+			width: '100%',
+			placeholder: '카테고리 선택',
+			allowClear: true,
+			closeOnSelect: true
+		});
 
+		$select.on('change', function () {
+			const selectedCategoryId = $(this).val();
+			const $row = $(this).closest('tr');
+			const $subSelect = $row.find('.subcategory-select');
 
-    $select.append(new Option('새 세부카테고리 직접 입력...', 'NEW_INPUT'));
+			if (selectedCategoryId === 'NEW_INPUT') {
+				$('#newCategoryInput').removeClass('d-none');
+				$row.find('input[name="categoryId"]').val('NEW');
+				$row.find('input[name="subCategoryId"]').val('');
+				$('#newSubCategoryInput').removeClass('d-none');
+				$subSelect.empty().trigger('change');
+			} else {
+				$('#newCategoryInput').addClass('d-none');
+				$row.find('input[name="categoryId"]').val(selectedCategoryId);
+				updateSubcategoryOptions($subSelect, selectedCategoryId);
+			}
+		});
+	});
+}
+
+function updateSubcategoryOptions($select, categoryId) {
+	$select.empty().append('<option></option>');
+	const filteredList = subcategoryList.filter(item => item.categoryId === categoryId);
+	filteredList.forEach(item => {
+		$select.append(new Option(item.subCategoryName, item.subCategoryId));
+	});
+	$select.append(new Option('새 세부카테고리 직접 입력...', 'NEW_INPUT'));
 
 	$select.off('change').on('change', function () {
 		const selectedId = $(this).val();
 		const $row = $(this).closest('tr');
-
 		if (selectedId === 'NEW_INPUT') {
 			$('#newSubCategoryInput').removeClass('d-none');
 			$row.find('input[name="subCategoryId"]').val('NEW');
@@ -215,48 +203,43 @@ request.setAttribute("today", today);
 		}
 	});
 
-    //select2 적용
-    $select.select2({
-        width: '100%',
-        placeholder: '세부카테고리 선택',
-        allowClear: true,
-        closeOnSelect: true
-    });
+	$select.select2({
+		width: '100%',
+		placeholder: '세부카테고리 선택',
+		allowClear: true,
+		closeOnSelect: true
+	});
 }
-	</script>
 
-	<!-- 상품 추가 데이터 수집 및 서버 전송 -->
-	<script>
-	$(document).ready(function () {
-		$('#addBtn').on('click', function () {
-			const productData = getProductData();
-			console.log("상품 데이터:", productData); 
+$(document).ready(function () {
+	$('#addBtn').on('click', function () {
+		const productData = getProductData();
+		console.log("상품 데이터:", productData);
 
-			if (!productData.productName || !productData.salePrice ||
-				(productData.categoryId === 'NEW' && !productData.newCategoryName) ||
-				(productData.subCategoryId === 'NEW' && !productData.newSubCategoryName)) {
-				alert('모든 항목을 입력해 주세요.');
-				return;
+		if (!productData.productName || !productData.salePrice ||
+			(productData.categoryId === 'NEW' && !productData.newCategoryName) ||
+			(productData.subCategoryId === 'NEW' && !productData.newSubCategoryName)) {
+			alert('모든 항목을 입력해 주세요.');
+			return;
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '${pageContext.request.contextPath}/product/insert.do',
+			data: JSON.stringify(productData),
+			contentType: 'application/json',
+			success: function () {
+				alert('상품이 등록되었습니다!');
+				location.reload();
+			},
+			error: function (xhr, status, err) {
+				console.error('등록 실패:', err);
+				alert('등록 실패! 콘솔을 확인하세요.');
 			}
-
-			$.ajax({
-				type: 'POST',
-				url: '${pageContext.request.contextPath}/product/insert.do',
-				data: JSON.stringify(productData),
-				contentType: 'application/json',
-				success: function (res) {
-					alert('상품이 등록되었습니다!');
-					location.reload();
-				},
-				error: function (xhr, status, err) {
-					console.error('등록 실패:', err);
-					alert('등록 실패! 콘솔을 확인하세요.');
-				}
-			});
 		});
 	});
+});
 
-// 상품 데이터 수집 함수
 function getProductData() {
 	const row = $('#itemTableBody tr').first();
 
@@ -270,13 +253,13 @@ function getProductData() {
 		productName: row.find('[name="productName"]').val(),
 		categoryId: categoryId,
 		subCategoryId: subCategoryId,
-		salePrice: row.find('[name="unitPriceList"]').val(),
+		stock: row.find('[name="stock"]').val(), 
+		unitPrice: row.find('[name="unitPriceList"]').val(), 
+		salePrice: row.find('[name="salePriceList"]').val(),
 		newCategoryName: newCategoryName,
 		newSubCategoryName: newSubCategoryName
 	};
 }
 </script>
-
-
 </body>
 </html>

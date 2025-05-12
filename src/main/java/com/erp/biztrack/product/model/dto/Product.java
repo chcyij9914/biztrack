@@ -24,7 +24,7 @@ public class Product implements java.io.Serializable{
 	
 	//stock 테이블 컬럼
 	private String stockId;
-	private String stock;
+	private int stock;
 	
 	//document 테이블 컬럼
 		private String documentId; 
@@ -72,7 +72,7 @@ public class Product implements java.io.Serializable{
 
 	public Product(String productId, String productName, String categoryId, String subCategoryId, int unitPrice,
 			int salePrice, String categoryName, String subCategoryName, String newCategoryName,
-			String newSubCategoryName, String stockId, String stock, String documentId, String documentTypeId,
+			String newSubCategoryName, String stockId, int stock, String documentId, String documentTypeId,
 			String clientId, String documentWriterId, String documentManagerId, String title, String remarks,
 			Date createdDate, Date documentDate, String paymentMethod, String itemId, int quantity, String documentName,
 			String transactionType, String clientName, String ceoName, String businessNumber, String companyPhone,
@@ -235,12 +235,12 @@ public class Product implements java.io.Serializable{
 	}
 
 
-	public String getStock() {
+	public int getStock() {
 		return stock;
 	}
 
 
-	public void setStock(String stock) {
+	public void setStock(int stock) {
 		this.stock = stock;
 	}
 
@@ -569,6 +569,6 @@ public class Product implements java.io.Serializable{
 				+ historyList + "]";
 	}
 
-	
+
 	
 }

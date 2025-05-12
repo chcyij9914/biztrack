@@ -2,6 +2,7 @@ package com.erp.biztrack.product.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.product.exception.ProductException;
@@ -27,4 +28,14 @@ public interface ProductService {
 	List<Product> searchByName(String keyword);
 	List<Product> searchByCategory(String categoryId);
 
+	//상품  입출고내역
+	List<Map<String, Object>> getProductHistory(String productId) throws ProductException;
+
+	
+	//수정기능
+    int updateProduct(Product product);
+
+    
+    //상품 삭제
+    int deleteProduct(String productId);
 }

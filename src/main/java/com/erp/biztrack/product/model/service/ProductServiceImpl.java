@@ -2,6 +2,7 @@ package com.erp.biztrack.product.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,11 +46,12 @@ public class ProductServiceImpl implements ProductService {
 	//상품 등록
 	@Override
 	public int insertProduct(Product product) throws ProductException {
-		int result = productDao.insertProduct(product);
-		if (result <= 0) {
+		int result1 = productDao.insertProduct(product);
+	    int result2 = productDao.insertStock(product);    
+		if (result1 <= 0) {
 			throw new ProductException("상품 등록 실패");
 		}
-		return result;
+		return result1 + result2;
 	}
 	
 	//상품 코드 자동 생성
@@ -63,9 +65,35 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> searchByName(String keyword) {
 	    return productDao.searchByName(keyword);
 	}
-
 	@Override
 	public List<Product> searchByCategory(String categoryId) {
 	    return productDao.searchByCategory(categoryId);
+	}
+	
+	//상품 입출고내역
+	@Override
+	public List<Map<String, Object>> getProductHistory(String productId) throws ProductException {
+	    try {
+	        return productDao.selectProductHistory(productId);
+	    } catch (Exception e) {
+	        throw new ProductException("입출고 내역 조회 실패");
+	    }
+	}
+	
+	//수정기능
+	@Override
+	 public int updateProduct(Product product) {
+        return productDao.updateProduct(product);
+    }
+	
+	//상품 삭제
+	public int deleteProduct(String productId) throws ProductException {
+	    int result1 = productDao.deleteStock(productId);
+	    int result2 = productDao.deleteProduct(productId);
+	    
+	    if (result2 == 0) {
+	        throw new ProductException("상품 삭제 실패");
+	    }
+	    return result1 + result2;
 	}
 }
