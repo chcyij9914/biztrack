@@ -130,8 +130,8 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public int deleteFile(FileDTO file) {
-		return clientDao.deleteFile(file);
+	public int deleteFileByClientIdOnly(String clientId) {
+	    return clientDao.deleteFileByClientIdOnly(clientId);
 	}
 
 	@Override
@@ -233,4 +233,29 @@ public class ClientServiceImpl implements ClientService {
     public ApproveDTO selectApprovalByDocumentId(String documentId) {
         return clientDao.selectApprovalByDocumentId(documentId);
     }
+
+	@Override
+	public int updateDocument(DocumentDTO document) {
+		return clientDao.updateDocument(document);
+	}
+
+	@Override
+	public int deleteDocumentItems(String documentId) {
+		return clientDao.deleteDocumentItems(documentId);
+	}
+
+	@Override
+	public int updateApprove(ApproveDTO approve) {
+		return clientDao.updateApprove(approve);
+	}
+
+	@Override
+	public int updateDocumentItem(DocumentItemDTO item) {
+		return clientDao.updateDocumentItem(item);
+	}
+	
+	@Override
+	public int deleteFileByDocumentId(String documentId) {
+	    return clientDao.deleteFileByDocumentId(documentId);
+	}
 }

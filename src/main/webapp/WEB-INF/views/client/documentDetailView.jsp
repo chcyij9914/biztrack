@@ -37,9 +37,8 @@
             <th>거래처명</th><td>${document.clientName}</td>
         </tr>
         <tr>
-            <th>담당자</th><td>${document.documentWriterId} / ${document.documentWriterName} / ${document.documentWriterJobTitle}</td>
-            <th>작성자</th><td>${document.documentManagerId} / ${document.documentManagerName} / ${document.documentManagerJobTitle}</td>
-            
+        	<th>작성자</th><td>${document.documentWriterId} / ${document.documentWriterName} / ${document.documentWriterJobTitle}</td>
+            <th>담당자</th><td>${document.documentManagerId} / ${document.documentManagerName} / ${document.documentManagerJobTitle}</td>
         </tr>
         <tr>
             <th>작성일</th>
@@ -153,13 +152,13 @@
         <p>${document.remarks}</p>
 
         <!-- 첨부파일 -->
-        <h5 class="mt-4">첨부파일</h5>
+		<h5 class="mt-4">첨부파일</h5>
 		<c:choose>
 		    <c:when test="${not empty file}">
 		        <p class="mb-2 font-weight-bold">${file.originalFileName}</p> <!-- 원래 파일명 표시 -->
 		
 		        <a class="btn btn-sm btn-info" target="_blank"
-		           href="${pageContext.request.contextPath}${file.filePath}">
+		           href="${pageContext.request.contextPath}${file.filePath}/${file.renameFileName}">
 		            <i class="fas fa-eye"></i> 보러가기
 		        </a>
 		
@@ -175,6 +174,10 @@
 
         <!-- 하단 버튼 -->
         <div class="text-right mt-4">
+	        <a href="${pageContext.request.contextPath}/client/documentUpdateForm.do?documentId=${document.documentId}" 
+		       class="btn btn-warning">
+		        <i class="fas fa-edit"></i> 수정
+		    </a>
             <button type="button" class="btn btn-secondary" onclick="history.back();">
                 <i class="fas fa-arrow-left"></i> 이전페이지
             </button>

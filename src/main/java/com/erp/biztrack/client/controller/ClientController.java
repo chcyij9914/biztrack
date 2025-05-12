@@ -2,6 +2,7 @@ package com.erp.biztrack.client.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +35,11 @@ import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.FileRenameUtil;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
+import com.erp.biztrack.employee.model.dto.Employee;
+import com.erp.biztrack.employee.model.service.EmployeeService;
 import com.erp.biztrack.login.model.dto.LoginDto;
 import com.erp.biztrack.login.model.service.LoginService;
+import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,6 +67,9 @@ public class ClientController {
 	
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private EmployeeService employeeService;
 
 	// 뷰 페이지 내보내기용 메소드
 	// --------------------------------------------------------------
@@ -255,52 +262,48 @@ public class ClientController {
 	// 거래처 수정 처리 (POST)
 	@RequestMapping(value = "cupdate.do", method = RequestMethod.POST)
 	public String updateClient(Client client,
-			@RequestParam(value = "businessCardFile", required = false) MultipartFile businessCardFile,
-			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+	        @RequestParam(value = "businessCardFile", required = false) MultipartFile businessCardFile,
+	        HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
-		// 1. 거래처 정보 수정
-		clientService.updateClient(client);
+	    // 1. 거래처 정보 수정
+	    clientService.updateClient(client);
 
-		// 2. 명함 파일이 새로 업로드된 경우
-		if (businessCardFile != null && !businessCardFile.isEmpty()) {
-			String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/businesscard/");
-			String originalFilename = businessCardFile.getOriginalFilename();
-			String renameFilename = FileRenameUtil.changeFileName(originalFilename);
+	    // 2. 명함 파일이 새로 업로드된 경우
+	    if (businessCardFile != null && !businessCardFile.isEmpty()) {
+	        String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/businesscard/");
+	        String originalFilename = businessCardFile.getOriginalFilename();
+	        String renameFilename = FileRenameUtil.changeFileName(originalFilename);
 
-			// 2-1. 기존 명함 파일 삭제
-			String oldPath = clientService.selectBusinessCardFilePath(client.getClientId());
-			if (oldPath != null && !oldPath.isEmpty()) {
-				File oldFile = new File(request.getSession().getServletContext().getRealPath(oldPath));
-				if (oldFile.exists()) {
-					oldFile.delete();
-				}
-			}
+	        // 2-1. 기존 명함 파일 삭제 (서버 파일)
+	        String oldPath = clientService.selectBusinessCardFilePath(client.getClientId());
+	        if (oldPath != null && !oldPath.isEmpty()) {
+	            File oldFile = new File(request.getSession().getServletContext().getRealPath(oldPath));
+	            if (oldFile.exists()) oldFile.delete();
+	        }
 
-			// 2-2. 기존 DB 정보 삭제
-			FileDTO deleteTarget = new FileDTO();
-			deleteTarget.setClientId(client.getClientId());
-			deleteTarget.setDocumentId(null); // 명함은 문서 아님
-			clientService.deleteFile(deleteTarget);
+	        // 2-2. 기존 명함 파일 DB 정보 삭제
+	        clientService.deleteFileByClientIdOnly(client.getClientId());
 
-			// 2-3. 새 명함 파일 등록
-			FileDTO newFile = new FileDTO();
-			newFile.setClientId(client.getClientId());
-			newFile.setOriginalFileName(originalFilename);
-			newFile.setRenameFileName(renameFilename);
-			newFile.setFilePath("/resources/upload/businesscard/" + renameFilename);
-			newFile.setUploadFileSize((int) businessCardFile.getSize());
+	        // 2-3. 새 명함 파일 등록
+	        FileDTO newFile = new FileDTO();
+	        newFile.setClientId(client.getClientId());
+	        newFile.setOriginalFileName(originalFilename);
+	        newFile.setRenameFileName(renameFilename);
+	        newFile.setFilePath("/resources/upload/businesscard/" + renameFilename);
+	        newFile.setUploadFileSize((int) businessCardFile.getSize());
 
-			try {
-				businessCardFile.transferTo(new File(savePath + renameFilename));
-				clientService.insertFile(newFile);
-			} catch (Exception e) {
-				e.printStackTrace(); // 로그 기록 또는 슬랙 알림으로 확장 가능
-			}
-		}
+	        try {
+	            businessCardFile.transferTo(new File(savePath + renameFilename));
+	            clientService.insertFile(newFile);
+	        } catch (Exception e) {
+	            e.printStackTrace(); // 추후 로그 처리 가능
+	        }
+	    }
 
-		redirectAttributes.addFlashAttribute("message", "거래처 정보가 수정되었습니다.");
-		return "redirect:/client/cdetail.do?clientId=" + client.getClientId();
+	    redirectAttributes.addFlashAttribute("message", "거래처 정보가 수정되었습니다.");
+	    return "redirect:/client/cdetail.do?clientId=" + client.getClientId();
 	}
+
 
 	// 거래처 수정 - empId로 직원 정보 조회 (AJAX 응답용)
 	@ResponseBody
@@ -536,7 +539,7 @@ public class ClientController {
 	
 	// 제안서 상세보기 관련 -----------------------------------------------------------------
 	// 문서 상세보기 이동용 컨트롤러
-	@GetMapping("documentDetail.do")
+	@GetMapping("documentDetailView.do")
 	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
 
 	    // 1. 문서 기본 정보 조회
@@ -551,7 +554,7 @@ public class ClientController {
 	        totalAmount += amount;
 	    }
 	    document.setItems(itemList);
-	    document.setTotalAmount(totalAmount); // ✅ 핵심: document 객체에 총합 저장
+	    document.setTotalAmount(totalAmount);
 
 	    // 3. 첨부파일 정보
 	    FileDTO file = clientService.selectFileByDocumentId(documentId);
@@ -566,7 +569,6 @@ public class ClientController {
 
 	    return "client/documentDetailView";
 	}
-
 	
 	// 문서 파일 다운로드
 	@RequestMapping("documentDownload.do")
@@ -584,5 +586,121 @@ public class ClientController {
 
 		return mv;
 	}
+	
+	// 문서 수정 관련
+	// 문서 수정폼 이동 (GET)
+	@GetMapping("documentUpdateForm.do")
+	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
+
+	    // 문서 기본 정보
+	    DocumentDTO document = clientService.selectOneDocument(documentId);
+	    model.addAttribute("document", document);
+
+	    // 문서 품목 목록
+	    List<DocumentItemDTO> documentItemList = clientService.selectDocumentItemList(documentId);
+	    model.addAttribute("documentItemList", documentItemList);
+
+	    // 결재자 정보
+	    ApproveDTO approve = clientService.selectApprovalByDocumentId(documentId);
+	    model.addAttribute("approve", approve);
+
+	    // 첨부파일 정보
+	    FileDTO file = clientService.selectFileByDocumentId(documentId);
+	    model.addAttribute("file", file);
+
+	    // 거래처 목록
+	    List<Client> clientList = clientService.selectAllClients();
+	    model.addAttribute("clientList", clientList);
+
+	    // 상품 목록 (품목 select 용)
+	    List<Product> productList = productService.selectAll();
+	    model.addAttribute("productList", productList);
+
+	    return "client/documentUpdateForm";
+	}
+
+	@PostMapping("documentUpdate.do")
+	public String updateDocument(@ModelAttribute DocumentDTO document,
+	                             @ModelAttribute ApproveDTO approve,
+	                             @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
+	                             @RequestParam(name = "deleteFlag", required = false) String deleteFlag,
+	                             @RequestParam(name = "originalClientId", required = false) String originalClientId,
+	                             HttpServletRequest request,
+	                             Model model) {
+
+	    String savePath = request.getServletContext().getRealPath("/resources/upload/proposal");
+
+	    // 파일 삭제 + 업로드
+	    if ((deleteFlag != null && deleteFlag.equals("yes")) || (uploadFile != null && !uploadFile.isEmpty())) {
+	        clientService.deleteFileByDocumentId(document.getDocumentId());  // 기존 파일 삭제
+	    }
+
+	    if (uploadFile != null && !uploadFile.isEmpty()) {
+	        String origin = uploadFile.getOriginalFilename();
+	        String rename = FileRenameUtil.changeFileName(origin);
+
+	        try {
+	            uploadFile.transferTo(new File(savePath + "/" + rename));
+	        } catch (Exception e) {
+	            model.addAttribute("errorMsg", "파일 업로드 실패");
+	            return "common/errorPage";
+	        }
+
+	        FileDTO fileDto = new FileDTO();
+	        fileDto.setDocumentId(document.getDocumentId());
+	        fileDto.setOriginalFileName(origin);
+	        fileDto.setRenameFileName(rename);
+	        fileDto.setFilePath("/resources/upload/proposal");
+	        fileDto.setUploadFileSize((int) uploadFile.getSize());
+
+	        clientService.insertFile(fileDto);
+	    }
+
+	    // 문서 정보 업데이트
+	    clientService.updateDocument(document);
+
+	    // 결재자 정보 업데이트
+	    approve.setDocumentId(document.getDocumentId());
+	    clientService.updateApprove(approve);
+
+	    // 품목 처리
+	    boolean isClientChanged = !document.getClientId().equals(originalClientId);
+
+	    if (isClientChanged) {
+	        // 거래처 변경 시: 기존 품목 삭제 후 새로 insert (itemId도 새로 생성)
+	        clientService.deleteDocumentItems(document.getDocumentId());
+
+	        for (DocumentItemDTO item : document.getItems()) {
+	            item.setDocumentId(document.getDocumentId());
+
+	            // itemId 시퀀스로 새로 생성
+	            String newItemId = clientService.selectNextItemId();
+	            item.setItemId(newItemId);
+
+	            clientService.insertDocumentItem(item);
+	        }
+	    } else {
+	        // 거래처 동일: 기존 itemId로 update
+	        for (DocumentItemDTO item : document.getItems()) {
+	            clientService.updateDocumentItem(item);
+	        }
+	    }
+
+	    return "redirect:/client/documentDetailView.do?documentId=" + document.getDocumentId();
+	}
+
+    @GetMapping("documentManEmpInfo.do")
+    @ResponseBody
+    public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
+        Employee emp = employeeService.selectEmpById(empId);
+
+        Map<String, String> result = new HashMap<>();
+        if (emp != null) {
+            result.put("empId", emp.getEmpId());
+            result.put("empName", emp.getEmpName());
+            result.put("jobTitle", emp.getJobTitle());
+        }
+        return result;
+    }
 
 }
