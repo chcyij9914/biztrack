@@ -31,6 +31,17 @@
          <img src="${pageContext.request.contextPath}/resources/img/logo-white.png" alt="BizTrack" width="140">
       </div>
    </a>
+   
+   	<!-- 관리자 전용 메뉴 -->
+  <c:if test="${loginInfo.adminYN == 'Y'}">
+    <!-- 관리자인 경우에만 보여줄 메뉴 -->
+    <li class="nav-item">
+        <a class="nav-link" href="${pageContext.request.contextPath}/adminMain.do">
+            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+            직원관리
+        </a>
+    </li>
+   </c:if>
 
    <!-- Nav Item - 공지사항 -->
    <li class="nav-item">
@@ -51,16 +62,11 @@
 
    <!-- Nav Item - 메일 -->
    <li class="nav-item">
-      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMail" aria-expanded="true" aria-controls="collapseMail">
-         <i class="fas fa-fw fa-envelope-open-text"></i>
-         <span>메일</span>
-      </a>
-      <div id="collapseMail" class="collapse" aria-labelledby="headingMail" data-parent="#accordionSidebar">
-         <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#">받은 메일</a>
-         </div>
-      </div>
-   </li>
+	   <a class="nav-link" href="${pageContext.request.contextPath}/mail/form.do">
+	      <i class="fas fa-fw fa-envelope-open-text"></i>
+	      <span>메일</span>
+	   </a>
+	</li>
 
    <!-- Nav Item - 인사 -->
    <li class="nav-item">
