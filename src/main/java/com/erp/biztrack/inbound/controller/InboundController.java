@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -102,4 +104,18 @@ public class InboundController {
 	public ArrayList<Product> getProductList() {
 		return productService.selectAll();
 	}
+	
+	//재고 수량 변경
+	@PostMapping("/insert")
+    public String insert(@ModelAttribute Inbound inbound) {
+		inboundService.insertInbound(inbound); // 문서와 품목, 재고까지 처리
+	    return "redirect:/inbound-document.do";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Inbound inbound) {
+    	inboundService.insertInbound(inbound); // 기존 수량 차이 반영
+        return "redirect:/inbound-document.do";
+    }
+
 }
