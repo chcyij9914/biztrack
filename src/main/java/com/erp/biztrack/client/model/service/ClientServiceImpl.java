@@ -258,4 +258,14 @@ public class ClientServiceImpl implements ClientService {
 	public int deleteFileByDocumentId(String documentId) {
 	    return clientDao.deleteFileByDocumentId(documentId);
 	}
+	
+	@Override
+	public int deleteDocumentOnly(String documentId) {
+		return clientDao.deleteDocumentOnly(documentId);
+	}
+
+	@Override
+	public int deleteApprove(String documentId) {
+		return clientDao.deleteApprove(documentId);
+	}
 }
