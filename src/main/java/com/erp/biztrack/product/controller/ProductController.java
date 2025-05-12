@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,15 +72,15 @@ public class ProductController {
 
 		// 서비스 모델로 페이징 적용된 목록 조회 요청하고 결과받기
 		ArrayList<Product> list = productService.selectList(paging);
-	    
-		//카테고리 리스트 조회(검색필터)
-		ArrayList<Category> categoryList = categoryService.selectAll(); 
+
+		// 카테고리 리스트 조회(검색필터)
+		ArrayList<Category> categoryList = categoryService.selectAll();
 
 		if (list != null && list.size() > 0) { // 조회 성공시
 			// ModelAndView : Model + View
 			mv.addObject("list", list); // request.setAttribute("list", list) 와 같음
 			mv.addObject("paging", paging);
-	        mv.addObject("categoryList", categoryList); 
+			mv.addObject("categoryList", categoryList);
 			mv.setViewName("product/product-list");
 
 		} else { // 조회 실패시
@@ -93,24 +94,24 @@ public class ProductController {
 	// 상품 상세보기
 	@RequestMapping("product-detail.do")
 	public ModelAndView productDetail(@RequestParam("productId") String productId, ModelAndView mv) {
-	    Product detail = productService.selectProductDetail(productId);
-	    List<Map<String, Object>> historyList = productService.getProductHistory(productId);
-	    
-	    if (detail != null) {
-	        detail.setHistoryList(historyList);
-	        mv.addObject("product", detail);
-	        mv.addObject("list", historyList); 
-	        mv.setViewName("product/product-detail");
-	    } else {
-	        mv.addObject("message", "해당 상품 정보를 불러올 수 없습니다.");
-	        mv.setViewName("common/errorPage");
-	    }
-	    System.out.println("입출고 내역 수: " + historyList.size());
-	    for (Map<String, Object> row : historyList) {
-	        System.out.println(row);
-	    }
-	    return mv;
-	    
+		Product detail = productService.selectProductDetail(productId);
+		List<Map<String, Object>> historyList = productService.getProductHistory(productId);
+
+		if (detail != null) {
+			detail.setHistoryList(historyList);
+			mv.addObject("product", detail);
+			mv.addObject("list", historyList);
+			mv.setViewName("product/product-detail");
+		} else {
+			mv.addObject("message", "해당 상품 정보를 불러올 수 없습니다.");
+			mv.setViewName("common/errorPage");
+		}
+		System.out.println("입출고 내역 수: " + historyList.size());
+		for (Map<String, Object> row : historyList) {
+			System.out.println(row);
+		}
+		return mv;
+
 	}
 
 	// 상품 추가페이지
@@ -133,71 +134,92 @@ public class ProductController {
 		return subcategoryService.selectAll();
 	}
 
-	//상품 등록
+	// 상품 등록
 	@RequestMapping("insert.do")
 	@ResponseBody
 	public String insertProduct(@RequestBody Product product) {
 		try {
 			// 상품코드 자동 생성
-	        String productId = productService.getNextProductId();
-	        product.setProductId(productId);
-			
-	     // 1. 새로운 카테고리 입력 시 DB에 먼저 insert
-	        if ("NEW".equals(product.getCategoryId()) && product.getNewCategoryName() != null) {
-	            String newCategoryId = categoryService.insertAndGetId(product.getNewCategoryName());
-	            product.setCategoryId(newCategoryId);
-	        }
+			String productId = productService.getNextProductId();
+			product.setProductId(productId);
 
-	        // 2. 새로운 서브카테고리 입력 시 DB에 먼저 insert
-	        if ("NEW".equals(product.getSubCategoryId()) && product.getNewSubCategoryName() != null) {
-	            String newSubCategoryId = subcategoryService.insertAndGetId(product.getNewSubCategoryName(), product.getCategoryId());
-	            product.setSubCategoryId(newSubCategoryId);
-	        }
+			// 1. 새로운 카테고리 입력 시 DB에 먼저 insert
+			if ("NEW".equals(product.getCategoryId()) && product.getNewCategoryName() != null) {
+				String newCategoryId = categoryService.insertAndGetId(product.getNewCategoryName());
+				product.setCategoryId(newCategoryId);
+			}
 
-	        int result = productService.insertProduct(product);
-	        return (result > 0) ? "success" : "fail";
+			// 2. 새로운 서브카테고리 입력 시 DB에 먼저 insert
+			if ("NEW".equals(product.getSubCategoryId()) && product.getNewSubCategoryName() != null) {
+				String newSubCategoryId = subcategoryService.insertAndGetId(product.getNewSubCategoryName(),
+						product.getCategoryId());
+				product.setSubCategoryId(newSubCategoryId);
+			}
 
-	    } catch (ProductException e) {
-	        logger.error("상품 등록 중 오류 발생", e);
-	        return "error: " + e.getMessage();
-	    }
+			int result = productService.insertProduct(product);
+			return (result > 0) ? "success" : "fail";
+
+		} catch (ProductException e) {
+			logger.error("상품 등록 중 오류 발생", e);
+			return "error: " + e.getMessage();
+		}
 	}
-	
-	//검색기능-이름
+
+	// 검색기능-이름
 	@RequestMapping("csearchName.do")
 	public String searchProductByName(@RequestParam("keyword") String keyword, Model model) {
 		List<Product> result = productService.searchByName(keyword);
-		model.addAttribute("list", result); 
+		model.addAttribute("list", result);
 		return "product/product-list";
 	}
 
-	//검색기능-카테고리
+	// 검색기능-카테고리
 	@RequestMapping("csearchCategory.do")
 	public String searchProductByCategory(@RequestParam("categoryId") String categoryId, Model model) {
 		List<Product> result = productService.searchByCategory(categoryId);
-	    List<Category> categoryList = categoryService.selectAll(); 
-	    model.addAttribute("list", result);
-	    model.addAttribute("categoryList", categoryList); 
-	    return "product/product-list";
+		List<Category> categoryList = categoryService.selectAll();
+		model.addAttribute("list", result);
+		model.addAttribute("categoryList", categoryList);
+		return "product/product-list";
 	}
-	
-	//수정기능
+
+	// 수정기능
 	@PostMapping("update.do")
 	public String updateProduct(@ModelAttribute Product product) {
-	    productService.updateProduct(product);
-	    return "redirect:/product/product-detail.do?productId=" + product.getProductId();
+		productService.updateProduct(product);
+		return "redirect:/product/product-detail.do?productId=" + product.getProductId();
 	}
-	
-	//상품 삭제
+
+	// 상품 삭제
 	@RequestMapping("delete.do")
 	@ResponseBody
 	public String deleteProduct(@RequestParam String productId) {
-	    try {
-	        int result = productService.deleteProduct(productId);
-	        return (result > 0) ? "success" : "fail";
-	    } catch (ProductException e) {
-	        logger.error("상품 삭제 실패", e);
-	        return "error: " + e.getMessage();
-	    }
+		try {
+			int result = productService.deleteProduct(productId);
+			return (result > 0) ? "success" : "fail";
+		} catch (ProductException e) {
+			logger.error("상품 삭제 실패", e);
+			return "error: " + e.getMessage();
+		}
+	}
+
+	// 상품 상세보기
+	@GetMapping("/product/product-detail.do")
+	public String getProductDetail(@RequestParam("productId") String productId, Model model) {
+		try {
+			Product product = productService.getProductById(productId);
+			model.addAttribute("product", product);
+
+			List<Map<String, Object>> historyList = productService.getProductHistory(productId);
+			model.addAttribute("list", historyList);
+
+			int calculatedStock = productService.getCalculatedStock(productId);
+			model.addAttribute("calculatedStock", calculatedStock);
+
+			return "product/product-detail";
+		} catch (ProductException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "error";
+		}
 	}
 }

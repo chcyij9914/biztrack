@@ -31,19 +31,24 @@
 .table input:focus {
 	outline: none;
 }
+
+input[readonly] {
+	background-color: #f2f2f2;
+	cursor: not-allowed;
 </style>
 </head>
 
 <body class="p-4 bg-light">
 
 	<div class="d-flex justify-content-between align-items-center mb-4">
-	<h2 class="mb-0">상품 정보</h2>
-	<div>
-		<button type="submit" class="btn btn-primary me-2" form="updateForm">수정</button>
-		<button type="button" class="btn btn-danger" onclick="deleteProduct('${product.productId}')">삭제</button>
+		<h2 class="mb-0">상품 정보</h2>
+		<div>
+			<button type="submit" class="btn btn-primary me-2" form="updateForm">수정</button>
+			<button type="button" class="btn btn-danger"
+				onclick="deleteProduct('${product.productId}')">삭제</button>
+		</div>
 	</div>
-</div>
-<hr>
+	<hr>
 
 	<!-- 상품 수정 form -->
 	<form id="updateForm" method="post"
@@ -80,7 +85,7 @@
 						</td>
 
 						<td><input type="number" name="stock"
-							value="${product.stock}"></td>
+							value="${product.stock}" readonly></td>
 						<td><input type="number" name="unitPrice"
 							value="${product.unitPrice}"></td>
 						<td><input type="number" name="salePrice"
@@ -93,35 +98,49 @@
 
 	<br>
 	<br>
+
+
 	<h5>입출고 내역</h5>
 
-	<div class="mb-3">
-		<table class="table table-bordered text-center"
-			style="font-size: 0.7rem;">
-			<thead style="background-color: #fdfdfe;">
-				<tr>
-					<th>거래유형</th>
-					<th>날짜</th>
-					<th>물품명</th>
-					<th>거래처</th>
-					<th>수량</th>
-					<th>재고</th>
-				</tr>
-			</thead>
-			<tbody style="background-color: #ffffff;">
-				<c:forEach var="row" items="${list}">
-					<tr>
-						<td>${row.DOCUMENT_NAME}</td>
-						<td>${row.DOCUMENT_DATE}</td>
-						<td>${row.PRODUCT_NAME}</td>
-						<td>${row.CLIENT_NAME}</td>
-						<td>${row.QUANTITY}</td>
-						<td>${row.STOCK}</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-	</div>
+	<c:choose>
+		<c:when test="${not empty list}">
+			<div class="mb-3">
+				<table class="table table-bordered text-center"
+					style="font-size: 0.7rem;">
+					<thead style="background-color: #fdfdfe;">
+						<tr>
+							<th>거래유형</th>
+							<th>날짜</th>
+							<th>물품명</th>
+							<th>거래처</th>
+							<th>변동수량</th>
+							<!-- <th>재고</th> -->
+						</tr>
+					</thead>
+					<tbody style="background-color: #ffffff;">
+						<c:forEach var="row" items="${list}">
+							<tr>
+								<td>${row.DOCUMENT_NAME}</td>
+								<td>${row.DOCUMENT_DATE}</td>
+								<td>${row.PRODUCT_NAME}</td>
+								<td>${row.CLIENT_NAME}</td>
+								<td><c:choose>
+										<c:when test="${row.DOCUMENT_NAME == '입고서'}">+${row.QUANTITY}</c:when>
+										<c:when test="${row.DOCUMENT_NAME == '출고서'}">-${row.QUANTITY}</c:when>
+										<c:otherwise>${row.QUANTITY}</c:otherwise>
+									</c:choose></td>
+								<%-- <td>${row.STOCK}</td> --%>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+		</c:when>
+
+		<c:otherwise>
+			<div class="text-center mt-3 text-muted">입출고 내역이 없습니다.</div>
+		</c:otherwise>
+	</c:choose>
 
 	<!-- JS -->
 	<script

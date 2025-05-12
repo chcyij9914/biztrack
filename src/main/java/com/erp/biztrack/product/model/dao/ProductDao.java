@@ -69,6 +69,9 @@ public class ProductDao {
 	public List<Map<String, Object>> selectProductHistory(String productId) {
 		return sqlSessionTemplate.selectList("productMapper.selectProductHistory", productId);
 	}
+	public int selectCalculatedStock(String productId) {
+	    return sqlSessionTemplate.selectOne("productMapper.selectCalculatedStock", productId);
+	}
 	
 	//수정기능
 	public int updateProduct(Product product) {

@@ -1,6 +1,7 @@
 package com.erp.biztrack.product.model.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,15 @@ public class ProductServiceImpl implements ProductService {
 	        throw new ProductException("입출고 내역 조회 실패");
 	    }
 	}
+
+	@Override
+	public int getCalculatedStock(String productId) throws ProductException {
+		  try {
+		        return productDao.selectCalculatedStock(productId);
+		    } catch (Exception e) {
+		        throw new ProductException("총 재고 계산 실패");
+		    }
+	}
 	
 	//수정기능
 	@Override
@@ -95,5 +105,11 @@ public class ProductServiceImpl implements ProductService {
 	        throw new ProductException("상품 삭제 실패");
 	    }
 	    return result1 + result2;
+	}
+
+	@Override
+	public Product getProductById(String productId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
