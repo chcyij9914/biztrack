@@ -26,4 +26,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> all = selectAll();
         return all.stream().collect(Collectors.groupingBy(Employee::getDeptId));
     }
+
+	@Override
+	public Employee selectEmpById(String empId) {
+		return employeeDao.selectEmpById(empId);
+	}
 }

@@ -30,7 +30,7 @@ public interface ClientService {
     String selectBusinessCardFilePath(String clientId);
     //거래처 수정 관련 -----------------------------------
     int updateClient(Client client);
-    int deleteFile(FileDTO file);
+    int deleteFileByClientIdOnly(String clientId);
     //거래처 검색 관련 ------------------------------------
     int selectSearchClientNameCount(String keyword);
     ArrayList<Client> selectSearchClientNameList(Search search);
@@ -56,5 +56,11 @@ public interface ClientService {
     DocumentDTO selectOneDocument(String documentId);
     ArrayList<DocumentItemDTO> selectDocumentItemList(String documentId);
     ApproveDTO selectApprovalByDocumentId(String documentId);
+    //문서 수정 관련 --------------------------------------------
+    int updateDocument(DocumentDTO document);
+    int deleteDocumentItems(String documentId);
+    int updateApprove(ApproveDTO approve);
+    int updateDocumentItem(DocumentItemDTO item);
+    int deleteFileByDocumentId(String documentId);
 }
 

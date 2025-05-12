@@ -89,7 +89,7 @@
                                                     </c:choose>
                                                 </td>
                                                 <td>
-                                                    <a href="${pageContext.request.contextPath}/client/documentDetail.do?documentId=${doc.documentId}"
+                                                    <a href="${pageContext.request.contextPath}/client/documentDetailView.do?documentId=${doc.documentId}"
                                                        class="btn btn-sm btn-outline-secondary">상세</a>
                                                 </td>
                                             </tr>

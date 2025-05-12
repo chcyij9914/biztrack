@@ -91,8 +91,8 @@ public class ClientDao {
 	}
 
 	// 명함 파일 삭제
-	public int deleteFile(FileDTO file) {
-	    return sqlSessionTemplate.delete("clientMapper.deleteFile", file);
+	public int deleteFileByClientIdOnly(String clientId) {
+	    return sqlSessionTemplate.delete("clientMapper.deleteFileByClientIdOnly", clientId);
 	}
 	
 	// 거래처명 검색
@@ -195,5 +195,31 @@ public class ClientDao {
     // 문서 결재자 상세정보 조회
     public ApproveDTO selectApprovalByDocumentId(String documentId) {
         return sqlSessionTemplate.selectOne("clientMapper.selectApprovalByDocumentId", documentId);
+    }
+    
+    // 문서 수정 관련 ------------------------------------------------------
+    // 문서 수정
+    public int updateDocument(DocumentDTO document) {
+        return sqlSessionTemplate.update("clientMapper.updateDocument", document);
+    }
+    
+    // 기존 품목 삭제
+    public int deleteDocumentItems(String documentId) {
+        return sqlSessionTemplate.delete("clientMapper.deleteDocumentItems", documentId);
+    }
+    
+    // 결재자 수정
+    public int updateApprove(ApproveDTO approve) {
+        return sqlSessionTemplate.update("clientMapper.updateApprove", approve);
+    }
+    
+    // 품목 수정
+    public int updateDocumentItem(DocumentItemDTO item) {
+        return sqlSessionTemplate.update("clientMapper.updateDocumentItem", item);
+    }
+    
+    // 문서 파일 삭제
+    public int deleteFileByDocumentId(String documentId) {
+        return sqlSessionTemplate.delete("clientMapper.deleteFileByDocumentId", documentId);
     }
 }

@@ -16,4 +16,8 @@ public class EmployeeDao {
 	public List<Employee> selectAll() {
         return sqlSessionTemplate.selectList("employeeMapper.selectAll");
     }
+	
+	public Employee selectEmpById(String empId) {
+	    return sqlSessionTemplate.selectOne("employeeMapper.selectEmpById", empId);
+	}
 }
