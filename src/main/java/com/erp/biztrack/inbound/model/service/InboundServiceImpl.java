@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.inbound.model.dao.InboundDao;
-import com.erp.biztrack.inbound.model.dto.DocumentItem;
 import com.erp.biztrack.inbound.model.dto.Inbound;
 
 @Service("inboundService")
@@ -40,7 +40,7 @@ public class InboundServiceImpl implements InboundService {
     public void insertInbound(Inbound inbound) {
         inboundDao.insertInboundDocument(inbound);
 
-        for (DocumentItem item : inbound.getItems()) {
+        for (DocumentItemDTO item : inbound.getItems()) {
             inboundDao.insertInboundItem(item);
             inboundDao.updateStock(item.getProductId(), item.getQuantity());
         }
@@ -52,8 +52,8 @@ public class InboundServiceImpl implements InboundService {
     public void updateInbound(Inbound inbound) {
         inboundDao.updateInboundDocument(inbound);
 
-        for (DocumentItem newItem : inbound.getItems()) {
-            DocumentItem oldItem = inboundDao.selectInboundItemById(newItem.getItemId());
+        for (DocumentItemDTO newItem : inbound.getItems()) {
+            DocumentItemDTO oldItem = inboundDao.selectInboundItemById(newItem.getItemId());
             int diff = newItem.getQuantity() - oldItem.getQuantity();
 
             inboundDao.updateInboundItem(newItem);
