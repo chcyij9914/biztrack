@@ -30,6 +30,8 @@ public interface ProductService {
 
 	//상품  입출고내역
 	List<Map<String, Object>> getProductHistory(String productId) throws ProductException;
+	int getCalculatedStock(String productId) throws ProductException;
+	Product getProductById(String productId) throws ProductException;
 
 	
 	//수정기능
@@ -38,4 +40,5 @@ public interface ProductService {
     
     //상품 삭제
     int deleteProduct(String productId);
+
 }
