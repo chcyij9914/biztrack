@@ -71,9 +71,9 @@
       </a>
       <div id="collapseHR" class="collapse" aria-labelledby="headingHR" data-parent="#accordionSidebar">
          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#">사원관리</a>
+            <a class="collapse-item" href="${pageContext.request.contextPath}/evaluation/evaluationList.do">직원평가</a>
          </div>
-      </div>
+       </div>
    </li>
 
    <!-- Nav Item - 구매 -->
