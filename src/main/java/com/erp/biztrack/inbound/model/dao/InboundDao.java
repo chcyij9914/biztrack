@@ -9,8 +9,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.Paging;
-import com.erp.biztrack.inbound.model.dto.DocumentItem;
 import com.erp.biztrack.inbound.model.dto.Inbound;
 
 @Repository("inboundDao")
@@ -45,17 +45,17 @@ public class InboundDao {
     }
 
     // 품목 등록
-    public int insertInboundItem(DocumentItem item) {
+    public int insertInboundItem(DocumentItemDTO item) {
         return sqlSessionTemplate.insert("inboundMapper.insertItem", item);
     }
 
     // 품목 수정
-    public int updateInboundItem(DocumentItem item) {
+    public int updateInboundItem(DocumentItemDTO item) {
         return sqlSessionTemplate.update("inboundMapper.updateItem", item);
     }
 
     // 기존 품목 조회
-    public DocumentItem selectInboundItemById(String itemId) {
+    public DocumentItemDTO selectInboundItemById(String itemId) {
         return sqlSessionTemplate.selectOne("inboundMapper.selectItemById", itemId);
     }
 

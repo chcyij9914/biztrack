@@ -3,6 +3,8 @@ package com.erp.biztrack.inbound.model.dto;
 import java.sql.Date;
 import java.util.List;
 
+import com.erp.biztrack.common.DocumentItemDTO;
+
 public class Inbound implements java.io.Serializable{
 
 	private static final long serialVersionUID = 1888455393661772085L;
@@ -487,6 +489,11 @@ public class Inbound implements java.io.Serializable{
 					+ approver2d + ", approve2Date=" + approve2Date + ", approve2Status=" + approve2Status
 					+ ", productName=" + productName + ", subCategoryId=" + subCategoryId + ", unitPrice=" + unitPrice
 					+ ", salePrice=" + salePrice + "]";
+		}
+
+		public DocumentItemDTO[] getItems() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 		
