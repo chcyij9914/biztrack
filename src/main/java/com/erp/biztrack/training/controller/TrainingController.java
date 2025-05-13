@@ -2,6 +2,7 @@ package com.erp.biztrack.training.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -18,12 +19,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.training.model.dto.Training;
 import com.erp.biztrack.training.model.service.TrainingService;
 import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 
@@ -114,7 +118,6 @@ public class TrainingController {
 	}
 	
 // 수강신청 목록 조회
-	
 	@RequestMapping("training/registrationView.do")
 	public ModelAndView trainingRegistrationView(@RequestParam("id") String trainingId, ModelAndView mv) {
 	    Training training = trainingService.selectTraining(trainingId); // 동일 서비스 호출
@@ -127,6 +130,8 @@ public class TrainingController {
 	    }
 	    return mv;
 	}
+	
+	// 수강신청 등록
 	@PostMapping("/training/register.do")
 	@ResponseBody
 	public Map<String, Object> registerTraining(@RequestBody Map<String, String> param) {
@@ -140,6 +145,8 @@ public class TrainingController {
 	    }
 	    return result;
 	}
+	
+	// 수강신청 정원 비활성화
 
 
 
@@ -244,4 +251,30 @@ public class TrainingController {
 
 		return mv;
 	}
+	
+	/*
+	 * @RequestMapping("/register.do") public String
+	 * registerTraining(@RequestParam("trainingId") String trainingId, HttpSession
+	 * session, RedirectAttributes ra) { Training training =
+	 * trainingService.getTrainingById(trainingId);
+	 * 
+	 * if (training != null) { // 수강신청 처리 로직 (DB 저장 또는 상태 변경) // 예: 신청자 세션에서 userId
+	 * 가져와 저장 (별도 테이블 필요시 INSERT) String userId = (String)
+	 * session.getAttribute("loginId");
+	 * trainingService.saveCompletedTraining(userId, trainingId); // 예시용 메서드
+	 * ra.addFlashAttribute("training", training); return
+	 * "redirect:/training/applicant.do?trainingId=" + trainingId; }
+	 * 
+	 * ra.addFlashAttribute("msg", "신청 실패"); return "redirect:/training/list.do"; }
+	 */
+	
+	@RequestMapping("/training/applicant.do")
+	public String showApplicantPage(
+		@RequestParam("trainingId") String trainingId, Model model) {
+	    Training training = trainingService.getTrainingById(trainingId); // DB에서 조회
+	    model.addAttribute("training", training);
+	    return "training/applicant"; // JSP로 이동
+	}
+
+
 }

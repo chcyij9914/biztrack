@@ -136,7 +136,7 @@
       <a class="collapse-item" href="${pageContext.request.contextPath}/list.do">교육 목록</a>
       <a class="collapse-item" href="${pageContext.request.contextPath}/training/register.do">교육 등록</a>
     <%--  <a class="collapse-item" href="${pageContext.request.contextPath}/training/detail.do?id=TR001"> 교육 상세보기</a> --%>
-      <a class="collapse-item" href="${pageContext.request.contextPath}/training/analysis.do" class="btn btn-outline-info">평가 분석</a>
+    <%--   <a class="collapse-item" href="${pageContext.request.contextPath}/training/analysis.do" class="btn btn-outline-info">평가 분석</a> --%>
 
     </div>
   </div>
@@ -156,7 +156,7 @@
       <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/list.do"> 내 수강일정</a>
       <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/progress.do"> 내 학습진도</a>
       <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/assignment.do">과제 제출</a> 
-      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/evaluation.do">평가 작성</a>
+      <%-- <a class="collapse-item" href="${pageContext.request.contextPath}/trainingRecord/evaluation.do">평가 작성</a> --%>
     </div>
   </div>
 </li>
@@ -173,8 +173,9 @@
     <div class="bg-white py-2 collapse-inner rounded">
       <h6 class="collapse-header">수강신청관리 메뉴:</h6>
     <%--    <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/"> 수강신청 </a> --%>
-      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/history.do">수강내역확인</a>
-      <a class="collapse-item" href="/training/applicant.do">수강신청자 관리</a>
+     <a class="collapse-item" href="${pageContext.request.contextPath}/training/applicant.do?trainingId=${training.trainingId}">수강내역 확인</a>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/history.do">수강신청자 관리</a>
+     <%--  <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/applicant.do">수강내역 확인</a> --%>
     </div>
   </div>
 </li>

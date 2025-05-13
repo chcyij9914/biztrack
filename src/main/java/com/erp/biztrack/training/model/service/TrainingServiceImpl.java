@@ -111,4 +111,22 @@ public class TrainingServiceImpl implements TrainingService {
 		
 	}
 
+	@Override
+	public Training getTrainingById(String trainingId) {
+	    return trainingDao.getTrainingById(trainingId);
+	}
+
+	@Override
+	public List<Map<String, Object>> getAllRegistrations() {
+		return null;
+	}
+
+	@Override
+	public List<Map<String, Object>> getTrainingStatusList() {
+		return null;
+	}
+
+	@Override
+	public void saveCompletedTraining(String userId, String trainingId) {
+	}
 }

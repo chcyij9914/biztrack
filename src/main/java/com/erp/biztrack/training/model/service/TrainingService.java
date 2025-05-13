@@ -52,6 +52,12 @@ public interface TrainingService {
 	void registerTraining(Map<String, String> paramMap) throws Exception;
 	void insertTrainingRegistration(Map<String, String> param);
 	
+	List<Map<String, Object>> getAllRegistrations();
+	List<Map<String, Object>> getTrainingStatusList();
 	
-
+	Training getTrainingById(String trainingId);
+	void saveCompletedTraining(String userId, String trainingId);
+	
+	  
 }
+

@@ -13,35 +13,43 @@ import com.erp.biztrack.trainingregistration.model.dao.TrainingRegistrationDao;
 import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
 
 @Service
-public class TrainingRegistrationServiceImpl implements TrainingRegistrationService{
+public class TrainingRegistrationServiceImpl implements TrainingRegistrationService {
+
+	@Autowired
+	private TrainingRegistrationDao trainingRegistrationDao;
+
+	@Override
+	public List<TrainingRegistration> selectByTrainingId(String trainingId) {
+		return trainingRegistrationDao.selectByTrainingId(trainingId);
+	}
+
+	@Override
+	public List<Map<String, Object>> getTrainingStatusList() {
+		return trainingRegistrationDao.getTrainingStatusList();
+	}
 	
-	
-	  @Autowired 
-	  private TrainingRegistrationDao trainingregistrationDao;
-	  
 	  @Override
-	    public List<TrainingRegistration> selectByTrainingId(String trainingId) {
-	        return trainingregistrationDao.selectByTrainingId(trainingId);
+	    public List getAllCourseWithStatus() {
+	        return trainingRegistrationDao.selectAllCourseWithStatus();
 	    }
-	  
-	  // 수강신청 전체 목록 갯수  
-		/*
-		 * @Override public int selectListCount() { return
-		 * trainingregistrationDao.selectListCount(); }
-		 * 
-		 * // 페이징 적용된 전체목록
-		 * 
-		 * @Override public ArrayList<TrainingRegistration> selectJoinedRegistrations()
-		 * { return trainingregistrationDao.selectJoinedRegistrations(); }
-		 * 
-		 * // 전체 수강신청 글 업데이트
-		 * 
-		 * @Override public int insertRegistration(Map<String, Object> paramMap) {
-		 * return trainingregistrationDao.insertRegistration(paramMap);
-		 * 
-		 * }
-		 * 
-		 * @Override public ArrayList<Training> selectAllTrainings() { return
-		 * trainingregistrationDao.selectAllTrainings(); }
-		 */
+
+	  @Override
+	  public List<Map<String, Object>> getAllRegistrations() {
+	      return trainingRegistrationDao.selectAllCourseWithStatus();
+	  }
+
+	@Override
+	public Training getTrainingById(String trainingId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void insertTrainingRegistration(TrainingRegistration dto) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
 }

@@ -1,6 +1,7 @@
 package com.erp.biztrack.training.model.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,17 +95,22 @@ public class TrainingDao {
 	public Object insertTrainingRegistration(Map<String, String> param) {
 		return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", param);
 	}
+	
+	public void insertApplicant(Training training) {
+		sqlSessionTemplate.insert(NAMESPACE + "insertApplicant", training);
+    }
+
+	public Training getTrainingById(String trainingId) {
+		return sqlSessionTemplate.selectOne("trainingMapper.selectTrainingById", trainingId);
+	}
 
 	/*
-	 * public void insertTrainingRegistration(Map<String, String> paramMap) {
-	 * sqlSessionTemplate.insert(NAMESPACE + "insertTrainingRegistration",
-	 * paramMap);
-	 * 
-	 * }
+	 * public Training selectApplicant(String trainingId, String name, String birth,
+	 * String phone) { Map<String, Object> map = new HashMap<>();
+	 * map.put("trainingId", trainingId); map.put("name", name); map.put("birth",
+	 * birth); map.put("phone", phone); return
+	 * sqlSessionTemplate.selectOne(NAMESPACE + "selectApplicant", map); }
 	 */
-
-
-	
 
 	
 }
