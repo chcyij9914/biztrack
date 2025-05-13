@@ -1,140 +1,177 @@
 package com.erp.biztrack.businessdocument.model.dto;
 
-public class DocumentPaging implements java.io.Serializable{
-	private static final long serialVersionUID = -1212718705347152605L;
-	
-	// Filed
-	private int currentPage; // 현재 페이지
-	private int start; // 시작 행 번호
-	private int end; // 끝 행 번호
-	private int limit = 10; // 한 페이지당 게시물 수
-	private int total; // 전체 게시물 수
+public class DocumentPaging implements java.io.Serializable {
+    private static final long serialVersionUID = -1212718705347152605L;
 
-	private String documentTypeId; // 문서 유형 (출고서 'O', 세금계산서 'G' 등)
-	
-	// 검색 관련
+    // 기본 페이징 필드
+    private int currentPage;     // 현재 페이지
+    private int start;           // 시작 행 번호
+    private int end;             // 끝 행 번호
+    private int limit = 10;      // 한 페이지당 게시물 수
+    private int total;           // 전체 게시물 수
+    private int totalPage;       // 전체 페이지 수
+    private int startPage;       // 시작 페이지 번호
+    private int endPage;         // 끝 페이지 번호
+    private int pageBlock = 10;  // 페이지 블럭 단위 (ex: 10 페이지씩 보이기)
+
+    // 문서 유형 (출고서 O, 세금계산서 G 등)
+    private String documentTypeId;
+
+    // 검색 관련 필드
     private String searchType;      // 검색 유형: title, client, status
     private String keyword;         // 검색 키워드
     private String approveStep;     // 결재 단계 (1차 or 2차)
     private String approveStatus;   // 결재 상태 (임시저장, 대기, 승인 등)
-    
-    // 생성자
-	public DocumentPaging() {
-		super();
-	}
-	
-	public DocumentPaging(int currentPage, String documentTypeId) {
-		super();
-		this.currentPage = currentPage;
-		this.documentTypeId = documentTypeId;
-		this.start = (currentPage - 1) * limit + 1;
-	    this.end = this.start + limit - 1;
-	}
 
-	public DocumentPaging(int currentPage, int start, int end, int limit, int total, String documentTypeId,
-			String searchType, String keyword, String approveStep, String approveStatus) {
-		super();
-		this.currentPage = currentPage;
-		this.start = start;
-		this.end = end;
-		this.limit = limit;
-		this.total = total;
-		this.documentTypeId = documentTypeId;
-		this.searchType = searchType;
-		this.keyword = keyword;
-		this.approveStep = approveStep;
-		this.approveStatus = approveStatus;
-	}
-	
-	// getters and setters
-	public int getCurrentPage() {
-		return currentPage;
-	}
+    // 기본 생성자
+    public DocumentPaging() {}
 
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
-	}
+    // 생성자: currentPage와 documentTypeId만 초기화하는 생성자
+    public DocumentPaging(int currentPage, String documentTypeId) {
+        this.currentPage = Math.max(currentPage, 1);
+        this.documentTypeId = documentTypeId;
+        this.start = (this.currentPage - 1) * limit + 1;
+        this.end = this.start + limit - 1;
+    }
 
-	public int getStart() {
-		return start;
-	}
+    // 모든 필드를 포함한 생성자
+    public DocumentPaging(int currentPage, int start, int end, int limit, int total,
+                          String documentTypeId, String searchType, String keyword,
+                          String approveStep, String approveStatus) {
+        this.currentPage = currentPage;
+        this.start = start;
+        this.end = end;
+        this.limit = limit;
+        this.total = total;
+        this.documentTypeId = documentTypeId;
+        this.searchType = searchType;
+        this.keyword = keyword;
+        this.approveStep = approveStep;
+        this.approveStatus = approveStatus;
+    }
 
-	public void setStart(int start) {
-		this.start = start;
-	}
+    // ----- Getter & Setter -----
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
-	public int getEnd() {
-		return end;
-	}
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 
-	public void setEnd(int end) {
-		this.end = end;
-	}
+    public int getStart() {
+        return start;
+    }
 
-	public int getLimit() {
-		return limit;
-	}
+    public void setStart(int start) {
+        this.start = start;
+    }
 
-	public void setLimit(int limit) {
-		this.limit = limit;
-	}
+    public int getEnd() {
+        return end;
+    }
 
-	public int getTotal() {
-		return total;
-	}
+    public void setEnd(int end) {
+        this.end = end;
+    }
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+    public int getLimit() {
+        return limit;
+    }
 
-	public String getDocumentTypeId() {
-		return documentTypeId;
-	}
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
 
-	public void setDocumentTypeId(String documentTypeId) {
-		this.documentTypeId = documentTypeId;
-	}
+    public int getTotal() {
+        return total;
+    }
 
-	public String getSearchType() {
-		return searchType;
-	}
+    // ⚠️ 핵심 로직: total 설정 시 totalPage, startPage, endPage까지 자동 계산
+    public void setTotal(int total) {
+        this.total = total;
 
-	public void setSearchType(String searchType) {
-		this.searchType = searchType;
-	}
+        // 총 페이지 수 계산
+        this.totalPage = (int) Math.ceil((double) total / limit);
 
-	public String getKeyword() {
-		return keyword;
-	}
+        // 시작 페이지 = 현재 페이지 기준으로 계산
+        this.startPage = ((currentPage - 1) / pageBlock) * pageBlock + 1;
 
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
+        // 끝 페이지 = 시작 페이지 + pageBlock - 1
+        this.endPage = startPage + pageBlock - 1;
 
-	public String getApproveStep() {
-		return approveStep;
-	}
+        // 끝 페이지가 총 페이지 수를 초과하면 조정
+        if (endPage > totalPage) {
+            endPage = totalPage;
+        }
+    }
 
-	public void setApproveStep(String approveStep) {
-		this.approveStep = approveStep;
-	}
+    public int getTotalPage() {
+        return totalPage;
+    }
 
-	public String getApproveStatus() {
-		return approveStatus;
-	}
+    public int getStartPage() {
+        return startPage;
+    }
 
-	public void setApproveStatus(String approveStatus) {
-		this.approveStatus = approveStatus;
-	}
+    public int getEndPage() {
+        return endPage;
+    }
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+    public int getPageBlock() {
+        return pageBlock;
+    }
 
-	@Override
-	public String toString() {
-		return "DocumentPaging [currentPage=" + currentPage + ", start=" + start + ", end=" + end + ", limit=" + limit
-				+ ", total=" + total + ", documentTypeId=" + documentTypeId + ", searchType=" + searchType
-				+ ", keyword=" + keyword + ", approveStep=" + approveStep + ", approveStatus=" + approveStatus + "]";
-	}
+    public String getDocumentTypeId() {
+        return documentTypeId;
+    }
+
+    public void setDocumentTypeId(String documentTypeId) {
+        this.documentTypeId = documentTypeId;
+    }
+
+    public String getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getApproveStep() {
+        return approveStep;
+    }
+
+    public void setApproveStep(String approveStep) {
+        this.approveStep = approveStep;
+    }
+
+    public String getApproveStatus() {
+        return approveStatus;
+    }
+
+    public void setApproveStatus(String approveStatus) {
+        this.approveStatus = approveStatus;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    // 디버깅용 toString()
+    @Override
+    public String toString() {
+        return "DocumentPaging [currentPage=" + currentPage + ", start=" + start + ", end=" + end + ", limit=" + limit
+                + ", total=" + total + ", totalPage=" + totalPage + ", startPage=" + startPage + ", endPage=" + endPage
+                + ", documentTypeId=" + documentTypeId + ", searchType=" + searchType + ", keyword=" + keyword
+                + ", approveStep=" + approveStep + ", approveStatus=" + approveStatus + "]";
+    }
 }
