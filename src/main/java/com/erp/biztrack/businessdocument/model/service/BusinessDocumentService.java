@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
+import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
 import com.erp.biztrack.common.Paging;
 
 public interface BusinessDocumentService {
 
-	ArrayList<BusinessDocument> selectDocumentListBySearch(SqlSession session, Map<String, Object> param);
-	int selectDocumentListSearchCount(SqlSession session, String searchType, String keyword);
-	ArrayList<BusinessDocument> selectOutBoundDocumentList(SqlSession session, Paging paging);
-	ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(SqlSession session, Paging paging);
-	int selectOutBoundDocumentListCount(SqlSession session);
-	int selectTaxInvoiceDocumentListCount(SqlSession session);
+	 ArrayList<BusinessDocument> selectDocumentListBySearch(SqlSessionTemplate sqlSessionTemplate, Map<String, Object> param);
+	 int selectDocumentListSearchCount(SqlSessionTemplate sqlSessionTemplate, Map<String, Object> param);
+	 ArrayList<BusinessDocument> selectOutboundDocumentList(DocumentPaging pageInfo);
+	 int selectOutboundListCount(DocumentPaging pageInfo);
+	 ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(SqlSession session, Paging paging);
+	 int selectTaxInvoiceDocumentListCount(SqlSession session);
 }

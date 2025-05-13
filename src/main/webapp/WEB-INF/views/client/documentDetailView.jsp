@@ -26,38 +26,34 @@
 <div class="card shadow mb-4">
     <div class="card-body">
         <!-- 문서 기본 정보 -->
-<table class="table table-bordered">
-    <tbody>
-        <tr>
-            <th>문서번호</th><td>${document.documentId}</td>
-            <th>문서유형</th><td>${document.documentName}</td>
-        </tr>
-        <tr>
-            <th>제목</th><td>${document.title}</td>
-            <th>거래처명</th><td>${document.clientName}</td>
-        </tr>
-        <tr>
-        	<th>작성자</th><td>${document.documentWriterId} / ${document.documentWriterName} / ${document.documentWriterJobTitle}</td>
-            <th>담당자</th><td>${document.documentManagerId} / ${document.documentManagerName} / ${document.documentManagerJobTitle}</td>
-        </tr>
-        <tr>
-            <th>작성일</th>
-            <td><fmt:formatDate value="${document.createdDate}" pattern="yyyy-MM-dd"/></td>
-            <th>수정일</th>
-            <td>
-                <c:choose>
-                    <c:when test="${not empty document.updatedDate}">
-                        <fmt:formatDate value="${document.updatedDate}" pattern="yyyy-MM-dd"/>
-                    </c:when>
-                    <c:otherwise>수정 내역 없음</c:otherwise>
-                </c:choose>
-            </td>
-        </tr>
-        <tr>
-            <th>거래일자</th><td colspan="3"><fmt:formatDate value="${document.documentDate}" pattern="yyyy-MM-dd"/></td>
-        </tr>
-    </tbody>
-</table>
+		<table class="table table-bordered">
+		  <tbody>
+		    <tr>
+		      <th>문서번호</th>
+		      <td>${document.documentId}</td>
+		      <th>문서유형</th>
+		      <td>${document.documentName}</td>
+		      <th>제목</th>
+		      <td>${document.title}</td>
+		    </tr>
+		    <tr>
+		      <th>거래처명</th>
+		      <td>${document.clientName}</td>
+		      <th>작성자</th>
+		      <td>${document.documentWriterId} / ${document.documentWriterName} / ${document.documentWriterJobTitle}</td>
+		      <th>담당자</th>
+		      <td>${document.documentManagerId} / ${document.documentManagerName} / ${document.documentManagerJobTitle}</td>
+		    </tr>
+		    <tr>
+		      <th>작성일</th>
+		      <td><fmt:formatDate value="${document.createdDate}" pattern="yyyy-MM-dd"/></td>
+		      <th>거래일자</th>
+		      <td><fmt:formatDate value="${document.documentDate}" pattern="yyyy-MM-dd"/></td>
+		      <th>결제수단</th>
+		      <td>${document.paymentMethod}</td>
+		    </tr>
+		  </tbody>
+		</table>
 
 <!-- 결재자 정보 블럭 -->
 <h5 class="mt-4">결재 정보</h5>
@@ -113,39 +109,35 @@
 </table>
 
         <!-- 품목 목록 -->
-        <h5 class="mt-4">품목 목록</h5>
-        <table class="table table-bordered text-center">
-            <thead class="thead-light">
-                <tr>
-                    <th>#</th>
-                    <th>제품코드</th>
-                    <th>제품명</th>
-                    <th>수량</th>
-                    <th>단가</th>
-                    <th>금액</th>
-                    <th>결제수단</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="item" items="${document.items}" varStatus="status">
-                    <tr>
-                        <td>${status.index + 1}</td>
-                        <td>${item.productId}</td>
-                        <td>${item.productName}</td>
-                        <td>${item.quantity}</td>
-                        <td><fmt:formatNumber value="${item.salePrice}" pattern="#,##0"/>원</td>
-                        <td><fmt:formatNumber value="${item.amount}" pattern="#,##0"/>원</td>
-                        <td>${item.paymentMethod}</td>
-                    </tr>
-                </c:forEach>
-                <tr class="bg-light font-weight-bold">
-                    <td colspan="5" class="text-right">총합계</td>
-                    <td colspan="2">
-                        <fmt:formatNumber value="${document.totalAmount}" pattern="#,##0" />원
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+		<h5 class="mt-4">품목 목록</h5>
+		<table class="table table-bordered text-center">
+		  <thead class="thead-light">
+		    <tr>
+		      <th>#</th>
+		      <th>제품코드</th>
+		      <th>제품명</th>
+		      <th>수량</th>
+		      <th>단가</th>
+		      <th>금액</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <c:forEach var="item" items="${document.items}" varStatus="status">
+		      <tr>
+		        <td>${status.index + 1}</td>
+		        <td>${item.productId}</td>
+		        <td>${item.productName}</td>
+		        <td>${item.quantity}</td>
+		        <td><fmt:formatNumber value="${item.salePrice}" pattern="#,##0"/>원</td>
+		        <td><fmt:formatNumber value="${item.amount}" pattern="#,##0"/>원</td>
+		      </tr>
+		    </c:forEach>
+		    <tr class="bg-light font-weight-bold">
+		      <td colspan="5" class="text-right">총합계</td>
+		      <td><fmt:formatNumber value="${document.totalAmount}" pattern="#,##0" />원</td>
+		    </tr>
+		  </tbody>
+		</table>
 
         <!-- 비고 -->
         <h5 class="mt-4">비고</h5>
@@ -184,6 +176,16 @@
             <a href="${pageContext.request.contextPath}/client/documentList.do" class="btn btn-info">
                 <i class="fas fa-list"></i> 목록으로
             </a>
+            <button type="button" class="btn btn-danger" onclick="confirmDelete('${document.documentId}')">
+		        <i class="fas fa-trash-alt"></i> 삭제
+		    </button>
+		    <script>
+			function confirmDelete(documentId) {
+			  if (confirm("정말 이 문서를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {
+			    location.href = '${pageContext.request.contextPath}/client/documentDelete.do?documentId=' + documentId;
+			  }
+			}
+			</script>
         </div>
     </div>
 </div>

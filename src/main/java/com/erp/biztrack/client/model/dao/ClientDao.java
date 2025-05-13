@@ -218,6 +218,16 @@ public class ClientDao {
         return sqlSessionTemplate.update("clientMapper.updateDocumentItem", item);
     }
     
+    // 문서 삭제
+    public int deleteDocumentOnly(String documentId) {
+    	return sqlSessionTemplate.delete("clientMapper.deleteDocumentOnly", documentId);
+    }
+    
+    // 결재 정보 삭제
+    public int deleteApprove(String documentId) {
+    	return sqlSessionTemplate.delete("clientMapper.deleteApprove", documentId);
+    }
+    
     // 문서 파일 삭제
     public int deleteFileByDocumentId(String documentId) {
         return sqlSessionTemplate.delete("clientMapper.deleteFileByDocumentId", documentId);

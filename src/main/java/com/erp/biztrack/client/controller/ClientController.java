@@ -702,5 +702,15 @@ public class ClientController {
         }
         return result;
     }
+    
+    @GetMapping("documentDelete.do")
+    public String deleteDocument(@RequestParam("documentId") String documentId) {
+        // 삭제 순서 중요!
+    	clientService.deleteDocumentItems(documentId);
+    	clientService.deleteApprove(documentId);
+    	clientService.deleteFileByDocumentId(documentId);
+    	clientService.deleteDocumentOnly(documentId);
 
+        return "redirect:/client/documentList.do";
+    }
 }
