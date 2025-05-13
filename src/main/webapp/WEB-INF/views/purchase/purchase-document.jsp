@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -71,8 +71,10 @@
 
 						<div class="d-flex align-items-center">
 							<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-								onclick="window.open('${pageContext.request.contextPath}/purchase/new-purchase.do', 'newWindow', 'width=800,height=600'); return false;">
-								+ 새문서 </a>
+								onclick="window.open('${pageContext.request.contextPath}/purchase/new-purchase.do', 'newWindow', 'width=1000,height=800'); return false;">
+								+ 품의서 </a> <a href="#" class="btn btn-primary px-3 py-2 mr-3"
+								onclick="window.open('${pageContext.request.contextPath}/purchase/new-payment.do', 'newWindow', 'width=1000,height=800'); return false;">
+								+ 지출결의서 </a>
 
 							<form class="form-inline"
 								action="${pageContext.request.contextPath}/purchase/search.do"
