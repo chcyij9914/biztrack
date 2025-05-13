@@ -21,39 +21,57 @@ public class GraphController {
 
     @Autowired
     private GraphService graphService;
-    
-    @RequestMapping(value = "/api/profitData.do", produces = "application/json; charset=UTF-8")
+
+    // 제품별 영업이익 그래프 API
+    @RequestMapping(value = "/api/profitGraph.do", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public ArrayList<Graph> getProfitData() {
-        return graphService.getProfitByProduct();
+        return (ArrayList<Graph>) graphService.selectProfitGraphData();
     }
     
+    
+    // 거래처별 거래건수 그래프 API
     @RequestMapping(value = "/api/transactionCountGraph.do", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public ArrayList<Graph> getTransactionCountData() {
         return (ArrayList<Graph>) graphService.getTransactionCountData();
     }
-    
-    // 그래프 대시보드 화면 이동
+
+
+    // 부서별 영업실적 그래프 API
+    @RequestMapping(value = "/api/departmentSalesPerformanceGraph.do", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public ArrayList<Graph> getDepartmentSalesData() {
+        return (ArrayList<Graph>) graphService.getDepartmentSalesPerformanceData();
+    }
+
+    // 그래프 대시보드 화면
     @RequestMapping("/dashBoard.do")
     public String showDashBoardViewPage() {
-        return "/graph/graphDashBoardView"; 
+        return "/graph/graphDashBoardView";
     }
-    
-    // 영업이익 분석 그래프 
+
+    // 제품별 영업이익 그래프
     @RequestMapping("/profitGraph.do")
     public String showProfitGraph(Model model) {
         List<Graph> profitGraphList = graphService.selectProfitGraphData();
         model.addAttribute("profitGraphList", profitGraphList);
-        return "/graph/profitGraphView"; 
+        return "/graph/profitGraphView";
     }
-    
-    // 거래건수 그래프 
+
+    // 거래건수 그래프
     @RequestMapping("/transactionCountGraph.do")
     public String showTransactionCount(Model model) {
         List<Graph> list = graphService.getTransactionCountData();
-        model.addAttribute("transactionCountList", list); 
+        model.addAttribute("transactionCountList", list);
         return "graph/transactionCountGraphView";
     }
 
+    // 부서별 영업실적 그래프
+    @RequestMapping("/departmentSalesPerformanceGraph.do")
+    public String departmentSalesPerformanceGraph(Model model) {
+        List<Graph> deptGraphList = graphService.getDepartmentSalesPerformanceData();
+        model.addAttribute("deptGraphList", deptGraphList);
+        return "graph/departmentSalesPerformanceGraphView";
+    }
 }

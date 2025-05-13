@@ -30,30 +30,20 @@
             <h1 class="h4 mb-0 text-gray-800">영업 그래프 대시보드</h1>
           </div>
 
-          <!-- 좌우 2열 구조 -->
+          <!-- 첫 번째 행: 제품별 영업이익, 거래처별 거래건수 -->
           <div class="row">
-            <!-- 제품별 영업이익 -->
             <div class="col-md-6 mb-4">
               <c:import url="/graph/profitGraph.do?fragment=true" />
             </div>
-
-            <!-- 거래처별 거래건수 -->
             <div class="col-md-6 mb-4">
               <c:import url="/graph/transactionCountGraph.do?fragment=true" />
             </div>
           </div>
 
-          <!-- 하단 추가 영역 -->
+          <!-- 두 번째 행: 부서별 영업실적 -->
           <div class="row">
-            <div class="col-md-12">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">추가 영역</h6>
-                </div>
-                <div class="card-body">
-                  <p>추가 그래프나 표 자리를 위한 공간입니다.</p>
-                </div>
-              </div>
+            <div class="col-md-12 mb-4">
+              <c:import url="/graph/departmentSalesPerformanceGraph.do?fragment=true" />
             </div>
           </div>
 
