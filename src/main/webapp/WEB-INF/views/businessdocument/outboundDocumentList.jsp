@@ -5,7 +5,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>영업문서 목록</title>
+  <title>출고서 목록</title>
   <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
   <link href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
   <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
@@ -16,33 +16,31 @@
   <%@ include file="/WEB-INF/views/common/menubar.jsp" %>
 
   <div class="container-fluid mt-4">
-    <h1 class="h4 text-gray-800 mb-4">영업문서 목록</h1>
-
-    <!-- 상단 버튼 + 검색창 -->
+    <!-- 타이틀 + 버튼 정렬 -->
     <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h4 text-gray-800 mb-0">문서 목록</h1>
       <div>
-        <a href="${pageContext.request.contextPath}/businessdocument/outboundList.do" class="btn btn-outline-primary btn-sm">출고서 목록</a>
+        <a href="${pageContext.request.contextPath}/businessdocument/outboundList.do" class="btn btn-primary btn-sm">출고서 목록</a>
         <a href="${pageContext.request.contextPath}/businessdocument/taxinvoiceList.do" class="btn btn-outline-primary btn-sm">세금계산서 목록</a>
       </div>
+    </div>
 
+    <!-- 검색창 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="d-flex">
-        <form class="form-inline mr-2" action="${pageContext.request.contextPath}/businessdocument/BusinessDocumentList.do" method="get">
-          <!-- 검색 조건 -->
+        <form class="form-inline mr-2" action="${pageContext.request.contextPath}/businessdocument/outboundList.do" method="get">
           <select name="searchType" id="searchType" class="form-control mr-2">
             <option value="title" ${param.searchType == 'title' ? 'selected' : ''}>제목</option>
             <option value="client" ${param.searchType == 'client' ? 'selected' : ''}>거래처명</option>
             <option value="status" ${param.searchType == 'status' ? 'selected' : ''}>상태</option>
           </select>
 
-          <!-- 제목 검색 -->
           <input type="text" class="form-control mr-2" id="textInput" placeholder="제목 입력"
                  style="display:none;" value="${param.searchType == 'title' ? param.keyword : ''}"/>
 
-          <!-- 거래처 검색 -->
           <input type="text" class="form-control mr-2" id="clientInput" placeholder="거래처명 입력"
                  style="display:none;" value="${param.searchType == 'client' ? param.keyword : ''}"/>
 
-          <!-- 상태 검색 -->
           <select name="approveStep" id="approveStepSelect" class="form-control mr-2" style="display:none;">
             <option value="">단계 선택</option>
             <option value="1" ${param.approveStep == '1' ? 'selected' : ''}>1차 결재</option>
@@ -58,9 +56,7 @@
             <option value="반려" ${param.approveStatus == '반려' ? 'selected' : ''}>반려</option>
           </select>
 
-          <!-- keyword 전달용 hidden input -->
           <input type="hidden" name="keyword" id="keywordHidden"/>
-
           <button type="submit" class="btn btn-primary">검색</button>
         </form>
 
@@ -71,7 +67,7 @@
     <!-- 목록 테이블 -->
     <div class="card shadow mb-4">
       <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">문서 목록</h6>
+        <h6 class="m-0 font-weight-bold text-primary">출고서 목록</h6>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -91,13 +87,7 @@
               <c:forEach var="doc" items="${documentList}">
                 <tr>
                   <td>${doc.documentId}</td>
-                  <td>
-                    <c:choose>
-                      <c:when test="${doc.documentTypeId eq 'O'}">출고서</c:when>
-                      <c:when test="${doc.documentTypeId eq 'G'}">세금계산서</c:when>
-                      <c:otherwise>기타</c:otherwise>
-                    </c:choose>
-                  </td>
+                  <td>출고서</td>
                   <td><fmt:formatDate value="${doc.createdDate}" pattern="yyyy-MM-dd"/></td>
                   <td>${doc.title}</td>
                   <td>${doc.clientName}</td>
