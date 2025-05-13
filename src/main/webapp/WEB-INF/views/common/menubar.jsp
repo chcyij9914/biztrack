@@ -172,8 +172,8 @@
   <div id="collapseApply" class="collapse" aria-labelledby="headingApply" data-parent="#accordionSidebar">
     <div class="bg-white py-2 collapse-inner rounded">
       <h6 class="collapse-header">수강신청관리 메뉴:</h6>
-       <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/"> 수강신청 </a>
-      <a class="collapse-item" href="/training/history.do">수강내역확인</a>
+    <%--    <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/"> 수강신청 </a> --%>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/trainingregistration/history.do">수강내역확인</a>
       <a class="collapse-item" href="/training/applicant.do">수강신청자 관리</a>
     </div>
   </div>

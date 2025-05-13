@@ -152,13 +152,13 @@
 									&nbsp;&nbsp; 
 									<%-- </c:if>
 									 --%>
-									<a href="${pageContext.request.contextPath}"
-											class="btn btn-warning btn-icon-split mr-2"> <span
-											class="icon text-white-50"> <i class="fas fa-edit"></i>
-										</span> <span class="text"> 수강신청</span>
-
-
-										</a>
+									<!-- 수강신청 버튼 -->
+									<a
+										href="${pageContext.request.contextPath}/training/registrationView.do?id=${training.trainingId}"
+										class="btn btn-warning btn-icon-split mr-2"> <span
+										class="icon text-white-50"> <i class="fas fa-edit"></i>
+									</span> <span class="text">수강신청</span>
+									</a> </a>
 										<a href="javascript:history.back();"
 											class="btn btn-secondary btn-icon-split mr-2"> <span
 											class="icon text-white-50"> <i

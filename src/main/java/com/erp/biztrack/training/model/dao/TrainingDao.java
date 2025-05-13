@@ -2,6 +2,7 @@ package com.erp.biztrack.training.model.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,15 @@ import org.springframework.stereotype.Repository;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.training.model.dto.Training;
+import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
 
 @Repository
 public class TrainingDao {
 	
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
+	
+	private final String NAMESPACE = "trainingMapper.";
 	
 	public int selectListCount() {
 		return sqlSessionTemplate.selectOne("trainingMapper.selectListCount");
@@ -82,6 +86,22 @@ public class TrainingDao {
 		 return sqlSessionTemplate.selectOne("trainingMapper.selectSearchInstructorCount", keyword);
 	}
 
+	
+	public int insertRegistration(TrainingRegistration registration) {
+	    return sqlSessionTemplate.insert("trainingMapper.insertRegistration", registration);
+	}
+
+	public Object insertTrainingRegistration(Map<String, String> param) {
+		return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", param);
+	}
+
+	/*
+	 * public void insertTrainingRegistration(Map<String, String> paramMap) {
+	 * sqlSessionTemplate.insert(NAMESPACE + "insertTrainingRegistration",
+	 * paramMap);
+	 * 
+	 * }
+	 */
 
 
 	

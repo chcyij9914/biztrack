@@ -1,6 +1,8 @@
 package com.erp.biztrack.training.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,15 +11,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.training.model.dto.Training;
 import com.erp.biztrack.training.model.service.TrainingService;
+import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
 
 @Controller
 
@@ -106,6 +112,36 @@ public class TrainingController {
 
 		return mv;
 	}
+	
+// 수강신청 목록 조회
+	
+	@RequestMapping("training/registrationView.do")
+	public ModelAndView trainingRegistrationView(@RequestParam("id") String trainingId, ModelAndView mv) {
+	    Training training = trainingService.selectTraining(trainingId); // 동일 서비스 호출
+	    if (training != null) {
+	        mv.addObject("training", training);
+	        mv.setViewName("training/registrationView");
+	    } else {
+	        mv.addObject("message", trainingId + "번 교육 정보를 불러올 수 없습니다.");
+	        mv.setViewName("common/error");
+	    }
+	    return mv;
+	}
+	@PostMapping("/training/register.do")
+	@ResponseBody
+	public Map<String, Object> registerTraining(@RequestBody Map<String, String> param) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        trainingService.insertTrainingRegistration(param);
+	        result.put("status", "success");
+	    } catch (Exception e) {
+	        result.put("status", "fail");
+	        result.put("message", e.getMessage());
+	    }
+	    return result;
+	}
+
+
 
 	// 교육 삭제
 	@RequestMapping(value = "/training/delete.do", method = RequestMethod.POST)
@@ -144,7 +180,8 @@ public class TrainingController {
 	    // 분석 데이터 로딩 로직 작성
 	    return "training/analysis";
 	}
-
+	
+	
 	// 교육 검색 페이지
 	@RequestMapping("training/searchAll.do")
 	public ModelAndView trainingSearchAllMethod(

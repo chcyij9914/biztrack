@@ -2,10 +2,12 @@ package com.erp.biztrack.training.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
 import com.erp.biztrack.training.model.dto.Training;
+import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
 
 public interface TrainingService {
 
@@ -43,6 +45,12 @@ public interface TrainingService {
 	int selectSearchInstructorCount(String keyword);
 	ArrayList<Training> selectSearchInstructor(Search search);
 	ArrayList<Training> selectAll(Paging paging);
+
+	
+	int insertRegistration(TrainingRegistration registration);
+
+	void registerTraining(Map<String, String> paramMap) throws Exception;
+	void insertTrainingRegistration(Map<String, String> param);
 	
 	
 
