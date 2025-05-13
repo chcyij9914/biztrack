@@ -15,18 +15,19 @@ public class GraphDao {
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 	
-	public ArrayList<Graph> getProfitByProduct() {
-	    return (ArrayList) sqlSessionTemplate.selectList("graphMapper.ProfitGraphData");
-	}
-	
 	// 제품별 영업이익 데이터 조회
 	public List<Graph> selectProfitGraphData() {
-        return sqlSessionTemplate.selectList("graphMapper.ProfitGraphData");
+        return sqlSessionTemplate.selectList("graphMapper.ProfitGraph");
 	 }
 	
 	// 거래건수 그래프 데이터 조회
     public List<Graph> getTransactionCountData() {
         return sqlSessionTemplate.selectList("graphMapper.TransactionCountGraph");
+    }
+    
+ // 부서별 영업실적 데이터 조회
+    public ArrayList<Graph> getDepartmentSalesPerformanceData() {
+        return new ArrayList<>(sqlSessionTemplate.selectList("graphMapper.DepartmentSalesPerformanceGraph"));
     }
 
 }

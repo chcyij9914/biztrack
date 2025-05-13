@@ -17,11 +17,6 @@ public class GraphServiceImpl implements GraphService {
 	private GraphDao graphDao;
 	
 	@Override
-	public ArrayList<Graph> getProfitByProduct() {
-		return graphDao.getProfitByProduct();
-	}
-
-	@Override
 	public List<Graph> selectProfitGraphData() {
 		return graphDao.selectProfitGraphData();
 	}
@@ -29,6 +24,11 @@ public class GraphServiceImpl implements GraphService {
 	@Override
 	public List<Graph> getTransactionCountData() {
 		return graphDao.getTransactionCountData();
+	}
+
+	@Override
+	public ArrayList<Graph> getDepartmentSalesPerformanceData() {
+		return graphDao.getDepartmentSalesPerformanceData();
 	}
 
 
