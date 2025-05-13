@@ -62,5 +62,8 @@ public interface ClientService {
     int updateApprove(ApproveDTO approve);
     int updateDocumentItem(DocumentItemDTO item);
     int deleteFileByDocumentId(String documentId);
+    //문서 삭제 관련 ----------------------------------------------
+    int deleteDocumentOnly(String documentId);
+    int deleteApprove(String documentId);
 }
 

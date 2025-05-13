@@ -163,14 +163,17 @@
               <td><input type="number" name="items[0].quantity" class="form-control" oninput="calculateAmount(0)"></td>
               <td><input type="number" name="items[0].salePrice" class="form-control" readonly></td>
               <td><input type="number" name="items[0].amount" class="form-control" readonly></td>
-              <td>
-                <select name="items[0].paymentMethod" class="form-control payment-select" required>
-				  <option value="" disabled selected>-- 결제수단 선택 --</option>
-				  <option value="카드">신용카드</option>
-				  <option value="계좌이제">계좌이체</option>
-				  <option value="현금">현금</option>
-				</select>
-              </td>
+              <div class="form-row mb-3">
+			  <div class="col-md-4">
+			    <label>결제수단</label>
+			    <select name="paymentMethod" class="form-control" required>
+			      <option value="" disabled selected>-- 결제수단 선택 --</option>
+			      <option value="카드">신용카드</option>
+			      <option value="계좌이체">계좌이체</option>
+			      <option value="현금">현금</option>
+			    </select>
+			  </div>
+			</div>
               <td><button type="button" class="btn btn-danger btn-sm btn-delete" onclick="removeRow(this)">삭제</button></td>
             </tr>
           </tbody>
@@ -290,7 +293,7 @@ $(function () {
 	      el.innerHTML = `
 	        <option value="" disabled selected>-- 결제수단 선택 --</option>
 	        <option value="카드">신용카드</option>
-	        <option value="계좌이제">계좌이체</option>
+	        <option value="계좌이체">계좌이체</option>
 	        <option value="현금">현금</option>
 	      `;
 	    }
