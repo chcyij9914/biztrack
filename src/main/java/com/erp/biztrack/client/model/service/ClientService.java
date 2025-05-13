@@ -2,6 +2,7 @@ package com.erp.biztrack.client.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.common.ApproveDTO;
@@ -42,15 +43,17 @@ public interface ClientService {
     // 거래처 삭제
     int deleteClient(String clientId);
     //거래처 문서 목록 조회 관련 ---------------------------------------------
-    ArrayList<DocumentDTO> selectDocumentList(Paging paging);
-    int selectDocumentListCount();
+    int selectDocumentListCountByType(String documentTypeId);
+    ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
     //문서등록관련---------------------------------
     int insertDocument(DocumentDTO document);
     int insertDocumentItem(DocumentItemDTO item);
     int insertApproval(ApproveDTO approval);
+    String selectNextDocumentIdC();
     String selectNextDocumentIdD();
     String selectNextApproveId();
     String selectNextItemId();
+    ArrayList<DocumentDTO> selectProposalListByWriter(String empId);
     //문서 상세정보 관련 -------------------------------------
     FileDTO selectFileByDocumentId(String documentId);
     DocumentDTO selectOneDocument(String documentId);
@@ -65,5 +68,12 @@ public interface ClientService {
     //문서 삭제 관련 ----------------------------------------------
     int deleteDocumentOnly(String documentId);
     int deleteApprove(String documentId);
+    //문서 검색 관련----------------------------
+    int selectDocumentCountByTitle(Search search);
+    ArrayList<DocumentDTO> selectDocumentListByTitle(Search search);
+    int selectDocumentCountByClientName(Search search);
+    ArrayList<DocumentDTO> selectDocumentListByClientName(Search search);
+    int selectDocumentCountByStatus(Search search);
+    ArrayList<DocumentDTO> selectDocumentListByStatus(Search search);
 }
 

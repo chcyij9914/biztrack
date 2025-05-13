@@ -136,14 +136,14 @@ public class ClientDao {
     }
     
     // 거래처 문서 목록 조회
-    public ArrayList<DocumentDTO> selectDocumentList(Paging paging) {
-    	List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentList", paging);
-		return (ArrayList<DocumentDTO>) list;
+    public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByType", param);
+        return (ArrayList<DocumentDTO>) list;
     }
     
     // 거래처 문서 전체 수
-    public int selectDocumentListCount() {
-        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentListCount");
+    public int selectDocumentListCountByType(String documentTypeId) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentListCountByType", documentTypeId);
     }
     
     // 문서 등록
@@ -166,6 +166,11 @@ public class ClientDao {
     	return sqlSessionTemplate.selectOne("clientMapper.selectNextDocumentIdD");
     }
     
+    //계약서 문서번호 시퀀스
+    public String selectNextDocumentIdC() {
+    	return sqlSessionTemplate.selectOne("clientMapper.selectNextDocumentIdC");
+    }
+    
     // 결재 ID 시퀀스 조회
     public String selectNextApproveId() {
     	return sqlSessionTemplate.selectOne("clientMapper.selectNextApproveId");
@@ -179,6 +184,12 @@ public class ClientDao {
     // 문서 파일 다운로드 & 상세정보 조회
     public FileDTO selectFileByDocumentId(String documentId) {
         return sqlSessionTemplate.selectOne("clientMapper.selectFileByDocumentId", documentId);
+    }
+    
+ // 작성자 기준 제안서 목록 조회
+    public ArrayList<DocumentDTO> selectProposalListByWriter(String empId) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectProposalListByWriter", empId);
+        return (ArrayList<DocumentDTO>) list;
     }
     
     // 문서 상세정보 조회
@@ -231,5 +242,36 @@ public class ClientDao {
     // 문서 파일 삭제
     public int deleteFileByDocumentId(String documentId) {
         return sqlSessionTemplate.delete("clientMapper.deleteFileByDocumentId", documentId);
+    }
+    
+    // 문서 검색 관련------------------------------------
+    // 제목 검색
+    public int selectDocumentCountByTitle(Search search) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentCountByTitle", search);
+    }
+
+    public ArrayList<DocumentDTO> selectDocumentListByTitle(Search search) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByTitle", search);
+        return (ArrayList<DocumentDTO>) list;
+    }
+
+    // 거래처명 검색
+    public int selectDocumentCountByClientName(Search search) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentCountByClientName", search);
+    }
+
+    public ArrayList<DocumentDTO> selectDocumentListByClientName(Search search) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByClientName", search);
+        return (ArrayList<DocumentDTO>) list;
+    }
+
+    // 상태 검색 (approveStep + status)
+    public int selectDocumentCountByStatus(Search search) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentCountByStatus", search);
+    }
+
+    public ArrayList<DocumentDTO> selectDocumentListByStatus(Search search) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByStatus", search);
+        return (ArrayList<DocumentDTO>) list;
     }
 }

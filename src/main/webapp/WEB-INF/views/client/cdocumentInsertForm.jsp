@@ -4,13 +4,12 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>문서 등록</title>
+  <title>계약서 등록</title>
   <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
   <link href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
   <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
   <style>
-    #itemTable th,
-    #itemTable td {
+    #itemTable th, #itemTable td {
       vertical-align: middle;
       text-align: center;
       font-size: 15px;
@@ -20,9 +19,6 @@
     }
     td input.form-control.product-name {
       min-width: 160px;
-    }
-    td select.form-control.payment-select {
-      min-width: 120px;
     }
     td button.btn-sm {
       padding: 0.25rem 0.75rem;
@@ -63,22 +59,40 @@
 <div class="container mt-5">
   <div class="card shadow">
     <div class="card-header bg-primary text-white">
-      <h4 class="m-0">제안서 등록</h4>
+      <h4 class="m-0">계약서 등록</h4>
     </div>
     <div class="card-body">
       <form action="${pageContext.request.contextPath}/client/documentInsert.do" method="post" enctype="multipart/form-data">
 
-        <!-- 상단 필드 -->
+        <!-- 연결 제안서 -->
+        <div class="form-row mb-3">
+          <div class="col-md-6">
+            <label>연결 제안서</label>
+            <div class="input-group">
+              <select id="proposalSelect" class="form-control">
+                <option value="">-- 제안서 선택 --</option>
+                <c:forEach var="doc" items="${proposalList}">
+                  <option value="${doc.documentId}">${doc.documentId} - ${doc.title}</option>
+                </c:forEach>
+              </select>
+              <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" onclick="loadProposalInfo()">불러오기</button>
+              </div>
+            </div>
+            <input type="hidden" name="connectDocumentId" id="connectDocumentId" />
+          </div>
+        </div>
+
+        <!-- 문서정보 -->
         <div class="form-row mb-3">
           <div class="col-md-2">
             <label>문서유형</label>
-            <label>문서유형</label>
-		    <input type="hidden" name="documentTypeId" value="D" />
-		    <input type="text" class="form-control" value="제안서" readonly />
+            <input type="hidden" name="documentTypeId" value="C" />
+            <input type="text" class="form-control" value="계약서" readonly />
           </div>
           <div class="col-md-2">
             <label>문서번호</label>
-            <input type="text" class="form-control" value="자동 생성됨" readonly />
+            <input type="text" class="form-control" value="자동 생성됩니다" readonly />
           </div>
           <div class="col-md-4">
             <label>제목</label>
@@ -86,6 +100,7 @@
           </div>
         </div>
 
+        <!-- 작성자 / 담당자 -->
         <div class="form-row mb-3">
           <div class="col-md-6">
             <label>작성자</label>
@@ -98,7 +113,7 @@
             <input type="hidden" name="managerEmpId" value="${sessionScope.loginInfo.empId}" />
           </div>
         </div>
-
+        
         <!-- 결재자 지정 (조직도 팝업 1개로 통합) -->
 		<div class="form-row mb-3">
 		  <div class="col-md-6">
@@ -118,83 +133,78 @@
 		  </div>
 		</div>
 
-        <!-- <div class="form-row mb-3">
-          <div class="col-md-3">
-            <label>1차 결재일자</label>
-            <input type="date" name="approve1Date" class="form-control" />
-          </div>
-          <div class="col-md-3">
-            <label>2차 결재일자</label>
-            <input type="date" name="approve2Date" class="form-control" />
-          </div>
-        </div> -->
-
-        <!-- 품목 리스트 테이블 -->
-        <table class="table table-bordered mb-3" id="itemTable">
-          <thead>
-            <tr class="text-center">
-              <th style="width: 30px;">#</th>
-              <th style="min-width: 180px;">물품코드</th>
-              <th>물품명</th>
-              <th>수량</th>
-              <th>단가</th>
-              <th>금액</th>
-              <th style="width: 80px;">삭제</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>
-                <select name="items[0].productId" class="form-control product-select" onchange="updatePrice(this)">
-				  <option value="" disabled selected>-- 품목 선택 --</option>  
-				  <c:forEach var="p" items="${productList}">
-					  <option value="${p.productId}"
-					          data-name="${p.productName}"
-					          data-price="${p.salePrice}"
-					          data-category="${p.categoryId}">
-					    ${p.productId} - ${p.productName}
-					  </option>
-					</c:forEach>
-				</select>
-              </td>
-              <td><input type="text" name="items[0].productName" class="form-control" readonly></td>
-              <td><input type="number" name="items[0].quantity" class="form-control" oninput="calculateAmount(0)"></td>
-              <td><input type="number" name="items[0].salePrice" class="form-control" readonly></td>
-              <td><input type="number" name="items[0].amount" class="form-control" readonly></td>
-              <div class="form-row mb-3">
-			  <div class="col-md-4">
-			    <label>결제수단</label>
-			    <select name="paymentMethod" class="form-control" required>
-			      <option value="" disabled selected>-- 결제수단 선택 --</option>
-			      <option value="카드">신용카드</option>
-			      <option value="계좌이체">계좌이체</option>
-			      <option value="현금">현금</option>
-			    </select>
-			  </div>
-			</div>
-              <td><button type="button" class="btn btn-danger btn-sm btn-delete" onclick="removeRow(this)">삭제</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <button type="button" class="btn btn-outline-primary mb-3" onclick="addItemRow()">+ 품목 추가</button>
-        <!-- 총합계 표시 -->
-		<div class="text-right mb-3">
-		  <strong>총합계:</strong> <span id="totalAmountDisplay">0</span>원
-		</div>
-
-        <!-- 거래처 및 거래일자 -->
+        <!-- 결제수단 -->
         <div class="form-row mb-3">
           <div class="col-md-4">
-            <label>거래처</label>
+            <label>결제수단</label>
+            <select name="paymentMethod" class="form-control" required>
+              <option value="" disabled selected>-- 결제수단 선택 --</option>
+              <option value="카드">신용카드</option>
+              <option value="계좌이체">계좌이체</option>
+              <option value="현금">현금</option>
+            </select>
+          </div>
+        </div>
+
+        <table class="table table-bordered mb-3" id="itemTable">
+		  <thead>
+		    <tr class="text-center">
+		      <th>#</th>
+		      <th>물품코드</th>
+		      <th>물품명</th>
+		      <th>수량</th>
+		      <th>단가</th>
+		      <th>금액</th>
+		      <th>삭제</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr>
+		      <td>1</td>
+		      <td>
+		        <select name="items[0].productId" class="form-control product-select" onchange="updatePrice(this)">
+		          <option value="">-- 품목 선택 --</option>
+		          <c:forEach var="prod" items="${productList}">
+		            <option value="${prod.productId}"
+					        data-name="${prod.productName}"
+					        data-price="${prod.salePrice}"
+					        data-category="${prod.categoryId}">
+					  ${prod.productId} - ${prod.productName}
+					</option>
+		          </c:forEach>
+		        </select>
+		      </td>
+		      <td><input type="text" name="items[0].productName" class="form-control" readonly></td>
+		      <td><input type="number" name="items[0].quantity" class="form-control" oninput="calculateAmount(0)"></td>
+		      <td><input type="number" name="items[0].salePrice" class="form-control" readonly></td>
+		      <td><input type="number" name="items[0].amount" class="form-control" readonly></td>
+		      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">삭제</button></td>
+		    </tr>
+		  </tbody>
+		</table>
+		
+		<!-- 품목 추가 버튼 & 총합 -->
+		<div class="form-row mb-3">
+		  <div class="col-md-6">
+		    <button type="button" class="btn btn-secondary" onclick="addItemRow()">+ 품목 추가</button>
+		  </div>
+		  <div class="col-md-6 text-right">
+		    <label><strong>총합계: </strong><span id="totalAmountDisplay">0</span> 원</label>
+		  </div>
+		</div>
+
+        <!-- 거래차 / 거래일자 -->
+        <div class="form-row mb-3">
+          <div class="col-md-4">
+            <label>거래차</label>
             <select name="clientId" id="clientId" class="form-control" required>
-			  <option value="" disabled selected>-- 거래처 선택 --</option>
-			  <c:forEach var="c" items="${clientList}">
-				  <option value="${c.clientId}" data-category="${c.categoryId}">
-				    ${c.clientId} - ${c.clientName}
-				  </option>
-				</c:forEach>
-			</select>
+              <option value="" disabled selected>-- 거래차 선택 --</option>
+              <c:forEach var="c" items="${clientList}">
+                <option value="${c.clientId}" data-category="${c.categoryId}">
+                  ${c.clientId} - ${c.clientName}
+                </option>
+              </c:forEach>
+            </select>
           </div>
           <div class="col-md-4">
             <label>거래일자</label>
@@ -202,25 +212,18 @@
           </div>
         </div>
 
-        <!-- 비고 -->
+        <!-- 비고 / 파일 -->
         <div class="form-group">
           <label>비고</label>
           <textarea name="remarks" class="form-control" rows="3"></textarea>
         </div>
-
-        <!-- 첨부파일 -->
         <div class="form-group">
-          <label>첨부파일</label>
+          <label>채팅파일</label>
           <input type="file" name="uploadFile" class="form-control-file" />
         </div>
-
-        <!-- 버튼 -->
         <div class="text-right">
           <button type="submit" class="btn btn-primary">상신</button>
         </div>
-        <c:if test="${not empty msg}">
-		  <div class="alert alert-success">${msg}</div>
-		</c:if>
       </form>
     </div>
   </div>
@@ -323,22 +326,41 @@ $(function () {
 
 	// 금액 계산
 	function updatePrice(select) {
-	  const row = select.closest('tr');
-	  const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
-	
-	  const option = select.options[select.selectedIndex];
-	  row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
-	  row.querySelector('[name="items[' + idx + '].salePrice"]').value = option.getAttribute('data-price');
-	  calculateAmount(idx);
-	}
+  const row = select.closest('tr');
+  const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
+
+  const option = select.options[select.selectedIndex];
+
+  const productNameInput = row.querySelector(`[name="items[${idx}].productName"]`);
+  const salePriceInput = row.querySelector(`[name="items[${idx}].salePrice"]`);
+
+  if (productNameInput && option) {
+    productNameInput.value = option.getAttribute('data-name') || '';
+  }
+
+  if (salePriceInput && option) {
+    salePriceInput.value = option.getAttribute('data-price') || '';
+  }
+
+  calculateAmount(idx);
+}
 
 	function calculateAmount(idx) {
 		  const row = document.querySelectorAll('#itemTable tbody tr')[idx];
-		  const qty = parseInt(row.querySelector('[name="items[' + idx + '].quantity"]').value || 0);
-		  const price = parseInt(row.querySelector('[name="items[' + idx + '].salePrice"]').value || 0);
-		  row.querySelector('[name="items[' + idx + '].amount"]').value = qty * price;
+		  if (!row) return;
 
-		  updateTotalAmount(); // ← 총합 업데이트 호출
+		  const qtyInput = row.querySelector(`[name="items[${idx}].quantity"]`);
+		  const priceInput = row.querySelector(`[name="items[${idx}].salePrice"]`);
+		  const amountInput = row.querySelector(`[name="items[${idx}].amount"]`);
+
+		  if (!qtyInput || !priceInput || !amountInput) return;
+
+		  const qty = parseInt(qtyInput.value || 0);
+		  const price = parseInt(priceInput.value || 0);
+
+		  amountInput.value = qty * price;
+
+		  updateTotalAmount();
 		}
 	
 	document.addEventListener('input', function (e) {
@@ -359,6 +381,97 @@ $(function () {
 		  document.getElementById('totalAmountDisplay').innerText = total.toLocaleString();
 		}
 	updateTotalAmount(); // 페이지 로딩 시 총합 초기 표시
+	
+  // 제안서 정보 불러오기
+function loadProposalInfo() {
+  const selectedId = $('#proposalSelect').val();
+  if (selectedId === "") {
+    alert("제안서를 선택해주세요.");
+    return;
+  }
+
+  $('#connectDocumentId').val(selectedId); // 연결문서 설정
+
+  $.ajax({
+    url: '${pageContext.request.contextPath}/client/loadProposalDetail.do',
+    type: 'GET',
+    data: { documentId: selectedId },
+    success: function (data) {
+      // 거래처, 거래일자, 결제수단 설정
+      $('#clientId').val(data.clientId).change();
+      $('[name="documentDate"]').val(data.documentDate);
+      $('[name="paymentMethod"]').val(data.paymentMethod);
+
+      const tbody = $('#itemTable tbody');
+      tbody.empty();
+
+      data.items.forEach((item, index) => {
+    	  const $tr = $('<tr>');
+    	  $tr.append(`<td>${index + 1}</td>`);
+
+    	  // select box 구성
+    	  const $select = $('<select>', {
+    	    name: `items[${index}].productId`,
+    	    class: 'form-control product-select',
+    	    onchange: 'updatePrice(this)'
+    	  });
+
+    	  $select.append(`<option value="">-- 품목 선택 --</option>`);
+
+    	  const originalOptions = $('.product-select:first').data('original-options');
+    	  const $optionList = $('<div>').html(originalOptions).find('option');
+
+    	  $optionList.each(function () {
+    	    const val = $(this).val();
+    	    const name = $(this).data('name');
+    	    const price = $(this).data('price');
+    	    const category = $(this).data('category');
+
+    	    const $opt = $('<option>', {
+    	      value: val,
+    	      text: val + ' - ' + name,
+    	      'data-name': name,
+    	      'data-price': price,
+    	      'data-category': category
+    	    });
+
+    	    if (val === item.productId) {
+    	      $opt.attr('selected', true);
+    	    }
+
+    	    $select.append($opt);
+    	  });
+
+    	  $tr.append(
+    			  $('<td>').append($select),
+    			  $('<td>').append(`<input type="text" name="items[${index}].productName" class="form-control" readonly>`),
+    			  $('<td>').append(`<input type="number" name="items[${index}].quantity" value="${item.quantity}" class="form-control" oninput="calculateAmount(${index})">`),
+    			  $('<td>').append(`<input type="number" name="items[${index}].salePrice" class="form-control" readonly>`),
+    			  $('<td>').append(`<input type="number" name="items[${index}].amount" class="form-control" readonly>`),
+    			  $('<td>').append(`
+    			    <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">삭제</button>
+    			    <input type="hidden" name="items[${index}].connectDocumentId" value="${data.connectDocumentId}" />
+    			  `)
+    			);
+
+    	  $('#itemTable tbody').append($tr);
+    	});
+
+      // 각 행의 상품 가격 정보 자동 반영
+      setTimeout(() => {
+        $('#itemTable tbody select.product-select').each(function () {
+          updatePrice(this);
+        });
+      }, 100);
+
+      updateTotalAmount();
+    },
+    error: function () {
+      alert("제안서 정보 불러오기 실패");
+    }
+  });
+}
 </script>
+
 </body>
 </html>
