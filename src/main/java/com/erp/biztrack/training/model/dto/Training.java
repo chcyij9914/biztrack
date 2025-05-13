@@ -114,6 +114,7 @@ public class Training implements java.io.Serializable {
 					+ ", instructorName=" + instructorName + ", startDate=" + startDate + ", endDate=" + endDate
 					+ ", capacity=" + capacity + ", location=" + location + ", detailContent="+ detailContent+" ]";
 		}
-	    
+
+	
 	    
 }

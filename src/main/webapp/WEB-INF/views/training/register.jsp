@@ -63,7 +63,7 @@
 					<!-- Page Heading -->
 					<div class="d-flex justify-content-between align-items-center mb-2">
 						<div>
-							<h1 class="h3 text-gray-800 mb-1">교육등록 / 수정</h1>
+							<h1 class="h3 text-gray-800 mb-1">교육등록</h1>
 							<p class="text-muted small mb-0">교육 과정을 신설하거나 기존 교육을 수정합니다.</p>
 						</div>
 
