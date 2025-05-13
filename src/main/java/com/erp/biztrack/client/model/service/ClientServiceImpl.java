@@ -3,6 +3,7 @@ package com.erp.biztrack.client.model.service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -175,13 +176,13 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public ArrayList<DocumentDTO> selectDocumentList(Paging paging) {
-		return clientDao.selectDocumentList(paging);
+	public int selectDocumentListCountByType(String documentTypeId) {
+	    return clientDao.selectDocumentListCountByType(documentTypeId);
 	}
 
 	@Override
-	public int selectDocumentListCount() {
-		return clientDao.selectDocumentListCount();
+	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
+	    return clientDao.selectDocumentListByType(param);
 	}
 
 	@Override
@@ -267,5 +268,45 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public int deleteApprove(String documentId) {
 		return clientDao.deleteApprove(documentId);
+	}
+
+	@Override
+	public int selectDocumentCountByTitle(Search search) {
+		return clientDao.selectDocumentCountByTitle(search);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByTitle(Search search) {
+		return clientDao.selectDocumentListByTitle(search);
+	}
+
+	@Override
+	public int selectDocumentCountByClientName(Search search) {
+		return clientDao.selectDocumentCountByClientName(search);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByClientName(Search search) {
+		return clientDao.selectDocumentListByClientName(search);
+	}
+
+	@Override
+	public int selectDocumentCountByStatus(Search search) {
+		return clientDao.selectDocumentCountByStatus(search);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByStatus(Search search) {
+		return clientDao.selectDocumentListByStatus(search);
+	}
+
+	@Override
+	public String selectNextDocumentIdC() {
+		return clientDao.selectNextDocumentIdC();
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectProposalListByWriter(String empId) {
+		return clientDao.selectProposalListByWriter(empId);
 	}
 }

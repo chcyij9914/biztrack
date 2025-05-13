@@ -433,28 +433,34 @@ public class ClientController {
 	//문서 관리 목록 조회
 	// 문서 목록 조회
 	@RequestMapping("documentList.do")
-	public ModelAndView selectDocumentList(@RequestParam(name = "page", required = false) String page,
-	                                       @RequestParam(name = "limit", required = false) String slimit,
-	                                       ModelAndView mv) {
+	public ModelAndView selectDocumentList(
+	    @RequestParam(name = "type", defaultValue = "D") String type,
+	    @RequestParam(name = "page", required = false) String page,
+	    @RequestParam(name = "limit", required = false) String slimit,
+	    ModelAndView mv) {
+
 	    int currentPage = (page != null) ? Integer.parseInt(page) : 1;
 	    int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
 
-	    int listCount = clientService.selectDocumentListCount();
+	    int listCount = clientService.selectDocumentListCountByType(type);
 	    Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
 	    paging.calculate();
 
 	    Map<String, Object> param = new HashMap<>();
 	    param.put("startRow", paging.getStartRow());
 	    param.put("endRow", paging.getEndRow());
+	    param.put("documentTypeId", type);
 
-	    ArrayList<DocumentDTO> documentList = clientService.selectDocumentList(paging);
+	    ArrayList<DocumentDTO> documentList = clientService.selectDocumentListByType(param);
 
+	    mv.addObject("docType", type);
 	    mv.addObject("documentList", documentList);
 	    mv.addObject("paging", paging);
 	    mv.setViewName("client/documentListView");
 
 	    return mv;
 	}
+
 	
 	//제안서 등록 관련 -------------------------------------------
 	//제안서 등록(GET)
@@ -465,21 +471,53 @@ public class ClientController {
 	    return "client/documentInsertForm"; // JSP 경로
 	}
 	
+	//계약서 등록(GET)
+	@GetMapping("cdocumentInsertForm.do")
+	public String showContractInsertForm(HttpSession session, Model model) {
+	    // 로그인 정보에서 사번 추출
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    String empId = loginInfo.getEmpId();
+
+	    // 거래처/상품/작성자 기준 제안서 목록 전달
+	    model.addAttribute("clientList", clientService.selectAllClients());
+	    model.addAttribute("productList", productService.selectAll());
+	    model.addAttribute("proposalList", clientService.selectProposalListByWriter(empId));  // 로그인 사번 기준 제안서만 전달
+
+	    return "client/cdocumentInsertForm";  // 계약서 등록 JSP
+	}
+	
+	//제안서 계약서 매핑용
+	@GetMapping("loadProposalDetail.do")
+	@ResponseBody
+	public Map<String, Object> loadProposalDetail(@RequestParam("documentId") String documentId) {
+	    DocumentDTO proposal = clientService.selectOneDocument(documentId);
+	    List<DocumentItemDTO> items = clientService.selectDocumentItemList(documentId);
+
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("clientId", proposal.getClientId());
+	    result.put("documentDate", proposal.getDocumentDate().toString());
+	    result.put("paymentMethod", proposal.getPaymentMethod());
+	    result.put("connectDocumentId", documentId);
+	    result.put("items", items);
+
+	    return result;
+	}
+	
 	//제안서 등록(POST)
 	@PostMapping("documentInsert.do")
-	public String insertDocument(@ModelAttribute DocumentDTO document,
-	                             @RequestParam("approver1Info") String approver1Id,
-	                             @RequestParam("approver2Info") String approver2Id,
-	                             @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
-	                             HttpServletRequest request,
-	                             HttpSession session,
-	                             RedirectAttributes redirectAttributes) {
+	public void insertDocument(@ModelAttribute DocumentDTO document,
+	                           @RequestParam("approver1Info") String approver1Id,
+	                           @RequestParam("approver2Info") String approver2Id,
+	                           @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
+	                           HttpServletRequest request,
+	                           HttpServletResponse response,
+	                           HttpSession session) throws IOException {
 
 	    // 1. 문서 ID 생성
 	    String documentId = clientService.selectNextDocumentIdD();
 	    document.setDocumentId(documentId);
 	    document.setDocumentTypeId("D"); // 제안서 고정
-	    
+
 	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
 	    String empId = loginInfo.getEmpId();
 
@@ -504,8 +542,8 @@ public class ClientController {
 	    approve.setEmpId(empId);
 	    approve.setFirstApproverId(approver1Id);
 	    approve.setSecondApproverId(approver2Id);
-	    approve.setFirstApproveStatus("결재 대기");
-	    approve.setSecondApproveStatus("결재 대기");
+	    approve.setFirstApproveStatus("1차 결재 대기");
+	    approve.setSecondApproveStatus("2차 결재 대기");
 	    clientService.insertApproval(approve);
 
 	    // 6. 파일 업로드 처리 (제안서 전용)
@@ -532,9 +570,85 @@ public class ClientController {
 	        clientService.insertFile(file);
 	    }
 
-	    // 7. 완료 후 메시지 및 리다이렉트
-	    redirectAttributes.addFlashAttribute("msg", "문서 " + documentId + "가 성공적으로 등록되었습니다.");
-	    return "redirect:/client/documentList.do";
+	    // 7. 등록 완료 후 팝업 닫고 부모창 새로고침
+	    response.setContentType("text/html; charset=UTF-8");
+	    response.getWriter().println("<script>");
+	    response.getWriter().println("alert('문서 " + documentId + " 이(가) 등록되었습니다.');");
+	    response.getWriter().println("opener.location.reload();");  // 부모창 새로고침
+	    response.getWriter().println("window.close();");            // 현재 창 닫기
+	    response.getWriter().println("</script>");
+	    response.getWriter().flush();
+	}
+	
+	@PostMapping("cdocumentInsert.do")
+	public void insertContract(@ModelAttribute DocumentDTO document,
+	                           @RequestParam("approver1Info") String approver1Id,
+	                           @RequestParam("approver2Info") String approver2Id,
+	                           @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
+	                           HttpServletRequest request,
+	                           HttpServletResponse response,
+	                           HttpSession session) throws IOException {
+
+	    // 문서 ID 생성
+	    String documentId = clientService.selectNextDocumentIdC();  // C타입용 시퀀스
+	    document.setDocumentId(documentId);
+	    document.setDocumentTypeId("C"); // 계약서 고정
+
+	    // 로그인 사용자 정보
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    String empId = loginInfo.getEmpId();
+	    document.setDocumentWriterId(empId);
+	    document.setDocumentManagerId(empId);
+
+	    // 문서 등록
+	    clientService.insertDocument(document);
+
+	    // 품목 등록
+	    for (DocumentItemDTO item : document.getItems()) {
+	        item.setDocumentId(documentId);
+	        item.setItemId(clientService.selectNextItemId());
+	        clientService.insertDocumentItem(item);
+	    }
+
+	    // 결재 등록
+	    ApproveDTO approve = new ApproveDTO();
+	    approve.setApproveId(clientService.selectNextApproveId());
+	    approve.setDocumentId(documentId);
+	    approve.setEmpId(empId);
+	    approve.setFirstApproverId(approver1Id);
+	    approve.setSecondApproverId(approver2Id);
+	    approve.setFirstApproveStatus("1차 결재 대기");
+	    approve.setSecondApproveStatus("2차 결재 대기");
+	    clientService.insertApproval(approve);
+
+	    // 파일 업로드
+	    if (uploadFile != null && !uploadFile.isEmpty()) {
+	        String path = request.getServletContext().getRealPath("/resources/upload/contract");
+	        new File(path).mkdirs();
+
+	        String originalName = uploadFile.getOriginalFilename();
+	        String renameName = FileRenameUtil.changeFileName(originalName);
+	        File saveFile = new File(path, renameName);
+	        uploadFile.transferTo(saveFile);
+
+	        FileDTO file = new FileDTO();
+	        file.setDocumentId(documentId);
+	        file.setFilePath("/resources/upload/contract/" + renameName);
+	        file.setOriginalFileName(originalName);
+	        file.setRenameFileName(renameName);
+	        file.setUploadFileSize((int) saveFile.length());
+
+	        clientService.insertFile(file);
+	    }
+
+	    // 완료 후 팝업 닫기 + 새로고침
+	    response.setContentType("text/html; charset=UTF-8");
+	    response.getWriter().println("<script>");
+	    response.getWriter().println("alert('계약서 " + documentId + " 이(가) 등록되었습니다.');");
+	    response.getWriter().println("opener.location.reload();");
+	    response.getWriter().println("window.close();");
+	    response.getWriter().println("</script>");
+	    response.getWriter().flush();
 	}
 	
 	// 제안서 상세보기 관련 -----------------------------------------------------------------
@@ -713,4 +827,53 @@ public class ClientController {
 
         return "redirect:/client/documentList.do";
     }
+    
+    // 문서 검색 관련 -------------------------------------------------------------------
+    // 문서 제목으로 검색
+    @GetMapping("documentSearch.do")
+    public String searchDocumentList(@ModelAttribute Search search,
+                                     @RequestParam(value = "searchType", required = false) String searchType,
+                                     @RequestParam(value = "keyword", required = false) String keyword,
+                                     @RequestParam(value = "approveStatus", required = false) String approveStatus,
+                                     @RequestParam(value = "page", defaultValue = "1") int currentPage,
+                                     Model model) {
+
+        search.setScType(searchType);
+        search.setKeyword(keyword);
+        search.setStatus(approveStatus);
+
+        int listCount = 0;
+        ArrayList<DocumentDTO> list = null;
+
+        if ("title".equals(searchType)) {
+            listCount = clientService.selectDocumentCountByTitle(search);
+        } else if ("client".equals(searchType)) {
+            listCount = clientService.selectDocumentCountByClientName(search);
+        } else if ("status".equals(searchType)) {
+            listCount = clientService.selectDocumentCountByStatus(search);
+        }
+
+        int limit = 10;
+        Paging paging = new Paging(listCount, limit, currentPage, "documentSearch.do");
+        paging.calculate();
+
+        search.setStartRow(paging.getStartRow());
+        search.setEndRow(paging.getEndRow());
+
+        if ("title".equals(searchType)) {
+            list = clientService.selectDocumentListByTitle(search);
+        } else if ("client".equals(searchType)) {
+            list = clientService.selectDocumentListByClientName(search);
+        } else if ("status".equals(searchType)) {
+            list = clientService.selectDocumentListByStatus(search);
+        }
+
+        model.addAttribute("documentList", list);
+        model.addAttribute("paging", paging);
+        model.addAttribute("search", search);
+
+        return "client/documentListView";
+    }
+
+
 }
