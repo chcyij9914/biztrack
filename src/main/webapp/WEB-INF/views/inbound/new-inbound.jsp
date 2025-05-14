@@ -1,256 +1,334 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>입고 작성</title>
-
-<!-- Font Awesome -->
-<link
-	href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css"
-	rel="stylesheet">
-<!-- SB Admin 2 CSS -->
 <link
 	href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css"
 	rel="stylesheet">
-
-<!-- Select2 CSS 추가 -->
 <link
-	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-	rel="stylesheet" />
-
-<!-- 표 스타일 -->
+	href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css"
+	rel="stylesheet">
+<script
+	src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
 <style>
-.table input, .table select {
-	border: none;
-	box-shadow: none;
-	background-color: transparent;
-	padding: 0;
+#itemTable th, #itemTable td {
+	vertical-align: middle;
 	text-align: center;
+	font-size: 15px;
 }
 
-.table input:focus, .table select:focus {
-	border: none;
-	box-shadow: none;
-	outline: none;
+td select.form-control.product-select {
+	min-width: 180px;
 }
 
-/* 숫자 input 화살표 제거 */
-input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
-	{
-	-webkit-appearance: none;
-	margin: 0;
+td input.form-control.product-name {
+	min-width: 160px;
 }
 
-input[type=number] {
-	-moz-appearance: textfield;
+td select.form-control.payment-select {
+	min-width: 120px;
+}
+
+td button.btn-sm {
+	padding: 0.25rem 0.75rem;
+	white-space: nowrap;
+}
+
+.btn-delete {
+	min-width: 50px;
+	height: 32px;
+	line-height: 1.2;
 }
 </style>
+<script>
+  // 결재자 적용
+  function applyApprovers(approver1Id, approver2Id) {
+    const a1 = document.getElementById("approver1Info");
+    const a2 = document.getElementById("approver2Info");
+    a1.value = approver1Id;
+    a2.value = approver2Id;
+    document.getElementById("approver1Display").value = approver1Id;
+    document.getElementById("approver2Display").value = approver2Id;
+  }
 
-<%@ page import="java.text.SimpleDateFormat, java.util.Date"%>
-<%
-String today = new SimpleDateFormat("yy/MM/dd").format(new Date());
-request.setAttribute("today", today);
-%>
+  function displayApproverInfo() {
+    const a1 = document.getElementById("approver1Info");
+    const a2 = document.getElementById("approver2Info");
+    document.getElementById("approver1Display").value = a1.value;
+    document.getElementById("approver2Display").value = a2.value;
+  }
+
+  function openApproverPopup() {
+	  window.open('${pageContext.request.contextPath}/department/approverPopup.do?target=both',
+	              'approverPopup',
+	              'width=900,height=750');
+	}
+</script>
 </head>
+<body class="bg-light">
+	<div class="container mt-5">
+		<div class="card shadow">
+			<div class="card-header bg-primary text-white">
+				<h4 class="m-0">문서 등록</h4>
+			</div>
+			<div class="card-body">
+				<form
+					action="${pageContext.request.contextPath}/inbound/new-inbound.do"
+					method="post" enctype="multipart/form-data">
 
-<body class="p-4 bg-light">
-	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2 class="mb-0">입고 내역</h2>
-		<button type="submit" class="btn btn-primary px-4 py-1.5 ml-3">상신</button>
+					<!-- 상단 필드 -->
+					<div class="form-row mb-3">
+						<div class="col-md-2">
+							<label>문서유형</label> <label>문서유형</label> <input type="hidden"
+								name="documentTypeId" value="I" /> <input type="text"
+								class="form-control" value="입고서" />
+						</div>
+						<div class="col-md-2">
+							<label>문서번호</label> <input type="text" class="form-control"
+								value="자동 생성됨" readonly />
+						</div>
+						<div class="col-md-4">
+							<label>제목</label> <input type="text" name="title"
+								class="form-control" required />
+						</div>
+					</div>
+
+					<div class="form-row mb-3">
+						<div class="col-md-6">
+							<label>작성자</label> <input type="text" class="form-control"
+								value="${sessionScope.loginInfo.empId} / ${sessionScope.loginInfo.empName} / ${sessionScope.loginInfo.jobId}"
+								readonly /> <input type="hidden" name="writerEmpId"
+								value="${sessionScope.loginInfo.empId}" />
+						</div>
+						<div class="col-md-6">
+							<label>담당자</label> <input type="text" class="form-control"
+								value="${sessionScope.loginInfo.empId} / ${sessionScope.loginInfo.empName} / ${sessionScope.loginInfo.jobId}"
+								readonly /> <input type="hidden" name="managerEmpId"
+								value="${sessionScope.loginInfo.empId}" />
+						</div>
+					</div>
+
+					<!-- 결재자 지정 (조직도 팝업 1개로 통합) -->
+					<div class="form-row mb-3">
+						<div class="col-md-6">
+							<label>결재자 선택</label>
+							<div class="input-group">
+								<!-- 사용자 표시용 -->
+								<input type="text" id="approver1Display" class="form-control"
+									placeholder="1차 결재자 사번" readonly /> <input type="text"
+									id="approver2Display" class="form-control"
+									placeholder="2차 결재자 사번" readonly />
+								<div class="input-group-append">
+									<button type="button" class="btn btn-outline-secondary"
+										onclick="openApproverPopup()">조직도에서 선택</button>
+								</div>
+							</div>
+
+							<!-- 실제 전송용 히든 필드 -->
+							<input type="hidden" name="approver1Info" id="approver1Info" />
+							<input type="hidden" name="approver2Info" id="approver2Info" />
+						</div>
+					</div>
+
+					<!-- <div class="form-row mb-3">
+          <div class="col-md-3">
+            <label>1차 결재일자</label>
+            <input type="date" name="approve1Date" class="form-control" />
+          </div>
+          <div class="col-md-3">
+            <label>2차 결재일자</label>
+            <input type="date" name="approve2Date" class="form-control" />
+          </div>
+        </div> -->
+					<br>
+					<!-- 품목 리스트 테이블 -->
+					<table class="table table-bordered mb-3" id="itemTable">
+						<thead>
+							<tr class="text-center">
+								<th style="width: 30px;">#</th>
+								<th style="min-width: 180px;">물품코드</th>
+								<th>물품명</th>
+								<th>수량</th>
+								<th>단가</th>
+								<th style="width: 80px;">삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="hidden" name="items[0].itemId" value="" />
+									<input type="hidden" name="items[0].documentId" value="" /> 1
+								</td>
+								<td><select name="items[0].productId"
+									class="form-control product-select"
+									onchange="updatePrice(this)">
+										<option value="" disabled selected>-- 품목 선택 --</option>
+										<c:forEach var="p" items="${productList}">
+											<option value="${p.productId}" data-name="${p.productName}"
+												data-category="${p.categoryId}">${p.productId}-
+												${p.productName}</option>
+										</c:forEach>
+								</select></td>
+								<td><input type="text" name="items[0].productName"
+									class="form-control" readonly></td>
+								<td><input type="number" name="items[0].quantity"
+									class="form-control"></td>
+								<td><input type="number" name="items[0].unitPrice"
+									class="form-control"></td>
+								<td><button type="button"
+										class="btn btn-danger btn-sm btn-delete"
+										onclick="removeRow(this)">삭제</button></td>
+							</tr>
+						</tbody>
+					</table>
+					<button type="button" class="btn btn-outline-primary mb-3"
+						onclick="addItemRow()">+ 품목 추가</button>
+
+
+					<!-- 거래처 및 입고일자 -->
+					<div class="form-row mb-3">
+						<div class="col-md-4">
+							<label>거래처</label> <select name="clientId" id="clientId"
+								class="form-control" required>
+								<option value="" disabled selected>-- 거래처 선택 --</option>
+								<c:forEach var="c" items="${clientList}">
+									<option value="${c.clientId}" data-category="${c.categoryId}">
+										${c.clientId} - ${c.clientName}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label>입고일자</label> <input type="date" name="documentDate"
+								class="form-control" required />
+						</div>
+					</div>
+
+					<!-- 비고 -->
+					<div class="form-group">
+						<label>비고</label>
+						<textarea name="remarks" class="form-control" rows="3"></textarea>
+					</div>
+
+					<!-- 첨부파일 -->
+					<div class="form-group">
+						<label>첨부파일</label> <input type="file" name="uploadFile"
+							class="form-control-file" />
+					</div>
+
+					<!-- 버튼 -->
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">상신</button>
+					</div>
+					<c:if test="${not empty msg}">
+						<div class="alert alert-success">${msg}</div>
+					</c:if>
+				</form>
+			</div>
+		</div>
 	</div>
-	<hr>
-
-	<!-- 결재 테이블 -->
-	<div class="d-flex justify-content-end mb-3">
-		<table class="table table-bordered text-center"
-			style="width: 50%; font-size: 0.8rem;">
-			<tbody style="background-color: #ffffff;">
-				<tr style="background-color: #fdfdfe;">
-					<th rowspan="3" style="vertical-align: middle; padding: 4px 8px;">결재</th>
-					<th style="padding: 4px 8px;">사원</th>
-					<th style="padding: 4px 8px;">팀장</th>
-				</tr>
-				<tr>
-					<td>기안</td>
-					<td>${inbound.approve1Status}</td>
-				</tr>
-				<tr>
-					<td>${today}</td>
-					<td>${inbound.approve1Date}</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<br>
-
-	<!-- 문서 작성 폼 -->
-	<div class="mb-3">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.8rem;">
-			<colgroup>
-				<col style="width: 15%;">
-				<col style="width: 35%;">
-				<col style="width: 15%;">
-				<col style="width: 35%;">
-			</colgroup>
-			<tbody style="background-color: #ffffff;">
-				<tr style="background-color: #fdfdfe;">
-					<th>문서번호</th>
-					<td><div>${inbound.documentId}</div></td>
-					<th>작성자</th>
-					<td><div>${inbound.empId}</div></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-
-	<!-- 물품 목록 -->
-	<div class="mb-3">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.7rem;">
-			<colgroup>
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-
-			</colgroup>
-			<thead style="background-color: #fdfdfe;">
-				<tr>
-					<th>물품코드</th>
-					<th>물품명</th>
-					<th>구매처</th>
-					<th>입고일자</th>
-					<th>수량</th>
-
-				</tr>
-			</thead>
-			<tbody id="itemTableBody" style="background-color: #ffffff;">
-				<tr>
-					<td><input type="text" class="form-control form-control-sm"
-						name="productCodeList" readonly></td>
-					<td><select class="form-control form-control-sm select2"
-						name="productNameList" onchange="fillProductInfo(this)">
-							<option value="">선택</option>
-					</select></td>
-					<td><input type="text" class="form-control form-control-sm"
-						name="vendorNameList"></td>
-					<td><input type="date" class="form-control form-control-sm"
-						name="receivedDate"></td>
-					<td><input type="number" class="form-control form-control-sm"
-						name="quantityList" onchange="calculateAmount(this)"></td>
-
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-	<!-- 품의서 번호 -->
-	<div class="form-group">
-		<label>품의서 문서번호</label> <input type="text" class="form-control"
-			id="linkedPurchaseId" placeholder="예: A001">
-	</div>
-
-	<!-- 비고란 -->
-	<div class="mb-4">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.8rem;">
-			<thead style="background-color: #fdfdfe;">
-				<tr>
-					<th>비고</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td style="background-color: #ffffff;"><div
-							contenteditable="true"
-							style="min-height: 80px; text-align: left;"></div></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-
-
-	<!-- JS -->
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
-
-	<!-- Select2 JS 추가 -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 	<script>
-let productList = []; // 전역 저장
-let uploadedFiles = []; // 이건 document.ready 밖에 있어야 함
+$(function () {
+	  // 최초 로딩 시 상품 select 옵션 백업
+	  $('.product-select').each(function () {
+	    $(this).data('original-options', $(this).html());
+	  });
 
-$(document).ready(function() {
-    const contextPath = '${pageContext.request.contextPath}';
+	  // 거래처 선택 시: 같은 카테고리의 상품만 필터링
+	  $('#clientId').on('change', function () {
+	    const selectedCategoryId = $(this).find('option:selected').data('category');
 
-    // 문서번호 미리보기
-    $.ajax({
-        url: contextPath + '/purchase/peek-document-id.do',
-        type: 'GET',
-        data: { type: '구매품의서' },
-        success: function (documentId) {
-            $('#documentIdInput').val(documentId);
-        },
-        error: function () {
-            alert('문서번호 조회 실패');
-        }
-    });
+	    $('#itemTable tbody tr').each(function () {
+	    	  const $select = $(this).find('.product-select');
+	    	  const backup = $select.data('original-options');
+	    	  if (!backup) return;
 
-    // 서버에서 상품 목록 불러오기
-    $.ajax({
-        url: contextPath + '/inbound/product-list.do',
-        method: 'GET',
-        success: function(data) {
-            productList = data;
-            initializeSelect2(); // 여기도 정상 호출
-        },
-        error: function () {
-            alert('상품 목록 조회 실패');
-        }
-    });
-});
+	    	  const selectedValue = $select.val(); // 선택된 값 저장
 
-// 드롭다운에 select2 적용
-function initializeSelect2() {
-    $('select[name="productNameList"]').each(function() {
-        const select = $(this);
-        select.empty().append('<option value="">선택</option>');
-        productList.forEach(product => {
-            const option = $('<option>', {
-                value: product.productCode,
-                text: product.productName,
-                'data-saleprice': product.salePrice
-            });
-            select.append(option);
-        });
-        select.select2({
-            width: '100%',
-            placeholder: "물품명 검색",
-            allowClear: true
-        });
-    });
-}
+	    	  const options = $('<div>' + backup + '</div>').find('option');
+	    	  const filtered = options.filter(function () {
+	    	    return $(this).data('category') == selectedCategoryId;
+	    	  });
 
-// 상품코드 자동 입력
-function fillProductInfo(select) {
-    const selectedOption = select.options[select.selectedIndex];
-    const selectedProductCode = selectedOption.value;
+	    	  $select.empty().append('<option value="">-- 품목 선택 --</option>').append(filtered);
 
-    const row = select.closest('tr');
-    row.querySelector('input[name="productCodeList"]').value = selectedProductCode;
-}
+	    	  // 다시 선택 복원 (있을 경우만)
+	    	  if (filtered.filter('[value="' + selectedValue + '"]').length > 0) {
+	    	    $select.val(selectedValue);
+	    	  }
+	    	});
+	  });
+
+	  // 상품 선택 시: 같은 카테고리의 거래처만 표시
+	  $(document).on('change', '.product-select', function () {
+	    const selectedCategory = $(this).find('option:selected').data('category');
+	    if (!selectedCategory) return;
+
+	    $('#clientId option').each(function () {
+	      const catId = $(this).data('category');
+	      if ($(this).val() === "" || catId == selectedCategory) {
+	        $(this).show();
+	      } else {
+	        $(this).hide();
+	      }
+	    });
+	  });
+	});
+	
+	// 금액 계산 --> 품목이름 업데이트
+	function updatePrice(select) {
+	  const row = select.closest('tr');
+ 	 const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
+
+ 	 const option = select.options[select.selectedIndex];
+ 	 row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
+ 	 calculateAmount(idx);
+	}
+
+	// 품목 행 추가 시: 거래처 필터 유지
+	function addItemRow() {
+	  const table = document.querySelector('#itemTable tbody');
+	  const rowCount = table.rows.length;
+	  const clone = table.rows[0].cloneNode(true);
+	  clone.querySelector('input[name$=".itemId"]').value = "";
+	  clone.querySelector('input[name$=".documentId"]').value = "";
+	  clone.querySelector('td').innerText = rowCount + 1;
+
+	  clone.querySelectorAll('input, select').forEach(el => {
+	    const name = el.name.replace(/\[\d+\]/, '[' + rowCount + ']');
+	    el.name = name;
+	
+	    if (el.tagName === 'INPUT') {
+	      el.value = (el.type === 'number' || el.type === 'text') ? '' : el.value;
+	    }
+	  });
+	
+	  table.appendChild(clone);
+
+	  // 거래처 카테고리 기준 필터링
+	  const selectedCategoryId = $('#clientId option:selected').data('category');
+	  const $select = $(clone).find('.product-select');
+	  const backup = $select.data('original-options') || $select.html();
+	  $select.data('original-options', backup);
+
+	  const options = $('<div>' + backup + '</div>').find('option');
+	  const filtered = options.filter(function () {
+	    return $(this).data('category') == selectedCategoryId;
+	  });
+
+	  $select.empty().append('<option value="">-- 품목 선택 --</option>').append(filtered);
+	}
+
+	// 행 삭제
+	function removeRow(btn) {
+	  const table = document.querySelector('#itemTable tbody');
+	  if (table.rows.length > 1) btn.closest('tr').remove();
+	  updateTotalAmount(); // ← 총합 업데이트 호출
+	}
+
 </script>
 </body>
 </html>

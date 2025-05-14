@@ -1,7 +1,9 @@
 package com.erp.biztrack.purchase.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.common.ApproveDTO;
 import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.DocumentItemDTO;
@@ -30,5 +32,23 @@ public interface PurchaseService {
 	String selectNextItemId();
     int insertFile(FileDTO file);
 
+   //문서 상세정보 관련 -------------------------------------
+    FileDTO selectFileByDocumentId(String documentId);
+    DocumentDTO selectOneDocument(String documentId);
+    ArrayList<DocumentItemDTO> selectDocumentItemList(String documentId);
+    ApproveDTO selectApprovalByDocumentId(String documentId);
+    
+    //문서 수정 관련 --------------------------------------------
+    int updateDocument(DocumentDTO document);
+    int deleteDocumentItems(String documentId);
+    int updateApprove(ApproveDTO approve);
+    int updateDocumentItem(DocumentItemDTO item);
+    int deleteFileByDocumentId(String documentId);
+    
+    //문서 삭제 관련 ----------------------------------------------
+    int deleteDocumentOnly(String documentId);
+    int deleteApprove(String documentId);
+
+	List<Client> selectAllClients();
 
 }
