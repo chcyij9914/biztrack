@@ -39,67 +39,88 @@
 
       <div class="container-fluid">
 
-        <!-- 상단 바: 탭 + 등록 + 검색 -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-
-          <!-- 제목 + 탭 -->
-          <div class="d-flex align-items-center">
-            <div class="mr-4">
-              <h1 class="h4 mb-0 text-gray-800">계약/제안서 관리</h1>
-              <p class="text-muted small mb-0">문서 목록</p>
-            </div>
-            <div class="ml-4">
-			  <a href="${pageContext.request.contextPath}/client/documentList.do?type=C" class="tab-button ${docType == 'C' ? 'active' : ''}">계약서</a>
-			  <a href="${pageContext.request.contextPath}/client/documentList.do?type=D" class="tab-button ${docType == 'D' ? 'active' : ''}">제안서</a>
-			</div>
-          </div>	
-
-          <!-- 등록 버튼 + 검색 -->
-          <div class="d-flex align-items-center">
-
-            <!-- 문서 등록 버튼 -->
-			<a href="#" class="btn btn-primary btn-sm mr-3"
-			   onclick="window.open('${pageContext.request.contextPath}/client/${docType eq "C" ? "cdocumentInsertForm" : "documentInsertForm"}.do?type=${docType}',
-			                        'insertDocWindow', 'width=1000,height=800'); return false;">
-			  + 문서 등록
-			</a>
-
-            <!-- 검색 폼 -->
-            <form class="form-inline" action="${pageContext.request.contextPath}/client/documentSearch.do" method="get" onsubmit="syncKeywordInput()">
-              <input type="hidden" name="type" value="C" />
-              <label class="mr-2 font-weight-bold">검색 기준</label>
-
-              <select name="searchType" id="searchType" class="form-control form-control-sm mr-2">
-                <option value="title" ${search.scType == 'title' ? 'selected' : ''}>제목</option>
-                <option value="client" ${search.scType == 'client' ? 'selected' : ''}>거래처명</option>
-                <option value="status" ${search.scType == 'status' ? 'selected' : ''}>상태</option>
-              </select>
-
-              <input type="text" class="form-control form-control-sm mr-2" id="textInput" name="titleInput"
-                     placeholder="제목 입력" style="display:none;" value="${search.scType == 'title' ? search.keyword : ''}" />
-
-              <input type="text" class="form-control form-control-sm mr-2" id="clientInput" name="clientInput"
-                     placeholder="거래처명 입력" style="display:none;" value="${search.scType == 'client' ? search.keyword : ''}" />
-
-              <select name="approveStatus" id="approveStatusSelect" class="form-control form-control-sm mr-2" style="display:none;">
-                <option value="" disabled selected>상태 선택</option>
-                <option value="1차 결재 대기">1차 결재 대기</option>
-                <option value="1차 결재 검토">1차 결재 검토</option>
-                <option value="1차 결재 승인">1차 결재 승인</option>
-                <option value="2차 결재 대기">2차 결재 대기</option>
-                <option value="2차 결재 검토">2차 결재 검토</option>
-                <option value="2차 결재 승인">2차 결재 승인</option>
-                <option value="반려">반려</option>
-              </select>
-
-              <input type="hidden" name="keyword" id="keywordHidden" />
-              <button type="submit" class="btn btn-sm btn-primary">검색</button>
-            </form>
-          </div>
-        </div>
+	  <!-- 상단 바: 탭 + 등록 + 검색 -->
+	  <div class="d-flex justify-content-between align-items-center mb-3">
+	
+	    <!-- 제목 + 탭 -->
+	    <div class="d-flex align-items-center">
+	      <div class="mr-4">
+	        <h1 class="h4 mb-0 text-gray-800">계약/제안서 관리</h1>
+	        <p class="text-muted small mb-0">문서 목록</p>
+	      </div>
+	      <div class="ml-4">
+	        <a href="${pageContext.request.contextPath}/client/documentList.do?type=C"
+	           class="tab-button ${docType == 'C' ? 'active' : ''}">계약서</a>
+	        <a href="${pageContext.request.contextPath}/client/documentList.do?type=D"
+	           class="tab-button ${docType == 'D' ? 'active' : ''}">제안서</a>
+	      </div>
+	    </div>
+	
+	    <!-- 등록 버튼 + 검색 -->
+	    <div class="d-flex align-items-center">
+	      <a href="#" class="btn btn-primary btn-sm mr-3"
+	         onclick="window.open('${pageContext.request.contextPath}/client/${docType eq "C" ? "cdocumentInsertForm" : "documentInsertForm"}.do?type=${docType}',
+	                              'insertDocWindow', 'width=1000,height=800'); return false;">
+	        + 문서 등록
+	      </a>
+	
+	      <form class="form-inline"
+	            action="${pageContext.request.contextPath}/client/documentSearch.do"
+	            method="get"
+	            onsubmit="syncKeywordInput()">
+	        <input type="hidden" name="documentTypeId" id="documentTypeIdHidden" value="${docType}" />
+	        <label class="mr-2 font-weight-bold">검색 기준</label>
+	        <select name="searchType" id="searchType" class="form-control form-control-sm mr-2">
+	          <option value="title" ${search.scType == 'title' ? 'selected' : ''}>제목</option>
+	          <option value="client" ${search.scType == 'client' ? 'selected' : ''}>거래처명</option>
+	          <option value="status" ${search.scType == 'status' ? 'selected' : ''}>상태</option>
+	        </select>
+	        <input type="text" class="form-control form-control-sm mr-2" id="textInput" name="titleInput"
+	               placeholder="제목 입력" style="display:none;" value="${search.scType == 'title' ? search.keyword : ''}" />
+	        <input type="text" class="form-control form-control-sm mr-2" id="clientInput" name="clientInput"
+	               placeholder="거래처명 입력" style="display:none;" value="${search.scType == 'client' ? search.keyword : ''}" />
+	        <select name="approveStatus" id="approveStatusSelect" class="form-control form-control-sm mr-2" style="display:none;">
+	          <option value="" disabled selected>상태 선택</option>
+	          <option value="1차 결재 대기">1차 결재 대기</option>
+	          <option value="1차 결재 검토">1차 결재 검토</option>
+	          <option value="1차 결재 승인">1차 결재 승인</option>
+	          <option value="2차 결재 대기">2차 결재 대기</option>
+	          <option value="2차 결재 검토">2차 결재 검토</option>
+	          <option value="2차 결재 승인">2차 결재 승인</option>
+	          <option value="반려">반려</option>
+	        </select>
+	        <input type="hidden" name="keyword" id="keywordHidden" />
+	        <button type="submit" class="btn btn-sm btn-primary">검색</button>
+	      </form>
+	    </div>
+	  </div>
+	
+	  <!-- ✅ 검색 조건 요약 + 이전페이지/목록으로 -->
+	  <c:if test="${not empty search.scType}">
+	    <div class="d-flex justify-content-between align-items-center mb-3">
+	      <div>
+	        <span class="badge badge-light border text-dark px-3 py-2">
+	          검색 조건:
+	          <c:choose>
+	            <c:when test="${search.scType eq 'title'}">제목 = "${param.keyword}"</c:when>
+	            <c:when test="${search.scType eq 'client'}">거래처명 = "${param.keyword}"</c:when>
+	            <c:when test="${search.scType eq 'status'}">상태 = "${param.approveStatus}"</c:when>
+	          </c:choose>
+	        </span>
+	        <span class="ml-2 small text-muted">총 ${paging.listCount}건 검색됨</span>
+	      </div>
+	      <div>
+	        <button type="button" class="btn btn-secondary btn-sm mr-1" onclick="history.back();">
+	          <i class="fas fa-arrow-left"></i> 이전페이지
+	        </button>
+	        <a href="${pageContext.request.contextPath}/client/documentList.do?type=${docType}" class="btn btn-info btn-sm">
+	          <i class="fas fa-list"></i> 목록으로
+	        </a>
+	      </div>
+	    </div>
+	  </c:if>
 
         <!-- 문서 테이블 공통 뷰 -->
-        <c:set var="docType" value="C" />
         <c:import url="/WEB-INF/views/client/documentTableView.jsp" />
 
       </div>
@@ -131,7 +152,15 @@ document.getElementById('searchType').addEventListener('change', function () {
   toggleSearchInputs(this.value);
 });
 </script>
-
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const docType = '${docType}'; // 서버에서 전달된 값
+    const hiddenInput = document.querySelector('input[name="documentTypeId"]');
+    if (docType && hiddenInput) {
+      hiddenInput.value = docType; // 강제 세팅
+    }
+  });
+</script>
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>

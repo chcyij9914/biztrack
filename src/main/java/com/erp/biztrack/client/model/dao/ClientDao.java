@@ -74,6 +74,13 @@ public class ClientDao {
 	public Client selectClientDetail(String clientId) {
 		return sqlSessionTemplate.selectOne("clientMapper.selectClientDetail", clientId);
 	}
+	
+	// 거래처 상세조회 - 계약 내역 보기
+	// 작성자 기준 제안서 목록 조회
+    public ArrayList<DocumentDTO> selectContractListByClientAndDept(DocumentDTO cond) {
+    	List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectContractListByClientAndDept", cond);
+        return (ArrayList<DocumentDTO>) list;
+    }
 
 	// 계약서 파일 경로 조회
 	public String selectContractFilePath(String clientId) {
@@ -88,6 +95,11 @@ public class ClientDao {
 	// 거래처 정보 수정
 	public int updateClient(Client client) {
 		return sqlSessionTemplate.update("clientMapper.updateClient", client);
+	}
+	
+	// 계약기간만 업데이트
+	public int updateContractPeriod(Client client) {
+	    return sqlSessionTemplate.update("clientMapper.updateContractPeriod", client);
 	}
 
 	// 명함 파일 삭제
@@ -135,7 +147,7 @@ public class ClientDao {
         return sqlSessionTemplate.delete("clientMapper.deleteClient", clientId);
     }
     
-    // 거래처 문서 목록 조회
+	// 거래처 문서 목록 조회
     public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
         List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByType", param);
         return (ArrayList<DocumentDTO>) list;
@@ -186,12 +198,6 @@ public class ClientDao {
         return sqlSessionTemplate.selectOne("clientMapper.selectFileByDocumentId", documentId);
     }
     
- // 작성자 기준 제안서 목록 조회
-    public ArrayList<DocumentDTO> selectProposalListByWriter(String empId) {
-        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectProposalListByWriter", empId);
-        return (ArrayList<DocumentDTO>) list;
-    }
-    
     // 문서 상세정보 조회
     public DocumentDTO selectOneDocument(String documentId) {
         return sqlSessionTemplate.selectOne("clientMapper.selectOneDocument", documentId);
@@ -206,6 +212,11 @@ public class ClientDao {
     // 문서 결재자 상세정보 조회
     public ApproveDTO selectApprovalByDocumentId(String documentId) {
         return sqlSessionTemplate.selectOne("clientMapper.selectApprovalByDocumentId", documentId);
+    }
+    
+    public ArrayList<DocumentDTO> selectProposalListByWriter(String empId){
+    	List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectProposalListByWriter", empId);
+        return (ArrayList<DocumentDTO>) list;
     }
     
     // 문서 수정 관련 ------------------------------------------------------

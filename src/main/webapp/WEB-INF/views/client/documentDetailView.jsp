@@ -166,19 +166,36 @@
 
         <!-- 하단 버튼 -->
         <div class="text-right mt-4">
+        
+        <c:if test="${loginInfo.roleId == 'A2' 
+			          || loginInfo.roleId == 'A3' 
+			          || loginInfo.empId == document.documentManagerId
+			          && approval.firstApproveStatus == '1차 결재 대기'
+			          or approval.firstApproveStatus == '반려'}">
 	        <a href="${pageContext.request.contextPath}/client/documentUpdateForm.do?documentId=${document.documentId}" 
 		       class="btn btn-warning">
 		        <i class="fas fa-edit"></i> 수정
 		    </a>
+		    </c:if>
+		    
             <button type="button" class="btn btn-secondary" onclick="history.back();">
                 <i class="fas fa-arrow-left"></i> 이전페이지
             </button>
+            
             <a href="${pageContext.request.contextPath}/client/documentList.do" class="btn btn-info">
                 <i class="fas fa-list"></i> 목록으로
             </a>
+            
+            <c:if test="${loginInfo.roleId == 'A2'
+			          || loginInfo.roleId == 'A3'
+			          || loginInfo.empId == document.documentManagerId
+			          && approval.firstApproveStatus == '1차 결재 대기'
+			          or approval.firstApproveStatus == '반려'}">
             <button type="button" class="btn btn-danger" onclick="confirmDelete('${document.documentId}')">
 		        <i class="fas fa-trash-alt"></i> 삭제
 		    </button>
+		    </c:if>
+		    
 		    <script>
 			function confirmDelete(documentId) {
 			  if (confirm("정말 이 문서를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {

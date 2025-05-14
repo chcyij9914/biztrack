@@ -225,26 +225,43 @@ public class ClientController {
 		return result;
 	}
 
-	// 거래처 상세보기
+	//거래처 상세보기
 	@RequestMapping("cdetail.do")
-	public String clientDetail(@RequestParam("clientId") String clientId, HttpServletRequest request, Model model) {
+	public String clientDetail(@RequestParam("clientId") String clientId,
+	                           HttpServletRequest request,
+	                           Model model) {
 
-		Client client = clientService.selectClientDetail(clientId);
-		String contractFilePath = clientService.selectContractFilePath(clientId);
-		String businessCardFilePath = clientService.selectBusinessCardFilePath(clientId);
+	    // 거래처 상세 정보
+	    Client client = clientService.selectClientDetail(clientId);
 
-		// 로그인 정보에서 loginUser와 비교하기 위한 부서 ID 추출
-		LoginDto loginInfo = (LoginDto) request.getSession().getAttribute("loginInfo");
+	    // 명함 파일 경로
+	    String businessCardFilePath = clientService.selectBusinessCardFilePath(clientId);
 
-		// 현재 담당자 정보 조회해서 부서 ID 추출
-		LoginDto currentManager = adminService.getEmployeeById(client.getCurrentManagerId());
+	    // 계약서 미리보기 (기존 단건 파일 경로, 필요 시 삭제 가능)
+	    String contractFilePath = clientService.selectContractFilePath(clientId);
 
-		model.addAttribute("client", client);
-		model.addAttribute("contractFilePath", contractFilePath);
-		model.addAttribute("businessCardFilePath", businessCardFilePath);
-		model.addAttribute("clientDeptId", currentManager != null ? currentManager.getDeptId() : "");
+	    // 로그인한 사용자 정보
+	    LoginDto loginInfo = (LoginDto) request.getSession().getAttribute("loginInfo");
 
-		return "client/clientDetailView";
+	    // 현재 담당자 정보 (사번 기준으로 EMPLOYEE 테이블에서 부서 조회)
+	    Employee currentManager = employeeService.selectEmpById(client.getCurrentManagerId());
+	    String clientDeptId = currentManager != null ? currentManager.getDeptId() : "";
+
+	    // 계약서 리스트 (문서 작성자의 부서 == 로그인한 사람의 부서인 경우만 조회)
+	    DocumentDTO cond = new DocumentDTO();
+	    cond.setClientId(clientId);
+	    cond.setDeptId(loginInfo.getDeptId()); // 로그인한 사용자 부서 기준 조회
+
+	    ArrayList<DocumentDTO> contractList = clientService.selectContractListByClientAndDept(cond);
+
+	    // 모델 등록
+	    model.addAttribute("client", client);
+	    model.addAttribute("businessCardFilePath", businessCardFilePath);
+	    model.addAttribute("contractFilePath", contractFilePath); // 기존 단건 미리보기용 (선택사항)
+	    model.addAttribute("clientDeptId", clientDeptId); // 담당자 부서 비교용
+	    model.addAttribute("contractList", contractList); // 부서 제한된 계약서 리스트
+
+	    return "client/clientDetailView";
 	}
 
 	// 거래처 수정 폼 요청 (GET)
@@ -464,7 +481,7 @@ public class ClientController {
 	
 	//제안서 등록 관련 -------------------------------------------
 	//제안서 등록(GET)
-	@GetMapping("documentInsertForm.do")
+	@RequestMapping("documentInsertForm.do")
 	public String showDocumentInsertForm(Model model) {
 	    model.addAttribute("clientList", clientService.selectAllClients());      // 거래처 목록
 	    model.addAttribute("productList", productService.selectAll());		// 상품 목록
@@ -472,39 +489,47 @@ public class ClientController {
 	}
 	
 	//계약서 등록(GET)
-	@GetMapping("cdocumentInsertForm.do")
-	public String showContractInsertForm(HttpSession session, Model model) {
-	    // 로그인 정보에서 사번 추출
+	@RequestMapping("cdocumentInsertForm.do")
+	public String showContractInsertForm(@RequestParam(name = "proposalId", required = false) String proposalId,
+	                                     HttpSession session, Model model) {
+
+	    // 0. 로그인 정보 가져오기
 	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
 	    String empId = loginInfo.getEmpId();
 
-	    // 거래처/상품/작성자 기준 제안서 목록 전달
-	    model.addAttribute("clientList", clientService.selectAllClients());
-	    model.addAttribute("productList", productService.selectAll());
-	    model.addAttribute("proposalList", clientService.selectProposalListByWriter(empId));  // 로그인 사번 기준 제안서만 전달
+	    // 1. 연결된 제안서 정보 불러오기
+	    if (proposalId != null && !proposalId.trim().isEmpty()) {
+	        DocumentDTO proposal = clientService.selectOneDocument(proposalId);
+	        List<DocumentItemDTO> items = clientService.selectDocumentItemList(proposalId);
 
-	    return "client/cdocumentInsertForm";  // 계약서 등록 JSP
+	        int totalAmount = 0;
+	        for (DocumentItemDTO item : items) {
+	            int amount = item.getQuantity() * item.getSalePrice();
+	            item.setAmount(amount);
+	            totalAmount += amount;
+	        }
+	        proposal.setItems(items);
+	        proposal.setTotalAmount(totalAmount);
+
+	        model.addAttribute("proposal", proposal);
+	        model.addAttribute("items", items);
+	    }
+
+	    // 2. 로그인 작성자의 제안서 목록만 조회
+	    List<DocumentDTO> proposalList = clientService.selectProposalListByWriter(empId);
+	    model.addAttribute("proposalList", proposalList);
+
+	    // 3. 거래처 목록 전달 (readonly지만 데이터 유효성 검사용으로 필요함)
+	    List<Client> clientList = clientService.selectAllClients();
+	    model.addAttribute("clientList", clientList);
+
+	    return "client/cdocumentInsertForm";
 	}
-	
-	//제안서 계약서 매핑용
-	@GetMapping("loadProposalDetail.do")
-	@ResponseBody
-	public Map<String, Object> loadProposalDetail(@RequestParam("documentId") String documentId) {
-	    DocumentDTO proposal = clientService.selectOneDocument(documentId);
-	    List<DocumentItemDTO> items = clientService.selectDocumentItemList(documentId);
 
-	    Map<String, Object> result = new HashMap<>();
-	    result.put("clientId", proposal.getClientId());
-	    result.put("documentDate", proposal.getDocumentDate().toString());
-	    result.put("paymentMethod", proposal.getPaymentMethod());
-	    result.put("connectDocumentId", documentId);
-	    result.put("items", items);
 
-	    return result;
-	}
-	
+
 	//제안서 등록(POST)
-	@PostMapping("documentInsert.do")
+	@RequestMapping(value = "documentInsert.do", method = RequestMethod.POST)
 	public void insertDocument(@ModelAttribute DocumentDTO document,
 	                           @RequestParam("approver1Info") String approver1Id,
 	                           @RequestParam("approver2Info") String approver2Id,
@@ -562,7 +587,7 @@ public class ClientController {
 
 	        FileDTO file = new FileDTO();
 	        file.setDocumentId(documentId);
-	        file.setFilePath("/resources/upload/proposal/" + renameName);
+	        file.setFilePath("/resources/upload/proposal/");
 	        file.setOriginalFileName(originalName);
 	        file.setRenameFileName(renameName);
 	        file.setUploadFileSize((int) saveFile.length());
@@ -580,7 +605,8 @@ public class ClientController {
 	    response.getWriter().flush();
 	}
 	
-	@PostMapping("cdocumentInsert.do")
+	// 계약서 등록(post)
+	@RequestMapping(value = "cdocumentInsert.do", method = RequestMethod.POST)
 	public void insertContract(@ModelAttribute DocumentDTO document,
 	                           @RequestParam("approver1Info") String approver1Id,
 	                           @RequestParam("approver2Info") String approver2Id,
@@ -589,39 +615,53 @@ public class ClientController {
 	                           HttpServletResponse response,
 	                           HttpSession session) throws IOException {
 
-	    // 문서 ID 생성
-	    String documentId = clientService.selectNextDocumentIdC();  // C타입용 시퀀스
+	    // 1. 문서 ID 생성 및 기본 설정
+	    String documentId = clientService.selectNextDocumentIdC();  // 시퀀스 기반
 	    document.setDocumentId(documentId);
 	    document.setDocumentTypeId("C"); // 계약서 고정
 
-	    // 로그인 사용자 정보
 	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
 	    String empId = loginInfo.getEmpId();
 	    document.setDocumentWriterId(empId);
 	    document.setDocumentManagerId(empId);
 
-	    // 문서 등록
-	    clientService.insertDocument(document);
+	    // 2. 연결된 제안서 확인
+	    if (document.getConnectDocumentId() == null || document.getConnectDocumentId().trim().isEmpty()) {
+	        response.setContentType("text/html; charset=UTF-8");
+	        response.getWriter().println("<script>alert('연결된 제안서가 없습니다.'); history.back();</script>");
+	        response.getWriter().flush();
+	        return;
+	    }
 
-	    // 품목 등록
+	    // 3. 문서 등록
+	    clientService.insertDocument(document);
+	    
+	    // 거래처 계약기간 업데이트
+	    Client client = new Client();
+	    client.setClientId(document.getClientId());
+	    client.setContractStartDate(Date.valueOf(request.getParameter("contractStartDate")));
+	    client.setContractEndDate(Date.valueOf(request.getParameter("contractEndDate")));
+	    clientService.updateContractPeriod(client);
+
+	    // 4. 품목 등록 (수량만 수정, 나머지는 제안서 기준)
 	    for (DocumentItemDTO item : document.getItems()) {
 	        item.setDocumentId(documentId);
-	        item.setItemId(clientService.selectNextItemId());
+	        item.setItemId(clientService.selectNextItemId()); // 시퀀스 기반
 	        clientService.insertDocumentItem(item);
 	    }
 
-	    // 결재 등록
+	    // 5. 결재 정보 등록
 	    ApproveDTO approve = new ApproveDTO();
 	    approve.setApproveId(clientService.selectNextApproveId());
 	    approve.setDocumentId(documentId);
-	    approve.setEmpId(empId);
+	    approve.setEmpId(empId);  // 작성자
 	    approve.setFirstApproverId(approver1Id);
 	    approve.setSecondApproverId(approver2Id);
 	    approve.setFirstApproveStatus("1차 결재 대기");
 	    approve.setSecondApproveStatus("2차 결재 대기");
 	    clientService.insertApproval(approve);
 
-	    // 파일 업로드
+	    // 6. 첨부파일 저장
 	    if (uploadFile != null && !uploadFile.isEmpty()) {
 	        String path = request.getServletContext().getRealPath("/resources/upload/contract");
 	        new File(path).mkdirs();
@@ -641,7 +681,7 @@ public class ClientController {
 	        clientService.insertFile(file);
 	    }
 
-	    // 완료 후 팝업 닫기 + 새로고침
+	    // 7. 등록 완료 후 팝업 닫기 + 부모창 새로고침
 	    response.setContentType("text/html; charset=UTF-8");
 	    response.getWriter().println("<script>");
 	    response.getWriter().println("alert('계약서 " + documentId + " 이(가) 등록되었습니다.');");
@@ -652,14 +692,20 @@ public class ClientController {
 	}
 	
 	// 제안서 상세보기 관련 -----------------------------------------------------------------
-	// 문서 상세보기 이동용 컨트롤러
-	@GetMapping("documentDetailView.do")
-	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
+	// 문서 상세보기
+	@RequestMapping("documentDetailView.do")
+	public String showDocumentDetail(@RequestParam("documentId") String documentId,
+	                                 HttpServletRequest request,
+	                                 Model model) {
 
-	    // 1. 문서 기본 정보 조회
+	    // 1. 로그인 사용자 정보
+	    LoginDto loginInfo = (LoginDto) request.getSession().getAttribute("loginInfo");
+	    model.addAttribute("loginInfo", loginInfo); // JSP에서 권한 판단용
+
+	    // 2. 문서 기본 정보
 	    DocumentDTO document = clientService.selectOneDocument(documentId);
 
-	    // 2. 품목 목록 + 금액 계산
+	    // 3. 품목 목록 및 총금액 계산
 	    List<DocumentItemDTO> itemList = clientService.selectDocumentItemList(documentId);
 	    int totalAmount = 0;
 	    for (DocumentItemDTO item : itemList) {
@@ -670,15 +716,15 @@ public class ClientController {
 	    document.setItems(itemList);
 	    document.setTotalAmount(totalAmount);
 
-	    // 3. 첨부파일 정보
+	    // 4. 첨부파일 정보
 	    FileDTO file = clientService.selectFileByDocumentId(documentId);
 	    model.addAttribute("file", file);
 
-	    // 4. 결재 정보
+	    // 5. 결재 정보
 	    ApproveDTO approval = clientService.selectApprovalByDocumentId(documentId);
 	    model.addAttribute("approval", approval);
 
-	    // 5. 문서 모델 등록
+	    // 6. 모델 등록
 	    model.addAttribute("document", document);
 
 	    return "client/documentDetailView";
@@ -835,12 +881,14 @@ public class ClientController {
                                      @RequestParam(value = "searchType", required = false) String searchType,
                                      @RequestParam(value = "keyword", required = false) String keyword,
                                      @RequestParam(value = "approveStatus", required = false) String approveStatus,
+                                     @RequestParam(value = "documentTypeId", required = false) String documentTypeId, // 📌 추가
                                      @RequestParam(value = "page", defaultValue = "1") int currentPage,
                                      Model model) {
 
         search.setScType(searchType);
         search.setKeyword(keyword);
         search.setStatus(approveStatus);
+        search.setDocumentTypeId(documentTypeId); // 📌 세팅
 
         int listCount = 0;
         ArrayList<DocumentDTO> list = null;
@@ -871,9 +919,9 @@ public class ClientController {
         model.addAttribute("documentList", list);
         model.addAttribute("paging", paging);
         model.addAttribute("search", search);
+        model.addAttribute("documentTypeId", documentTypeId); // 탭 유지용
+        model.addAttribute("docType", documentTypeId);// 탭 활성화 및 JS용
 
         return "client/documentListView";
     }
-
-
 }

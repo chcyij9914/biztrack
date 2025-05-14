@@ -3,6 +3,8 @@ package com.erp.biztrack.common;
 import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class DocumentDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -7970793635367626682L;
 
@@ -21,12 +23,16 @@ public class DocumentDTO implements java.io.Serializable {
 	private String title;                   				// TITLE VARCHAR2(100)
 	private String remarks;                 			// REMARKS VARCHAR2(1000)
 	private java.sql.Date createdDate;      			// CREATED_DATE DATE
+	
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	private java.sql.Date documentDate;     		// DOCUMENT_DATE DATE
 	private String paymentMethod;           		// PAYMENT_METHOD VARCHAR2(30)
 	private String status;                 		 		// 결재 상태 (작성중, 승인 등)
 	private List<DocumentItemDTO> items;
 	private Integer totalAmount;						//총합계
 	private java.sql.Date updatedDate;				//수정일
+	private String connectDocumentId;      //   CONNECT_DOCUMENT_ID   VARCHAR2(30 BYTE)
+	private String deptId;  // 로그인 사용자의 부서 ID (조회 조건 전달용)
 
 	// Constructor
 	public DocumentDTO() {
@@ -37,7 +43,8 @@ public class DocumentDTO implements java.io.Serializable {
 			String clientId, String clientName, String documentWriterId, String documentWriterJobTitle,
 			String documentWriterName, String documentManagerId, String documentManagerJobTitle,
 			String documentManagerName, String title, String remarks, Date createdDate, Date documentDate,
-			String paymentMethod, String status, List<DocumentItemDTO> items, Integer totalAmount, Date updatedDate) {
+			String paymentMethod, String status, List<DocumentItemDTO> items, Integer totalAmount, Date updatedDate,
+			String connectDocumentId, String deptId) {
 		super();
 		this.documentId = documentId;
 		this.documentTypeId = documentTypeId;
@@ -60,6 +67,8 @@ public class DocumentDTO implements java.io.Serializable {
 		this.items = items;
 		this.totalAmount = totalAmount;
 		this.updatedDate = updatedDate;
+		this.connectDocumentId = connectDocumentId;
+		this.deptId = deptId;
 	}
 
 	public String getDocumentId() {
@@ -230,8 +239,24 @@ public class DocumentDTO implements java.io.Serializable {
 		this.updatedDate = updatedDate;
 	}
 
+	public String getConnectDocumentId() {
+		return connectDocumentId;
+	}
+
+	public void setConnectDocumentId(String connectDocumentId) {
+		this.connectDocumentId = connectDocumentId;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
 	}
 
 	@Override
@@ -243,6 +268,7 @@ public class DocumentDTO implements java.io.Serializable {
 				+ documentManagerId + ", documentManagerJobTitle=" + documentManagerJobTitle + ", documentManagerName="
 				+ documentManagerName + ", title=" + title + ", remarks=" + remarks + ", createdDate=" + createdDate
 				+ ", documentDate=" + documentDate + ", paymentMethod=" + paymentMethod + ", status=" + status
-				+ ", items=" + items + ", totalAmount=" + totalAmount + ", updatedDate=" + updatedDate + "]";
+				+ ", items=" + items + ", totalAmount=" + totalAmount + ", updatedDate=" + updatedDate
+				+ ", connectDocumentId=" + connectDocumentId + ", deptId=" + deptId + "]";
 	}
 }
