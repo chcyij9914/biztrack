@@ -101,16 +101,25 @@ public class TrainingDao {
     }
 
 	public Training getTrainingById(String trainingId) {
-		return sqlSessionTemplate.selectOne("trainingMapper.selectTrainingById", trainingId);
+	    return sqlSessionTemplate.selectOne("trainingMapper.selectTrainingById", trainingId);
 	}
 
-	/*
-	 * public Training selectApplicant(String trainingId, String name, String birth,
-	 * String phone) { Map<String, Object> map = new HashMap<>();
-	 * map.put("trainingId", trainingId); map.put("name", name); map.put("birth",
-	 * birth); map.put("phone", phone); return
-	 * sqlSessionTemplate.selectOne(NAMESPACE + "selectApplicant", map); }
-	 */
+
+	public ArrayList<Training> selectTrainingsByRegistrant(String email) {
+		return sqlSessionTemplate.selectOne("trainingMapper.selectTrainingsByRegistrant", email);
+	}
+
+	  public List<Training> selectTrainingsByEmail(String email) { 
+		  return sqlSessionTemplate.selectOne("trainingMapper.selectTrainingsByEmail", email);
+	  }
+	  
+	  public List<TrainingRegistration> selectMyTrainingList(String email) { 
+		  return sqlSessionTemplate.selectList("trainingregistrationMapper.selectMyTrainingList", email); }
+
+	public List<Map<String, Object>> getTrainingListByEmail(String email) {
+		 return  sqlSessionTemplate.selectList(NAMESPACE + "getTrainingListByEmail", email);
+	}
+	 
 
 	
 }

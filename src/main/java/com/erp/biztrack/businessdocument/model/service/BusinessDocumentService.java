@@ -1,21 +1,37 @@
 package com.erp.biztrack.businessdocument.model.service;
 
 import java.util.ArrayList;
-import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionTemplate;
+import java.util.List;
 
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
 import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
-import com.erp.biztrack.common.Paging;
 
 public interface BusinessDocumentService {
+	
+	// 출고서 목록 조회
+    ArrayList<BusinessDocument> selectOutboundDocumentList(DocumentPaging pageInfo);
 
-	 ArrayList<BusinessDocument> selectDocumentListBySearch(SqlSessionTemplate sqlSessionTemplate, Map<String, Object> param);
-	 int selectDocumentListSearchCount(SqlSessionTemplate sqlSessionTemplate, Map<String, Object> param);
-	 ArrayList<BusinessDocument> selectOutboundDocumentList(DocumentPaging pageInfo);
-	 int selectOutboundListCount(DocumentPaging pageInfo);
-	 ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(SqlSession session, Paging paging);
-	 int selectTaxInvoiceDocumentListCount(SqlSession session);
+    // 출고서 목록 개수 조회
+    int selectOutboundListCount(DocumentPaging pageInfo);
+
+    // 출고서 등록
+    int insertOutboundDocument(BusinessDocument document);
+
+    // 출고서 품목 등록
+    int insertDocumentItem(BusinessDocument item);
+    
+    // 품목 리스트 일괄 등록용
+    int insertDocumentItemList(List<BusinessDocument> items);
+    
+    // 출고서 문서번호 시퀀스 조회
+    String selectNextOutboundId();
+    
+    // 품목 ID 시퀀스 조회 
+    String selectNextItemId();
+
+    // 세금계산서 목록 조회
+    ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(DocumentPaging pageInfo);
+
+    // 세금계산서 개수
+    int selectTaxInvoiceListCount(DocumentPaging pageInfo);
 }

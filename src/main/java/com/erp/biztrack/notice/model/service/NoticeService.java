@@ -1,6 +1,7 @@
 package com.erp.biztrack.notice.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
@@ -26,5 +27,8 @@ public interface NoticeService {
 		ArrayList<Notice> selectSearchContent(Search search);
 		ArrayList<Notice> selectSearchDate(Search search);
 		ArrayList<Notice> selectSearchWriter(Search search);
+		ArrayList<Notice> getAllNotices();
+		ArrayList<Notice> selectImportantList();
+		ArrayList<Notice> selectNoticeList(String page);
 		
 	}

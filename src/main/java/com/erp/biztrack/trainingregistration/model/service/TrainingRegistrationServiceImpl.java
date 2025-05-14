@@ -34,21 +34,24 @@ public class TrainingRegistrationServiceImpl implements TrainingRegistrationServ
 	    }
 
 	  @Override
-	  public List<Map<String, Object>> getAllRegistrations() {
-	      return trainingRegistrationDao.selectAllCourseWithStatus();
+	  public List getAllRegistrations() {
+	      return trainingRegistrationDao.selectAllCourseWithStatus();  // Mapper도 DTO 반환하도록 변경 필요
 	  }
+
 
 	@Override
 	public Training getTrainingById(String trainingId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void insertTrainingRegistration(TrainingRegistration dto) {
-		// TODO Auto-generated method stub
-		
 	}
+	
+	/*
+	 * @Override public List<TrainingRegistration> getMyTrainingList(String email) {
+	 * return trainingRegistrationDao.selectMyTrainingList(email); }
+	 */
 
 	
 

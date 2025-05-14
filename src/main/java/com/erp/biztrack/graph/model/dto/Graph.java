@@ -6,14 +6,14 @@ public class Graph implements java.io.Serializable {
     // ---------------------- 제품별 영업이익 관련 필드 ----------------------
     private String productCode;         // 제품 코드
     private String productName;         // 제품명
-    private int costPrice;              // 원가
+    private int unitPrice;              // 단가 (문서별 기준)
     private int salePrice;              // 판매가
     private int outboundQuantity;       // 출고 수량
     private int profitPerUnit;          // 단위당 이익
     private int totalProfit;            // 총 이익
     private double profitMargin;        // 이익률 %
 
-    // ---------------------- 거래건수 그래프/표 관련 필드 ----------------------
+    // ---------------------- 거래처별 거래건수 관련 필드 ----------------------
     private String clientName;          // 거래처 이름
     private int count;                  // 거래 건수
     private int totalAmount;            // 총 거래 금액
@@ -22,14 +22,19 @@ public class Graph implements java.io.Serializable {
     private String managerPhone;        // 담당자 연락처
     private String clientStatus;        // 계약 상태
 
+    // ---------------------- 부서별 영업실적 관련 필드 ----------------------
+    private String deptName;            // 부서명
+    private int deptSalesAmount;        // 총 매출액 (거래금액)
+    private int deptTransactionCount;   // 부서별 거래건수
+
     // ---------------------- 생성자 ----------------------
     public Graph() {}
 
-    public Graph(String productCode, String productName, int costPrice, int salePrice, int outboundQuantity,
+    public Graph(String productCode, String productName, int unitPrice, int salePrice, int outboundQuantity,
                  int profitPerUnit, int totalProfit, double profitMargin) {
         this.productCode = productCode;
         this.productName = productName;
-        this.costPrice = costPrice;
+        this.unitPrice = unitPrice;
         this.salePrice = salePrice;
         this.outboundQuantity = outboundQuantity;
         this.profitPerUnit = profitPerUnit;
@@ -44,8 +49,8 @@ public class Graph implements java.io.Serializable {
     public String getProductName() { return productName; }
     public void setProductName(String productName) { this.productName = productName; }
 
-    public int getCostPrice() { return costPrice; }
-    public void setCostPrice(int costPrice) { this.costPrice = costPrice; }
+    public int getUnitPrice() { return unitPrice; }
+    public void setUnitPrice(int unitPrice) { this.unitPrice = unitPrice; }
 
     public int getSalePrice() { return salePrice; }
     public void setSalePrice(int salePrice) { this.salePrice = salePrice; }
@@ -62,15 +67,10 @@ public class Graph implements java.io.Serializable {
     public double getProfitMargin() { return profitMargin; }
     public void setProfitMargin(double profitMargin) { this.profitMargin = profitMargin; }
 
-    public int getTotalRevenue() {
-        return salePrice * outboundQuantity;
-    }
+    public int getTotalRevenue() { return salePrice * outboundQuantity; }
+    public int getTotalCost() { return unitPrice * outboundQuantity; }
 
-    public int getTotalCost() {
-        return costPrice * outboundQuantity;
-    }
-
-    // ---------------------- Getter / Setter (거래건수) ----------------------
+    // ---------------------- Getter / Setter (거래처) ----------------------
     public String getClientName() { return clientName; }
     public void setClientName(String clientName) { this.clientName = clientName; }
 
@@ -92,6 +92,16 @@ public class Graph implements java.io.Serializable {
     public String getClientStatus() { return clientStatus; }
     public void setClientStatus(String clientStatus) { this.clientStatus = clientStatus; }
 
+    // ---------------------- Getter / Setter (부서) ----------------------
+    public String getDeptName() { return deptName; }
+    public void setDeptName(String deptName) { this.deptName = deptName; }
+
+    public int getDeptSalesAmount() { return deptSalesAmount; }
+    public void setDeptSalesAmount(int deptSalesAmount) { this.deptSalesAmount = deptSalesAmount; }
+
+    public int getDeptTransactionCount() { return deptTransactionCount; }
+    public void setDeptTransactionCount(int deptTransactionCount) { this.deptTransactionCount = deptTransactionCount; }
+
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
@@ -100,20 +110,22 @@ public class Graph implements java.io.Serializable {
     @Override
     public String toString() {
         if (productCode != null && productName != null) {
-            // 제품 그래프
             return "[제품 그래프] 제품명: " + productName +
                    ", 출고수량: " + outboundQuantity +
                    ", 총이익: " + totalProfit +
                    ", 이익률: " + profitMargin + "%" +
                    ", 단위당이익: " + profitPerUnit;
         } else if (clientName != null) {
-            // 거래건수 그래프
             return "[거래 그래프] 거래처: " + clientName +
                    ", 거래건수: " + count +
                    ", 총금액: " + totalAmount +
                    ", 최근거래일: " + lastTransactionDate +
                    ", 담당자: " + managerName +
                    ", 상태: " + clientStatus;
+        } else if (deptName != null) {
+            return "[부서 그래프] 부서명: " + deptName +
+                   ", 거래건수: " + deptTransactionCount +
+                   ", 매출합계: " + deptSalesAmount;
         } else {
             return "[Graph DTO] 내용 없음";
         }

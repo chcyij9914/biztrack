@@ -16,6 +16,10 @@ public class NoticeDao {
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 	
+	public ArrayList<Notice> getAllNotices;
+	public ArrayList<Notice> selectImportantList;
+	public ArrayList<Notice> selectNoticeList;
+	
 	public ArrayList<Notice> selectTop3(){
 		List<Notice> list = sqlSessionTemplate.selectList("noticeMapper.selectTop3");
 		return (ArrayList<Notice>)list;
