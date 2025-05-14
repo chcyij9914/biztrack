@@ -58,6 +58,17 @@ public interface TrainingService {
 	Training getTrainingById(String trainingId);
 	void saveCompletedTraining(String userId, String trainingId);
 	
+	List<Training> getMyTrainings(String employeeId);
+	List<TrainingRegistration> getMyTrainingList(String email);
+	
+	public ArrayList<Training> getTrainingsByRegistrant(String email); 
+	List<Training> getTrainingsByEmail(String loginEmail);
+	List<Map<String, Object>> getMyTrainingListByEmail(String email); 
+	
+	
+	
+
+	
 	  
 }
 

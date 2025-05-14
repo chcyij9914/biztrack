@@ -14,12 +14,7 @@ public interface TrainingRegistrationService{
 	  // 전체 수강신청 글 갯수 조회 
 	    List<TrainingRegistration> selectByTrainingId(String trainingId);
 
-	    List<Map<String, Object>> getAllRegistrations();
-		
-
-		static Training selectTraining(String trainingId) {
-			return null;
-		}
+	    List<TrainingRegistration> getAllRegistrations(); 
 		
 		List<Map<String, Object>> getTrainingStatusList();
 
@@ -27,8 +22,8 @@ public interface TrainingRegistrationService{
 
 		Training getTrainingById(String trainingId);
 		void insertTrainingRegistration(TrainingRegistration dto);
-		
 
+	
 	}
 
 

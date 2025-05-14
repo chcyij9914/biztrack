@@ -101,32 +101,60 @@ public class TrainingServiceImpl implements TrainingService {
 	}
 
 	@Override
-    public void registerTraining(Map<String, String> paramMap) throws Exception {
-        trainingDao.insertTrainingRegistration(paramMap);
+	public void registerTraining(Map<String, String> paramMap) throws Exception {
+		trainingDao.insertTrainingRegistration(paramMap);
 	}
 
 	@Override
 	public void insertTrainingRegistration(Map<String, String> param) {
-		 trainingDao.insertTrainingRegistration(param);
-		
+		trainingDao.insertTrainingRegistration(param);
+
 	}
 
 	@Override
 	public Training getTrainingById(String trainingId) {
-	    return trainingDao.getTrainingById(trainingId);
+		return trainingDao.getTrainingById(trainingId);
+	}
+
+	@Override
+	public ArrayList<Training> getTrainingsByRegistrant(String email) {
+		return trainingDao.selectTrainingsByRegistrant(email);
+	}
+
+	@Override
+	public List<Training> getTrainingsByEmail(String loginEmail) {
+		return trainingDao.selectTrainingsByEmail(loginEmail);
+	}
+
+	@Override
+	public List<Training> getMyTrainings(String employeeId) {
+		return trainingDao.selectTrainingsByRegistrant(employeeId);
+	}
+
+	@Override
+	public List<TrainingRegistration> getMyTrainingList(String email) {
+		return trainingDao.selectMyTrainingList(email);
+	}
+
+	@Override
+	public List<Map<String, Object>> getMyTrainingListByEmail(String email) {
+		return trainingDao.getTrainingListByEmail(email);
 	}
 
 	@Override
 	public List<Map<String, Object>> getAllRegistrations() {
 		return null;
+		/* return trainingDao.getAllRegistrations(Registrations) */
 	}
 
 	@Override
 	public List<Map<String, Object>> getTrainingStatusList() {
 		return null;
+		/* return trainingDao. getTrainingStatusList(StatusList); */
 	}
 
 	@Override
 	public void saveCompletedTraining(String userId, String trainingId) {
 	}
+
 }
