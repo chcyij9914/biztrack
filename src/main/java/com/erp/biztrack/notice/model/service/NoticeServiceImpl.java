@@ -95,6 +95,21 @@ public class NoticeServiceImpl implements NoticeService {
 	public Notice selectLast() {
 		return noticeDao.selectLast();
 	}
+
+	@Override
+	public ArrayList<Notice> getAllNotices() {
+		return noticeDao.getAllNotices;
+	}
+
+	@Override
+	public ArrayList<Notice> selectImportantList() {
+		return noticeDao.selectImportantList;
+	}
+
+	@Override
+	public ArrayList<Notice> selectNoticeList(String page) {
+		return noticeDao.selectNoticeList;
+	}
 	
 
 }

@@ -31,5 +31,11 @@ public class TrainingRegistrationDao {
 		return sqlSessionTemplate.selectList("trainingregistrationMapper.selectAllCourseWithStatus");
 
 	}
-
+	
+	/*
+	 * public List<TrainingRegistration> selectMyTrainingList(String email) { return
+	 * sqlSessionTemplate.selectList(
+	 * "trainingregistrationMapper.selectMyTrainingList", email); }
+	 * 
+	 */
 }

@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -96,9 +100,9 @@
 							&nbsp;&nbsp;
 							<%-- </c:if> --%>
 
-
+<!-- 
 							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
-							&nbsp;&nbsp;
+							&nbsp;&nbsp; -->
 							<!-- <button type="submit" class="btn btn-danger">삭제</button>&nbsp;&nbsp; -->
 
 
@@ -202,21 +206,63 @@
 									<table class="table table-bordered text-center">
 										<thead class="thead-light">
 											<tr>
-												<th><input type="radio"></th>
+												<!-- <th><input type="radio"></th> -->
 												<th>공지 번호</th>
 												<th>제목</th>
 												<th>공지 내용</th>
 												<th>등록일</th>
 												<th>작성자</th>
-												<th>중요 공지여부</th>
+												<!-- <th>중요 공지여부</th> -->
 												<th>중요 공지여부 종료일</th>
 												<th>조회수</th>
 
 											</tr>
 										</thead>
 										<tbody class="text-center bg-white">
+											<!-- 🔸 중요공지 먼저 출력 -->
+											<c:forEach var="notice" items="${noticeList}">
+												<c:if test="${notice.importance == 'Y'}">
+													<tr style="background-color: #fff3cd;">
+														<%-- <td><input type="radio" name="selectedId"
+															value="${item.noticeNo}"></td> --%>
+														<td><span class="badge badge-danger">중요</span></td>
+														<td><a
+															href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
+															${notice.noticeTitle} </a>
+														</td>
+														<td>${notice.noticeContent}</td>
+														<td>${notice.noticeDate}</td>
+														<td>${notice.noticeWriter}</td>
+														<td><fmt:formatDate value="${notice.noticeDate}"
+																pattern="yyyy-MM-dd" /></td>
+														<td>${notice.readCount}</td>
+													</tr>
+												</c:if>
+											</c:forEach>
+
+											<!-- 🔹 일반 공지 출력 -->
+											<c:forEach var="notice" items="${noticeList}">
+												<c:if test="${notice.importance != 'Y'}">
+													<tr>
+														<%-- <td><input type="radio" name="selectedId"
+															value="${item.noticeNo}"></td> --%>
+														<td>${notice.noticeNo}</td>
+														<td><a
+															href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
+																${notice.noticeTitle} </a></td>
+														<td>${notice.noticeContent}</td>
+														<td>${notice.noticeDate}</td>
+														<td>${notice.noticeWriter}</td>
+														<td><fmt:formatDate value="${notice.noticeDate}"
+																pattern="yyyy-MM-dd" /></td>
+														<td>${notice.readCount}</td>
+													</tr>
+												</c:if>
+											</c:forEach>
+
+
 											<%--  조회된 목록 출력 부분 --%>
-											<c:forEach var="item" items="${notice}">
+											<%-- <c:forEach var="item" items="${notice}">
 												<tr>
 													<td><input type="radio" name="selectedId"
 														value="${item.noticeNo}"></td>
@@ -230,7 +276,7 @@
 													<td>${item.readCount}</td>
 												</tr>
 											</c:forEach>
-
+ --%>
 										</tbody>
 									</table>
 									</div>
