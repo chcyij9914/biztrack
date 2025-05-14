@@ -181,11 +181,6 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
-	    return clientDao.selectDocumentListByType(param);
-	}
-
-	@Override
 	public int insertDocument(DocumentDTO document) {
 		return clientDao.insertDocument(document);
 	}
@@ -306,7 +301,22 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
+	public ArrayList<DocumentDTO> selectContractListByClientAndDept(DocumentDTO cond) {
+		return clientDao.selectContractListByClientAndDept(cond);
+	}
+
+	@Override
 	public ArrayList<DocumentDTO> selectProposalListByWriter(String empId) {
 		return clientDao.selectProposalListByWriter(empId);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
+		return clientDao.selectDocumentListByType(param);
+	}
+
+	@Override
+	public int updateContractPeriod(Client client) {
+		return clientDao.updateContractPeriod(client);
 	}
 }

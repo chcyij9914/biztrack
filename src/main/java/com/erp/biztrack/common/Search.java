@@ -14,6 +14,7 @@ public class Search {
 	private String categoryId; // 카테고리 명
 	private String categoryName; // 카테고리 명
 	private String filter; // 검색기준
+	private String documentTypeId;  // 계약서(C), 제안서(D) 구분용
 	
 	public Search() {
 		super();
@@ -99,10 +100,18 @@ public class Search {
 		this.filter = filter;
 	}
 
+	public String getDocumentTypeId() {
+		return documentTypeId;
+	}
+
+	public void setDocumentTypeId(String documentTypeId) {
+		this.documentTypeId = documentTypeId;
+	}
+
 	@Override
 	public String toString() {
 		return "Search [keyword=" + keyword + ", startRow=" + startRow + ", endRow=" + endRow + ", begin=" + begin
 				+ ", end=" + end + ", status=" + status + ", scType=" + scType + ", categoryId=" + categoryId
-				+ ", categoryName=" + categoryName + ", filter=" + filter + "]";
+				+ ", categoryName=" + categoryName + ", filter=" + filter + ", documentTypeId=" + documentTypeId + "]";
 	}
 }

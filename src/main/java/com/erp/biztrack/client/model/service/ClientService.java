@@ -29,9 +29,11 @@ public interface ClientService {
     Client selectClientDetail(String clientId);
     String selectContractFilePath(String clientId);
     String selectBusinessCardFilePath(String clientId);
+    ArrayList<DocumentDTO> selectContractListByClientAndDept(DocumentDTO cond);
     //거래처 수정 관련 -----------------------------------
     int updateClient(Client client);
     int deleteFileByClientIdOnly(String clientId);
+    int updateContractPeriod(Client client);
     //거래처 검색 관련 ------------------------------------
     int selectSearchClientNameCount(String keyword);
     ArrayList<Client> selectSearchClientNameList(Search search);

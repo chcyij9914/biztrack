@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:if test="${empty sessionScope.loginInfo}">
     <c:redirect url="/login.do" />
 </c:if>
@@ -49,27 +50,26 @@
 
 						<!-- 버튼 영역 (오른쪽) -->
 						<div>
-							<c:if test="${loginInfo.adminYN == 'Y'}">
-								<a href="${pageContext.request.contextPath}/client/delete.do?clientId=${client.clientId}" 
-								   class="btn btn-danger btn-sm mr-1"
-								   onclick="return confirm('정말 삭제하시겠습니까?');">
-								   <i class="fas fa-trash-alt"></i> 삭제
-								</a>
+							<c:if test="${loginInfo.roleId == 'A2' 
+							          || loginInfo.roleId == 'A3' 
+							          || loginInfo.empId == client.currentManagerId}">
+							  <a href="${pageContext.request.contextPath}/client/delete.do?clientId=${client.clientId}" 
+							     class="btn btn-danger btn-sm mr-1"
+							     onclick="return confirm('정말 삭제하시겠습니까?');">
+							     <i class="fas fa-trash-alt"></i> 삭제
+							  </a>
 							</c:if>
-						    <c:if test="${(loginInfo.adminYN == 'Y' && loginInfo.deptId == clientDeptId)
-						           || ((loginInfo.roleId == 'A2' || loginInfo.roleId == 'A3')
-						                && loginInfo.deptId == clientDeptId)
-						           || loginInfo.empId == client.currentManagerId}">
-						        <a href="${pageContext.request.contextPath}/client/cupdate.do?clientId=${client.clientId}" 
-						           class="btn btn-primary btn-sm mr-1">
-						           <i class="fas fa-edit"></i> 수정하기
-						        </a>
-						    </c:if>
-						
+						    <c:if test="${loginInfo.roleId == 'A2' 
+							          || loginInfo.roleId == 'A3' 
+							          || loginInfo.empId == client.currentManagerId}">
+							  <a href="${pageContext.request.contextPath}/client/cupdate.do?clientId=${client.clientId}" 
+							     class="btn btn-primary btn-sm mr-1">
+							     <i class="fas fa-edit"></i> 수정하기
+							  </a>
+							</c:if>
 						    <button type="button" class="btn btn-secondary btn-sm mr-1" onclick="history.back();">
 						        <i class="fas fa-arrow-left"></i> 이전페이지
 						    </button>
-						
 						    <a href="${pageContext.request.contextPath}/client/clist.do" class="btn btn-info btn-sm">
 						        <i class="fas fa-list"></i> 목록으로
 						    </a>
@@ -170,13 +170,37 @@
 						<div class="tab-pane fade" id="contract">
 							<div class="card shadow mb-4">
 								<div class="card-body">
-									<c:if test="${not empty contractFilePath}">
-										<iframe
-											src="${pageContext.request.contextPath}${contractFilePath}"
-											width="100%" height="600px"></iframe>
+									<c:if test="${not empty contractList}">
+									  <table class="table table-bordered text-center">
+									    <thead class="thead-light">
+									      <tr>
+									        <th>문서번호</th>
+									        <th>제목</th>
+									        <th>계약일자</th>
+									        <th>총금액</th>
+									        <th>결제수단</th>
+									        <th>관리</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									      <c:forEach var="doc" items="${contractList}">
+									        <tr>
+									          <td>${doc.documentId}</td>
+									          <td class="text-left">${doc.title}</td>
+									          <td><fmt:formatDate value="${doc.documentDate}" pattern="yyyy-MM-dd" /></td>
+									          <td><fmt:formatNumber value="${doc.totalAmount}" type="currency" currencySymbol="₩" /></td>
+									          <td>${doc.paymentMethod}</td>
+									          <td>
+									            <a href="${pageContext.request.contextPath}/client/documentDetailView.do?documentId=${doc.documentId}"
+									               class="btn btn-outline-primary btn-sm">보러가기</a>
+									          </td>
+									        </tr>
+									      </c:forEach>
+									    </tbody>
+									  </table>
 									</c:if>
-									<c:if test="${empty contractFilePath}">
-										<p class="text-muted">등록된 계약서가 없습니다.</p>
+									<c:if test="${empty contractList}">
+									  <p class="text-muted">계약 내역이 없습니다.</p>
 									</c:if>
 								</div>
 							</div>

@@ -118,53 +118,30 @@ td {
 														const $form = $('#searchForm');
 
 														// 모든 입력/선택 필드 숨기기
-														$form
-																.find(
-																		'input[name="keyword"]')
-																.addClass(
-																		'd-none');
-														$form
-																.find(
-																		'select[name="statusParam"]')
-																.addClass(
-																		'd-none');
-														$form
-																.find(
-																		'select[name="categoryId"]')
-																.addClass(
-																		'd-none');
+														$form.find('input[name="keyword"]').addClass('d-none');
+														$form.find('select[name="statusParam"]').addClass('d-none');
+														$form.find('select[name="categoryId"]').addClass('d-none');
 
 														// 타입별로 폼 액션 및 필드 표시 설정
 														if (type === 'name') {
-															$form
-																	.attr(
+															$form.attr(
 																			'action',
 																			'csearchName.do');
-															$form
-																	.find(
-																			'input[name="keyword"]')
-																	.removeClass(
+															$form.find(
+																			'input[name="keyword"]').removeClass(
 																			'd-none');
 														} else if (type === 'status') {
-															$form
-																	.attr(
+															$form.attr(
 																			'action',
 																			'csearchStatus.do');
-															$form
-																	.find(
-																			'select[name="statusParam"]')
-																	.removeClass(
+															$form.find(
+																			'select[name="statusParam"]').removeClass(
 																			'd-none');
 														} else if (type === 'category') {
-															$form
-																	.attr(
+															$form.attr(
 																			'action',
 																			'csearchCategory.do');
-															$form
-																	.find(
-																			'select[name="categoryId"]')
-																	.removeClass(
-																			'd-none');
+															$form.find('select[name="categoryId"]').removeClass('d-none');
 														}
 													});
 								});

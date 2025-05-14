@@ -11,15 +11,13 @@ public class DocumentItemDTO implements java.io.Serializable {
    private int salePrice;
    private int unitPrice;                  //   UNIT_PRICE   NUMBER(10,0)
    private int amount;
-   private String paymentMethod;       // 예: 카드, 계좌이체, 현금
-   private String connectDocumentId;      //   CONNECT_DOCUMENT_ID   VARCHAR2(30 BYTE)
    
    public DocumentItemDTO() {
       super();
    }
 
    public DocumentItemDTO(String itemId, String productId, String productName, String documentId, int quantity,
-         int salePrice, int unitPrice, int amount, String paymentMethod, String connectDocumentId) {
+         int salePrice, int unitPrice, int amount) {
       super();
       this.itemId = itemId;
       this.productId = productId;
@@ -29,8 +27,6 @@ public class DocumentItemDTO implements java.io.Serializable {
       this.salePrice = salePrice;
       this.unitPrice = unitPrice;
       this.amount = amount;
-      this.paymentMethod = paymentMethod;
-      this.connectDocumentId = connectDocumentId;
    }
 
    public String getItemId() {
@@ -97,22 +93,6 @@ public class DocumentItemDTO implements java.io.Serializable {
       this.amount = amount;
    }
 
-   public String getPaymentMethod() {
-      return paymentMethod;
-   }
-
-   public void setPaymentMethod(String paymentMethod) {
-      this.paymentMethod = paymentMethod;
-   }
-
-   public String getConnectDocumentId() {
-      return connectDocumentId;
-   }
-
-   public void setConnectDocumentId(String connectDocumentId) {
-      this.connectDocumentId = connectDocumentId;
-   }
-
    public static long getSerialversionuid() {
       return serialVersionUID;
    }
@@ -121,7 +101,6 @@ public class DocumentItemDTO implements java.io.Serializable {
    public String toString() {
       return "DocumentItemDTO [itemId=" + itemId + ", productId=" + productId + ", productName=" + productName
             + ", documentId=" + documentId + ", quantity=" + quantity + ", salePrice=" + salePrice + ", unitPrice="
-            + unitPrice + ", amount=" + amount + ", paymentMethod=" + paymentMethod + ", connectDocumentId="
-            + connectDocumentId + "]";
+            + unitPrice + ", amount=" + amount + "]";
    }
 }
