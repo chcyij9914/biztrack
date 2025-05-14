@@ -69,8 +69,8 @@
 
 						<div class="d-flex align-items-center">
 							<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-								onclick="window.open('${pageContext.request.contextPath}/inbound/new-inbound.do', 'newWindow', 'width=800,height=600'); return false;">
-								+ 입고 </a>
+								onclick="window.open('${pageContext.request.contextPath}/inbound/new-inbound.do', 'newWindow', 'width=1000,height=800'); return false;">
+								+ 입고 </a> 
 
 							<form class="form-inline"
 								action="${pageContext.request.contextPath}/purchase/search.do"
@@ -124,10 +124,9 @@
 											<td>${inbound.quantity}</td>
 											<td>${inbound.clientName}</td>
 											<td><span class="badge badge-primary">${inbound.approve1Status}</span></td>
-											<td><a href="#"
-												onclick="window.open('${pageContext.request.contextPath}/inbound/inbound-detail.do?documentId=${inbound.documentId}', 'detailWindow', 'width=800,height=600'); return false;"
-												class="btn btn-sm btn-outline-secondary"
-												width=1000,height=800'>상세</a></td>
+											<td><a
+												href="${pageContext.request.contextPath}/inbound/inbound-detail.do?documentId=${inbound.documentId}"
+												class="btn btn-sm btn-outline-secondary">상세</a></td>
 										</tr>
 									</c:forEach>
 								</tbody>

@@ -134,10 +134,9 @@
 											<td>${purchase.title}</td>
 											<td>${purchase.clientName}</td>
 											<td><span class="badge badge-primary">${purchase.approve1Status}</span></td>
-											<td><a href="#"
-												onclick="window.open('${pageContext.request.contextPath}/purchase/purchase-detail.do?documentId=${purchase.documentId}', 'detailWindow', 'width=800,height=600'); return false;"
-												class="btn btn-sm btn-outline-secondary"
-												width=1000,height=800'>상세</a></td>
+											<td><a
+												href="${pageContext.request.contextPath}/purchase/purchase-detail.do?documentId=${purchase.documentId}"
+												class="btn btn-sm btn-outline-secondary">상세</a></td>
 										</tr>
 									</c:forEach>
 								</tbody>

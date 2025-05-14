@@ -145,6 +145,18 @@ td button.btn-sm {
           </div>
         </div> -->
 
+					<!-- 결제수단 -->
+					<div class="form-row mb-3">
+						<div class="col-md-4">
+							<label>결제수단</label> <select name="paymentMethod"
+								class="form-control" required>
+								<option value="" disabled selected>-- 결제수단 선택 --</option>
+								<option value="카드">신용카드</option>
+								<option value="계좌이체">계좌이체</option>
+								<option value="현금">현금</option>
+							</select>
+						</div>
+					</div>
 					<!-- 품목 리스트 테이블 -->
 					<table class="table table-bordered mb-3" id="itemTable">
 						<thead>
@@ -155,20 +167,21 @@ td button.btn-sm {
 								<th>수량</th>
 								<th>단가</th>
 								<th>금액</th>
-								<th>결제수단</th>
 								<th style="width: 80px;">삭제</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td>1</td>
+								<td><input type="hidden" name="items[0].itemId" value="" />
+									<input type="hidden" name="items[0].documentId" value="" /> 1
+								</td>
 								<td><select name="items[0].productId"
 									class="form-control product-select"
 									onchange="updatePrice(this)">
 										<option value="" disabled selected>-- 품목 선택 --</option>
 										<c:forEach var="p" items="${productList}">
 											<option value="${p.productId}" data-name="${p.productName}"
-												data-category="${p.categoryId}">${p.productId} -
+												data-category="${p.categoryId}">${p.productId}-
 												${p.productName}</option>
 										</c:forEach>
 								</select></td>
@@ -180,13 +193,6 @@ td button.btn-sm {
 									class="form-control"></td>
 								<td><input type="number" name="items[0].amount"
 									class="form-control" readonly></td>
-								<td><select name="items[0].paymentMethod"
-									class="form-control payment-select" required>
-										<option value="" disabled selected>-- 결제수단 선택 --</option>
-										<option value="카드">신용카드</option>
-										<option value="계좌이제">계좌이체</option>
-										<option value="현금">현금</option>
-								</select></td>
 								<td><button type="button"
 										class="btn btn-danger btn-sm btn-delete"
 										onclick="removeRow(this)">삭제</button></td>
@@ -295,7 +301,8 @@ $(function () {
 	  const table = document.querySelector('#itemTable tbody');
 	  const rowCount = table.rows.length;
 	  const clone = table.rows[0].cloneNode(true);
-	
+	  clone.querySelector('input[name$=".itemId"]').value = "";
+	  clone.querySelector('input[name$=".documentId"]').value = "";
 	  clone.querySelector('td').innerText = rowCount + 1;
 
 	  clone.querySelectorAll('input, select').forEach(el => {
@@ -339,7 +346,7 @@ $(function () {
 	  updateTotalAmount(); // ← 총합 업데이트 호출
 	}
 
-	// 금액 계산
+	// 금액 계산 --> 품목이름 업데이트
 	function updatePrice(select) {
 	  const row = select.closest('tr');
 	  const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
@@ -353,7 +360,7 @@ $(function () {
 		  const row = document.querySelectorAll('#itemTable tbody tr')[idx];
 		  const qty = parseInt(row.querySelector('[name="items[' + idx + '].quantity"]').value || 0);
 		  const price = parseInt(row.querySelector('[name="items[' + idx + '].unitPrice"]').value || 0);
-		  const amount = qty * price * 1.1;
+		  const amount = qty * price;
 		  row.querySelector('[name="items[' + idx + '].amount"]').value = Math.floor(amount); // 소수점 버림
 		  updateTotalAmount(); // ← 총합 업데이트 호출
 		}

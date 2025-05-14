@@ -3,6 +3,9 @@ package com.erp.biztrack.purchase.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +17,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.erp.biztrack.admin.model.service.AdminServiceImpl;
+import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.client.model.service.ClientService;
 import com.erp.biztrack.common.ApproveDTO;
 import com.erp.biztrack.common.DocumentDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.FileRenameUtil;
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.employee.model.dto.Employee;
+import com.erp.biztrack.employee.model.service.EmployeeService;
 import com.erp.biztrack.login.model.dto.LoginDto;
+import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 import com.erp.biztrack.purchase.model.service.PurchaseService;
@@ -50,14 +59,12 @@ public class PurchaseController {
 	@Autowired
 	private ClientService clientService;
 
+	@Autowired
+	private EmployeeService employeeService;
+
 	PurchaseController(AdminServiceImpl adminServiceImpl) {
 		this.adminServiceImpl = adminServiceImpl;
 	}
-
-	/*
-	 * @Autowired 가 내부에서 자동 의존성 주입하고 서비스와 연결해 줌, 생성 코드 필요없음 public
-	 * PurchaseController() { purchaseService = new PurchaseService(); }
-	 */
 
 	// 뷰 페이지 내보내기용 메소드 -----------------------------------------------------
 	// 공지사항 전체 목록보기 요청 처리용 (페이징 처리 : 한 페이지에 10개씩 출력 처리)
@@ -121,87 +128,241 @@ public class PurchaseController {
 
 	// 품의서 등록(POST)
 	@PostMapping("new-purchase.do")
-	public void insertDocument(@ModelAttribute DocumentDTO document,
-	                           @RequestParam("approver1Info") String approver1Id,
-	                           @RequestParam("approver2Info") String approver2Id,
-	                           @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
-	                           HttpServletRequest request,
-	                           HttpServletResponse response,
-	                           HttpSession session) throws IOException {
-	    
-	    String documentId = purchaseService.selectNextDocumentIdR();
-	    document.setDocumentId(documentId);
-	    document.setDocumentTypeId("R");
+	public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
+			@RequestParam("approver2Info") String approver2Id,
+			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request,
+			HttpServletResponse response, HttpSession session) throws IOException {
 
-	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
-	    String empId = loginInfo.getEmpId();
-	    document.setDocumentWriterId(empId);
-	    document.setDocumentManagerId(empId);
+		// 1.문서 ID생성
+		String documentId = purchaseService.selectNextDocumentIdR();
+		document.setDocumentId(documentId);
+		document.setDocumentTypeId("R");
 
-	    purchaseService.insertDocument(document);
+		LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+		String empId = loginInfo.getEmpId();
 
-	    ApproveDTO approve = new ApproveDTO();
-	    approve.setApproveId(purchaseService.selectNextApproveId());
-	    approve.setDocumentId(documentId);
-	    approve.setEmpId(empId);
-	    approve.setFirstApproverId(approver1Id);
-	    approve.setSecondApproverId(approver2Id);
-	    approve.setFirstApproveStatus("결재 대기");
-	    approve.setSecondApproveStatus("결재 대기");
-	    purchaseService.insertApproval(approve);
+		// 2. 작성자/담당자 ID 설정
+		document.setDocumentWriterId(empId);
+		document.setDocumentManagerId(empId);
 
-	    if (uploadFile != null && !uploadFile.isEmpty()) {
-	        String path = request.getServletContext().getRealPath("/resources/upload/purchase");
-	        new File(path).mkdirs();
+		// 3. 문서 등록
+		purchaseService.insertDocument(document);
 
-	        String originalName = uploadFile.getOriginalFilename();
-	        String renameName = FileRenameUtil.changeFileName(originalName);
-	        File saveFile = new File(path, renameName);
-	        uploadFile.transferTo(saveFile);
-
-	        FileDTO file = new FileDTO();
-	        file.setDocumentId(documentId);
-	        file.setFilePath("/resources/upload/purchase/" + renameName);
-	        file.setOriginalFileName(originalName);
-	        file.setRenameFileName(renameName);
-	        file.setUploadFileSize((int) saveFile.length());
-	        purchaseService.insertFile(file);
-	    }
-
-	    // 창 닫기 + 부모 창 새로고침
-	    response.setContentType("text/html; charset=UTF-8");
-	    response.getWriter().write(
-	        "<script>" +
-	        "alert('문서가 성공적으로 등록되었습니다.');" +
-	        "window.opener.location.href='" + request.getContextPath() + "/purchase/purchase-document.do';" +
-	        "window.close();" +
-	        "</script>"
-	    );
-	}
-
-	// 문서 상세보기
-	@RequestMapping("purchase-detail.do")
-	public ModelAndView purchaseDetail(@RequestParam("documentId") String documentId, ModelAndView mv) {
-		Purchase detail = purchaseService.selectPurchaseDetail(documentId);
-
-		if (detail != null) {
-			mv.addObject("purchase", detail);
-
-			// 문서 종류에 따라 뷰 분기 (ID로 비교)
-			if ("R".equals(detail.getDocumentTypeId())) {
-				mv.setViewName("purchase/purchase-detail");
-			} else if ("T".equals(detail.getDocumentTypeId())) {
-				mv.setViewName("purchase/payment-detail");
-			} else {
-				mv.addObject("message", "알 수 없는 문서 유형입니다.");
-				mv.setViewName("common/errorPage");
-			}
-		} else {
-			mv.addObject("message", "해당 문서를 찾을 수 없습니다.");
-			mv.setViewName("common/errorPage");
+		// 4. 품목 목록 등록
+		for (DocumentItemDTO item : document.getItems()) {
+			item.setDocumentId(documentId);
+			item.setItemId(purchaseService.selectNextItemId());
+			purchaseService.insertDocumentItem(item);
 		}
 
+		// 5. 결재 정보 등록
+		ApproveDTO approve = new ApproveDTO();
+		approve.setApproveId(purchaseService.selectNextApproveId());
+		approve.setDocumentId(documentId);
+		approve.setEmpId(empId);
+		approve.setFirstApproverId(approver1Id);
+		approve.setSecondApproverId(approver2Id);
+		approve.setFirstApproveStatus("결재 대기");
+		approve.setSecondApproveStatus("결재 대기");
+		purchaseService.insertApproval(approve);
+
+		// 6. 파일 업로드 처리 
+		if (uploadFile != null && !uploadFile.isEmpty()) {
+			String path = request.getServletContext().getRealPath("/resources/upload/purchase");
+			new File(path).mkdirs();
+
+			String originalName = uploadFile.getOriginalFilename();
+			String renameName = FileRenameUtil.changeFileName(originalName);
+			File saveFile = new File(path, renameName);
+			uploadFile.transferTo(saveFile);
+
+			FileDTO file = new FileDTO();
+			file.setDocumentId(documentId);
+			file.setFilePath("/resources/upload/purchase/" + renameName);
+			file.setOriginalFileName(originalName);
+			file.setRenameFileName(renameName);
+			file.setUploadFileSize((int) saveFile.length());
+			purchaseService.insertFile(file);
+		}
+
+		// 창 닫기 + 부모 창 새로고침
+		response.setContentType("text/html; charset=UTF-8");
+		response.getWriter().write("<script>" + "alert('문서가 성공적으로 등록되었습니다.');" + "window.opener.location.href='"
+				+ request.getContextPath() + "/purchase/purchase-document.do';" + "window.close();" + "</script>");
+	}
+
+	// 문서 상세보기 이동용 컨트롤러
+	@GetMapping("purchase-detail.do")
+	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
+
+		// 1. 문서 기본 정보 조회
+		DocumentDTO document = purchaseService.selectOneDocument(documentId);
+
+		// 2. 품목 목록 + 금액 계산
+		List<DocumentItemDTO> itemList = purchaseService.selectDocumentItemList(documentId);
+		int totalAmount = 0;
+		for (DocumentItemDTO item : itemList) {
+			int amount = item.getQuantity() * item.getSalePrice();
+			item.setAmount(amount);
+			totalAmount += amount;
+		}
+		document.setItems(itemList);
+		document.setTotalAmount(totalAmount);
+
+		// 3. 첨부파일 정보
+		FileDTO file = purchaseService.selectFileByDocumentId(documentId);
+		model.addAttribute("file", file);
+
+		// 4. 결재 정보
+		ApproveDTO approval = purchaseService.selectApprovalByDocumentId(documentId);
+		model.addAttribute("approval", approval);
+
+		// 5. 문서 모델 등록
+		model.addAttribute("document", document);
+
+		return "purchase/purchase-detail";
+	}
+
+	// 문서 파일 다운로드
+	@RequestMapping("documentDownload.do")
+	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
+			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
+
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/proposal");
+
+		File downFile = new File(savePath + File.separator + renameFileName);
+		File originFile = new File(originalFileName);
+
+		mv.setViewName("filedown");
+		mv.addObject("originFile", originFile);
+		mv.addObject("renameFile", downFile);
+
 		return mv;
+	}
+
+	// 문서 수정 관련
+	// 문서 수정폼 이동 (GET)
+	@GetMapping("purchase-update.do")
+	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
+
+		// 문서 기본 정보
+		DocumentDTO document = purchaseService.selectOneDocument(documentId);
+		model.addAttribute("document", document);
+
+		// 문서 품목 목록
+		List<DocumentItemDTO> documentItemList = purchaseService.selectDocumentItemList(documentId);
+		model.addAttribute("documentItemList", documentItemList);
+
+		// 결재자 정보
+		ApproveDTO approve = purchaseService.selectApprovalByDocumentId(documentId);
+		model.addAttribute("approve", approve);
+
+		// 첨부파일 정보
+		FileDTO file = purchaseService.selectFileByDocumentId(documentId);
+		model.addAttribute("file", file);
+
+		// 거래처 목록
+		List<Client> clientList = purchaseService.selectAllClients();
+		model.addAttribute("clientList", clientList);
+
+		// 상품 목록 (품목 select 용)
+		List<Product> productList = productService.selectAll();
+		model.addAttribute("productList", productList);
+
+		return "purchase/purchase-update";
+	}
+
+	@PostMapping("purchase-update.do")
+	public String updateDocument(@ModelAttribute DocumentDTO document, @ModelAttribute ApproveDTO approve,
+			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
+			@RequestParam(name = "deleteFlag", required = false) String deleteFlag,
+			@RequestParam(name = "originalClientId", required = false) String originalClientId,
+			HttpServletRequest request, Model model) {
+
+		String savePath = request.getServletContext().getRealPath("/resources/upload/purchase");
+
+		// 파일 삭제 + 업로드
+		if ((deleteFlag != null && deleteFlag.equals("yes")) || (uploadFile != null && !uploadFile.isEmpty())) {
+			purchaseService.deleteFileByDocumentId(document.getDocumentId()); // 기존 파일 삭제
+		}
+
+		if (uploadFile != null && !uploadFile.isEmpty()) {
+			String origin = uploadFile.getOriginalFilename();
+			String rename = FileRenameUtil.changeFileName(origin);
+
+			try {
+				uploadFile.transferTo(new File(savePath + "/" + rename));
+			} catch (Exception e) {
+				model.addAttribute("errorMsg", "파일 업로드 실패");
+				return "common/errorPage";
+			}
+
+			FileDTO fileDto = new FileDTO();
+			fileDto.setDocumentId(document.getDocumentId());
+			fileDto.setOriginalFileName(origin);
+			fileDto.setRenameFileName(rename);
+			fileDto.setFilePath("/resources/upload/purchase");
+			fileDto.setUploadFileSize((int) uploadFile.getSize());
+
+			purchaseService.insertFile(fileDto);
+		}
+
+		// 문서 정보 업데이트
+		purchaseService.updateDocument(document);
+
+		// 결재자 정보 업데이트
+		approve.setDocumentId(document.getDocumentId());
+		purchaseService.updateApprove(approve);
+
+		// 품목 처리
+		boolean isPurchaseChanged = !document.getClientId().equals(originalClientId);
+
+		if (isPurchaseChanged) {
+			// 거래처 변경 시: 기존 품목 삭제 후 새로 insert (itemId도 새로 생성)
+			purchaseService.deleteDocumentItems(document.getDocumentId());
+
+			for (DocumentItemDTO item : document.getItems()) {
+				item.setDocumentId(document.getDocumentId());
+
+				// itemId 시퀀스로 새로 생성
+				String newItemId = purchaseService.selectNextItemId();
+				item.setItemId(newItemId);
+
+				purchaseService.insertDocumentItem(item);
+			}
+		} else {
+			// 거래처 동일: 기존 itemId로 update
+			for (DocumentItemDTO item : document.getItems()) {
+				purchaseService.updateDocumentItem(item);
+			}
+		}
+
+		return "redirect:/purchase/purchase-detail.do?documentId=" + document.getDocumentId();
+	}
+
+	@GetMapping("documentManEmpInfo.do")
+	@ResponseBody
+	public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
+		Employee emp = employeeService.selectEmpById(empId);
+
+		Map<String, String> result = new HashMap<>();
+		if (emp != null) {
+			result.put("empId", emp.getEmpId());
+			result.put("empName", emp.getEmpName());
+			result.put("jobTitle", emp.getJobTitle());
+		}
+		return result;
+	}
+
+	@GetMapping("documentDelete.do")
+	public String deleteDocument(@RequestParam("documentId") String documentId) {
+		// 삭제 순서 중요!
+		purchaseService.deleteDocumentItems(documentId);
+		purchaseService.deleteApprove(documentId);
+		purchaseService.deleteFileByDocumentId(documentId);
+		purchaseService.deleteDocumentOnly(documentId);
+
+		return "redirect:/purchase/purchase-document.do";
 	}
 
 }
