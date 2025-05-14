@@ -1,188 +1,192 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:if test="${empty sessionScope.loginInfo}">
+    <c:redirect url="/login.do" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>입고 작성</title>
-
-<!-- Font Awesome -->
-<link
-	href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css"
-	rel="stylesheet">
-<!-- SB Admin 2 CSS -->
-<link
-	href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css"
-	rel="stylesheet">
-
-<!-- Select2 CSS 추가 -->
-<link
-	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-	rel="stylesheet" />
-
-<!-- 표 스타일 -->
-<style>
-.table input, .table select {
-	border: none;
-	box-shadow: none;
-	background-color: transparent;
-	padding: 0;
-	text-align: center;
-}
-
-.table input:focus, .table select:focus {
-	border: none;
-	box-shadow: none;
-	outline: none;
-}
-
-/* 숫자 input 화살표 제거 */
-input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
-	{
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-input[type=number] {
-	-moz-appearance: textfield;
-}
-</style>
-
-<%@ page import="java.text.SimpleDateFormat, java.util.Date"%>
-<%
-String today = new SimpleDateFormat("yy/MM/dd").format(new Date());
-request.setAttribute("today", today);
-%>
+    <meta charset="UTF-8">
+    <title>문서 상세보기</title>
+    <link href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
 </head>
+<body id="page-top">
+<div id="wrapper">
+    <c:import url="/WEB-INF/views/common/menubar.jsp" />
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <c:import url="/WEB-INF/views/common/topbar.jsp" />
 
-<body class="p-4 bg-light">
-	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2 class="mb-0">입고 내역</h2>
-		<button type="submit" class="btn btn-primary px-4 py-1.5 ml-3">수정</button>
-	</div>
-	<hr>
-	
-	<!-- 결재 테이블 -->
-	<div class="d-flex justify-content-end mb-3">
-		<table class="table table-bordered text-center"
-			style="width: 50%; font-size: 0.8rem;">
-			<tbody style="background-color: #ffffff;">
-				<tr style="background-color: #fdfdfe;">
-					<th rowspan="3" style="vertical-align: middle; padding: 4px 8px;">결재</th>
-					<th style="padding: 4px 8px;">사원</th>
-					<th style="padding: 4px 8px;">팀장</th>
-				</tr>
-				<tr>
-					<td>기안</td>
-					<td>${inbound.approve1Status}</td>
-				</tr>
-				<tr>
-					<td>${inbound.createdDate}</td>
-					<td>${inbound.approve1Date}</td>
-				</tr>
-			</tbody>
+            <div class="container-fluid">
+                <h1 class="h3 mb-2 text-gray-800">문서 상세보기</h1>
+				<p class="mb-4 small text-muted">등록된 <strong>${document.documentId}</strong> 제안서의 상세 내용을 확인합니다.</p>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <!-- 문서 기본 정보 -->
+		<table class="table table-bordered">
+		  <tbody>
+		    <tr>
+		      <th>문서번호</th>
+		      <td>${document.documentId}</td>
+		      <th>문서유형</th>
+		      <td>${document.documentName}</td>
+		      <th>제목</th>
+		      <td>${document.title}</td>
+		    </tr>
+		    <tr>
+		      <th>거래처명</th>
+		      <td>${document.clientName}</td>
+		      <th>작성자</th>
+		      <td>${document.documentWriterId} / ${document.documentWriterName} / ${document.documentWriterJobTitle}</td>
+		      <th>담당자</th>
+		      <td>${document.documentManagerId} / ${document.documentManagerName} / ${document.documentManagerJobTitle}</td>
+		    </tr>
+		    <tr>
+		      <th>작성일</th>
+		      <td><fmt:formatDate value="${document.createdDate}" pattern="yyyy-MM-dd"/></td>
+		      <th>거래일자</th>
+		      <td><fmt:formatDate value="${document.documentDate}" pattern="yyyy-MM-dd"/></td>
+		      <th>결제수단</th>
+		      <td>${document.paymentMethod}</td>
+		    </tr>
+		  </tbody>
 		</table>
-	</div>
-	<br>
 
-	<!-- 문서 작성 폼 -->
-	<div class="mb-3">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.8rem;">
-			<colgroup>
-				<col style="width: 15%;">
-				<col style="width: 35%;">
-				<col style="width: 15%;">
-				<col style="width: 35%;">
-			</colgroup>
-			<tbody style="background-color: #ffffff;">
-				<tr style="background-color: #fdfdfe;">
-					<th>문서번호</th>
-					<td><div>${inbound.documentId}</div></td>
-					<th>작성자</th>
-					<td><div>${inbound.empId}</div></td>
-				</tr>
-			</tbody>
+<!-- 결재자 정보 블럭 -->
+<h5 class="mt-4">결재 정보</h5>
+<table class="table table-bordered text-center">
+    <thead class="thead-light">
+        <tr>
+            <th>구분</th>
+            <th>사번</th>
+            <th>이름</th>
+            <th>직급</th>
+            <th>직책</th>
+            <th>부서</th>
+            <th>결재일</th>
+            <th>상태</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1차 결재자</td>
+            <td>${approval.firstApproverId}</td>
+            <td>${approval.firstApproverName}</td>
+            <td>${approval.firstApproverJobTitle}</td>
+            <td>${approval.firstApproverRoleName}</td>
+            <td>${approval.firstApproverDeptName}</td>
+            <td>
+                <c:choose>
+                    <c:when test="${not empty approval.firstApproveDate}">
+                        <fmt:formatDate value="${approval.firstApproveDate}" pattern="yyyy-MM-dd"/>
+                    </c:when>
+                    <c:otherwise>미결재</c:otherwise>
+                </c:choose>
+            </td>
+            <td>${approval.firstApproveStatus}</td>
+        </tr>
+        <tr>
+            <td>2차 결재자</td>
+            <td>${approval.secondApproverId}</td>
+            <td>${approval.secondApproverName}</td>
+            <td>${approval.secondApproverJobTitle}</td>
+            <td>${approval.secondApproverRoleName}</td>
+            <td>${approval.secondApproverDeptName}</td>
+            <td>
+                <c:choose>
+                    <c:when test="${not empty approval.secondApproveDate}">
+                        <fmt:formatDate value="${approval.secondApproveDate}" pattern="yyyy-MM-dd"/>
+                    </c:when>
+                    <c:otherwise>미결재</c:otherwise>
+                </c:choose>
+            </td>
+            <td>${approval.secondApproveStatus}</td>
+        </tr>
+    </tbody>
+</table>
+
+        <!-- 품목 목록 -->
+		<h5 class="mt-4">품목 목록</h5>
+		<table class="table table-bordered text-center">
+		  <thead class="thead-light">
+		    <tr>
+		      <th>#</th>
+		      <th>제품코드</th>
+		      <th>제품명</th>
+		      <th>수량</th>
+		      <th>단가</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <c:forEach var="item" items="${document.items}" varStatus="status">
+		      <tr>
+		        <td>${status.index + 1}</td>
+		        <td>${item.productId}</td>
+		        <td>${item.productName}</td>
+		        <td>${item.quantity}</td>
+		        <td><fmt:formatNumber value="${item.unitPrice}" pattern="#,##0"/>원</td>
+		      </tr>
+		    </c:forEach>
+		  </tbody>
 		</table>
-	</div>
 
+        <!-- 비고 -->
+        <h5 class="mt-4">비고</h5>
+        <p>${document.remarks}</p>
 
-	<!-- 물품 목록 -->
-	<div class="mb-3">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.7rem;">
-			<colgroup>
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-				<col style="width: 20%;">
-			
-			</colgroup>
-			<thead style="background-color: #fdfdfe;">
-				<tr>
-					<th>물품코드</th>
-					<th>물품명</th>
-					<th>구매처</th>
-					<th>입고일자</th>
-					<th>수량</th>
+           <!-- 첨부파일 -->
+		<h5 class="mt-4">첨부파일</h5>
+		<c:choose>
+		    <c:when test="${not empty file}">
+		        <p class="mb-2 font-weight-bold">${file.originalFileName}</p> <!-- 원래 파일명 표시 -->
+		
+		        <a class="btn btn-sm btn-info" target="_blank"
+		           href="${pageContext.request.contextPath}${file.filePath}/${file.renameFileName}">
+		            <i class="fas fa-eye"></i> 보러가기
+		        </a>
+		
+		        <a class="btn btn-sm btn-outline-primary"
+		           href="${pageContext.request.contextPath}//documentDownload.do?ofile=${file.originalFileName}&rfile=${file.renameFileName}">
+		           <i class="fas fa-download"></i> 다운로드
+		        </a>
+		    </c:when>
+		    <c:otherwise>
+		        <p class="text-muted">첨부파일 없음</p>
+		    </c:otherwise>
+		</c:choose>
 
-				</tr>
-			</thead>
-			<tbody id="itemTableBody" style="background-color: #ffffff;">
-				<tr>
-					<td><div>${inbound.productCode}</div></td>
-					<td><div>${inbound.productCode}</div></td>
-					<td><div>${inbound.vendorName}</div></td>
-					<td><div>${inbound.receivedDate}</div></td>
-					<td><div>${inbound.inboundQuantity}</div></td>
+        <!-- 하단 버튼 -->
+        <div class="text-right mt-4">
+	        <a href="${pageContext.request.contextPath}/inbound/inbound-update.do?documentId=${document.documentId}" 
+		       class="btn btn-warning">
+		        <i class="fas fa-edit"></i> 수정
+		    </a>
+            <button type="button" class="btn btn-secondary" onclick="history.back();">
+                <i class="fas fa-arrow-left"></i> 이전페이지
+            </button>
+            <a href="${pageContext.request.contextPath}/inbound/inbound-document.do" class="btn btn-info">
+                <i class="fas fa-list"></i> 목록으로
+            </a>
+            <button type="button" class="btn btn-danger" onclick="confirmDelete('${document.documentId}')">
+		        <i class="fas fa-trash-alt"></i> 삭제
+		    </button>
+		    <script>
+			function confirmDelete(documentId) {
+			  if (confirm("정말 이 문서를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {
+			    location.href = '${pageContext.request.contextPath}/inbound/documentDelete.do?documentId=' + documentId;
+			  }
+			}
+			</script>
+        </div>
+    </div>
+</div>
 
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-	<!-- 품의서 번호 -->
-	<div class="form-group">
-		<label>품의서 문서번호</label> <input type="text" class="form-control"
-			id="linkedPurchaseId"
-			<%-- value="${purchase.documentId}"  --%>readonly>
-	</div>
-
-	<!-- 비고란 -->
-	<div class="mb-4">
-		<table class="table table-bordered text-center"
-			style="width: 100%; font-size: 0.8rem;">
-			<thead style="background-color: #fdfdfe;">
-				<tr>
-					<th>비고</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td style="background-color: #ffffff;"><div
-							contenteditable="true"
-							style="min-height: 80px; text-align: left;"></div></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-
-
-	<!-- JS -->
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
-
-	<!-- Select2 JS 추가 -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-	</script>
+<script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
 </body>
 </html>

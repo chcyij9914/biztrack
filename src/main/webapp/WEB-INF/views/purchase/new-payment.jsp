@@ -85,7 +85,7 @@ td button.btn-sm {
 						<div class="col-md-2">
 							<label>문서유형</label> <label>문서유형</label> <input type="hidden"
 								name="documentTypeId" value="R" /> <input type="text"
-								class="form-control" value="품의서" />
+								class="form-control" value="지출결의서" />
 						</div>
 						<div class="col-md-2">
 							<label>문서번호</label> <input type="text" class="form-control"
@@ -145,6 +145,18 @@ td button.btn-sm {
           </div>
         </div> -->
 
+					<!-- 결제수단 -->
+					<div class="form-row mb-3">
+						<div class="col-md-4">
+							<label>결제수단</label> <select name="paymentMethod"
+								class="form-control" required>
+								<option value="" disabled selected>-- 결제수단 선택 --</option>
+								<option value="카드">신용카드</option>
+								<option value="계좌이체">계좌이체</option>
+								<option value="현금">현금</option>
+							</select>
+						</div>
+					</div>
 					<!-- 품목 리스트 테이블 -->
 					<table class="table table-bordered mb-3" id="itemTable">
 						<thead>
@@ -155,7 +167,6 @@ td button.btn-sm {
 								<th>수량</th>
 								<th>단가</th>
 								<th>금액</th>
-								<th>결제수단</th>
 								<th style="width: 80px;">삭제</th>
 							</tr>
 						</thead>
@@ -168,7 +179,7 @@ td button.btn-sm {
 										<option value="" disabled selected>-- 품목 선택 --</option>
 										<c:forEach var="p" items="${productList}">
 											<option value="${p.productId}" data-name="${p.productName}"
-												data-category="${p.categoryId}">${p.productId} -
+												data-category="${p.categoryId}">${p.productId}-
 												${p.productName}</option>
 										</c:forEach>
 								</select></td>
@@ -180,13 +191,6 @@ td button.btn-sm {
 									class="form-control"></td>
 								<td><input type="number" name="items[0].amount"
 									class="form-control" readonly></td>
-								<td><select name="items[0].paymentMethod"
-									class="form-control payment-select" required>
-										<option value="" disabled selected>-- 결제수단 선택 --</option>
-										<option value="카드">신용카드</option>
-										<option value="계좌이제">계좌이체</option>
-										<option value="현금">현금</option>
-								</select></td>
 								<td><button type="button"
 										class="btn btn-danger btn-sm btn-delete"
 										onclick="removeRow(this)">삭제</button></td>
