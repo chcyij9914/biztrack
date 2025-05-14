@@ -45,6 +45,7 @@ public class LoginController {
 	        }
 
 	        session.setAttribute("loginInfo", result);
+	        session.setAttribute("empId", result.getEmpId());
 
 	        if ("Y".equals(result.getIsDefaultPwd())) {
 	            return "redirect:/changePassword.do";
