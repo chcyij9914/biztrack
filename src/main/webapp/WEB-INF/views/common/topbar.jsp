@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html;charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
@@ -20,35 +20,41 @@
   <!-- Topbar Navbar -->
   <ul class="navbar-nav ml-auto">
 
-    <!-- Nav Item - User Information -->
+    <!-- 🔔 알림 아이콘 -->
+    <li class="nav-item dropdown no-arrow mx-1">
+      <a class="nav-link" href="#" id="alertsDropdown" role="button">
+        <i class="fas fa-bell fa-fw"></i>
+      </a>
+    </li>
+
+    <!-- 사용자 정보 (이미지 제거됨) -->
     <li class="nav-item dropdown no-arrow">
-      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small">
           <c:out value="${loginInfo.empName}" />님
         </span>
-        <img class="img-profile rounded-circle" src="${pageContext.request.contextPath}/resources/img/undraw_profile.svg">
+        <!-- 프로필 이미지 제거됨 -->
       </a>
-      <!-- Dropdown - User Information -->
+
+      <!-- 드롭다운 - 사용자 메뉴 -->
       <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-    <a class="dropdown-item" href="${pageContext.request.contextPath}/main.do">
-       <i class="fas fa-user-cog fa-sm fa-fw mr-2 text-gray-400"></i>
-        마이페이지
-    </a>
-    <a class="dropdown-item" href="${pageContext.request.contextPath}/changePassword.do">
-        <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
-        비밀번호 변경
-    </a>
-    <a class="dropdown-item" href="${pageContext.request.contextPath}/logout.do">
-        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-        로그아웃
-    </a>
-</div>
+        <a class="dropdown-item" href="${pageContext.request.contextPath}/main.do">
+          <i class="fas fa-user-cog fa-sm fa-fw mr-2 text-gray-400"></i> 마이페이지
+        </a>
+        <a class="dropdown-item" href="${pageContext.request.contextPath}/changePassword.do">
+          <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i> 비밀번호 변경
+        </a>
+        <a class="dropdown-item" href="${pageContext.request.contextPath}/logout.do">
+          <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> 로그아웃
+        </a>
+      </div>
     </li>
 
   </ul>
-
 </nav>
 <!-- End of Topbar -->
+
 
 <!-- JS Scripts -->
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>

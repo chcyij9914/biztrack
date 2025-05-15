@@ -13,19 +13,19 @@ public class Evaluation {
     private int scoreTraining;        // 교육점수
     private String comments;          // 평가멘트
     private String empId;             // 사번
-    private String recordId;          // 교육ID
     private String grade;             // 평가등급   
     // 평가자 이름, 사원 이름, 부서명 등 조인으로 출력할 항목(옵션)
     private String empName;
     private String deptName;
+    private String quarter;
 
     // 기본 생성자
     public Evaluation() {}
 
     // 전체 생성자
     public Evaluation(String evaluationId, String evaluationName, String evaluatorId, Date evaluationDay,
-                         int totalScore, int scoreSales, int scoreAttitude, int scoreTraining, String comments,
-                         String empId, String recordId, String grade) {
+                         int totalScore, int scoreSales, int scoreAttitude, String comments,
+                         String empId, String grade, String quarter) {
         this.evaluationId = evaluationId;
         this.evaluationName = evaluationName;
         this.evaluatorId = evaluatorId;
@@ -33,11 +33,10 @@ public class Evaluation {
         this.totalScore = totalScore;
         this.scoreSales = scoreSales;
         this.scoreAttitude = scoreAttitude;
-        this.scoreTraining = scoreTraining;
         this.comments = comments;
         this.empId = empId;
-        this.recordId = recordId;
         this.grade = grade;
+        this.quarter = quarter;
     }
 
     // getter/setter
@@ -97,14 +96,6 @@ public class Evaluation {
         this.scoreAttitude = scoreAttitude;
     }
 
-    public int getScoreTraining() {
-        return scoreTraining;
-    }
-
-    public void setScoreTraining(int scoreTraining) {
-        this.scoreTraining = scoreTraining;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -119,14 +110,6 @@ public class Evaluation {
 
     public void setEmpId(String empId) {
         this.empId = empId;
-    }
-
-    public String getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordId(String recordId) {
-        this.recordId = recordId;
     }
 
    
@@ -153,14 +136,21 @@ public class Evaluation {
 	public void setGrade(String grade) {
 		this.grade = grade;
 	}
+	
+	public String getQuarter() {
+	    return quarter;
+	}
+
+	public void setQuarter(String quarter) {
+	    this.quarter = quarter;
+	}
 
 	@Override
 	public String toString() {
 		return "Evaluation [evaluationId=" + evaluationId + ", evaluationName=" + evaluationName + ", evaluatorId="
 				+ evaluatorId + ", evaluationDay=" + evaluationDay + ", totalScore=" + totalScore + ", scoreSales="
 				+ scoreSales + ", scoreAttitude=" + scoreAttitude + ", scoreTraining=" + scoreTraining + ", comments="
-				+ comments + ", empId=" + empId + ", recordId=" + recordId + ", grade=" + grade + ", empName=" + empName
-				+ ", deptName=" + deptName + "]";
+				+ comments + ", empId=" + empId + ", deptName=" + deptName + ", quarter" + quarter + "]";
 	}
 
 	

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html;charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -69,18 +69,26 @@
 	</li>
 
    <!-- Nav Item - 인사 -->
-   <li class="nav-item">
-      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseHR"
-      		aria-expanded="true" aria-controls="collapseHR">
-         <i class="fas fa-fw fa-user"></i>
-         <span>인사</span>
-      </a>
-      <div id="collapseHR" class="collapse" aria-labelledby="headingHR" data-parent="#accordionSidebar">
-         <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="${pageContext.request.contextPath}/evaluation/evaluationList.do">직원평가</a>
-         </div>
-       </div>
-   </li>
+<li class="nav-item">
+  <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseHR"
+        aria-expanded="true" aria-controls="collapseHR">
+    <i class="fas fa-fw fa-user"></i>
+    <span>인사</span>
+  </a>
+  <div id="collapseHR" class="collapse" aria-labelledby="headingHR" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+      
+      <!-- ✅ 조직도 메뉴: 항상 보이게 -->
+      <a class="collapse-item" href="${pageContext.request.contextPath}/organization/organizationList.do">조직도</a>
+
+      <!-- ✅ 직원평가 메뉴: A1, A2, A3인 경우만 -->
+      <c:if test="${loginInfo.roleId == 'A1' || loginInfo.roleId == 'A2' || loginInfo.roleId == 'A3'}">
+        <a class="collapse-item" href="${pageContext.request.contextPath}/evaluation/evaluationList.do">직원평가</a>
+      </c:if>
+
+    </div>
+  </div>
+</li>
 
    <!-- Nav Item - 구매 -->
    <li class="nav-item">
