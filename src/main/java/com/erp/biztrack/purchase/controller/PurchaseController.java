@@ -136,27 +136,49 @@ public class PurchaseController {
 
 	// 검색기능-------------------------------------------------------------------------------------
 	// 검색기능 - 문서번호로 검색
+	// 문서번호로 검색
 	@RequestMapping("searchByDocumentId.do")
-	public String searchByDocumentId(@RequestParam("keyword") String documentId, Model model) {
-		List<Purchase> result = purchaseService.searchByDocumentId(documentId);
-		model.addAttribute("documentList", result);
-		return "purchase/purchase-document";
+	public String searchByDocumentId(@RequestParam("keyword") String documentId,
+	                                 @RequestParam("documentTypeId") String documentTypeId,
+	                                 Model model) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("documentId", documentId);
+	    param.put("documentTypeId", documentTypeId);
+
+	    List<Purchase> result = purchaseService.searchByDocumentId(param);
+	    model.addAttribute("documentList", result);
+
+	    return "T".equals(documentTypeId) ? "purchase/payment-document" : "purchase/purchase-document";
 	}
 
-	// 검색기능 - 제목으로 검색
+	// 제목으로 검색
 	@RequestMapping("searchByTitle.do")
-	public String searchByTitle(@RequestParam("keyword") String title, Model model) {
-		List<Purchase> result = purchaseService.searchByTitle(title);
-		model.addAttribute("documentList", result);
-		return "purchase/purchase-document";
+	public String searchByTitle(@RequestParam("keyword") String title,
+	                            @RequestParam("documentTypeId") String documentTypeId,
+	                            Model model) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("title", title);
+	    param.put("documentTypeId", documentTypeId);
+
+	    List<Purchase> result = purchaseService.searchByTitle(param);
+	    model.addAttribute("documentList", result);
+
+	    return "T".equals(documentTypeId) ? "purchase/payment-document" : "purchase/purchase-document";
 	}
 
-	// 검색기능 - 상태로 검색
+	// 상태로 검색
 	@RequestMapping("searchByStatus.do")
-	public String searchByStatus(@RequestParam("status") String status, Model model) {
-		List<Purchase> result = purchaseService.searchByStatus(status);
-		model.addAttribute("documentList", result);
-		return "purchase/purchase-document";
+	public String searchByStatus(@RequestParam("status") String status,
+	                             @RequestParam("documentTypeId") String documentTypeId,
+	                             Model model) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("status", status);
+	    param.put("documentTypeId", documentTypeId);
+
+	    List<Purchase> result = purchaseService.searchByStatus(param);
+	    model.addAttribute("documentList", result);
+
+	    return "T".equals(documentTypeId) ? "purchase/payment-document" : "purchase/purchase-document";
 	}
 
 	// 품의서 등록 -------------------------------------------

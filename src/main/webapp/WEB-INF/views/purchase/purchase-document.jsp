@@ -89,6 +89,8 @@
 
 								<form id="searchForm" method="get" class="form-inline"
 									action="searchByDocumentId.do">
+									    <input type="hidden" name="documentTypeId" value="R" />
+									
 									<!-- 텍스트 입력 -->
 									<input type="text" id="keywordInput" name="keyword"
 										class="form-control mr-2" placeholder="문서번호를 입력하세요.">
