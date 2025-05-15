@@ -45,17 +45,19 @@ public class PurchaseDao {
 	        return (ArrayList<DocumentDTO>) list;
 	    }
 	//--------------------------------------------------------------------------------------------
-	//검색기능
-		public List<Purchase> searchByDocumentId(String documentId) {
-			return sqlSessionTemplate.selectList("purchaseMapper.searchByDocumentId", documentId);
+		// 검색 기능 - 문서번호
+		public List<Purchase> searchByDocumentId(Map<String, Object> param) {
+		    return sqlSessionTemplate.selectList("purchaseMapper.searchByDocumentId", param);
 		}
 
-		public List<Purchase> searchByTitle(String title) {
-			return sqlSessionTemplate.selectList("purchaseMapper.searchByTitle", title);
+		// 검색 기능 - 제목
+		public List<Purchase> searchByTitle(Map<String, Object> param) {
+		    return sqlSessionTemplate.selectList("purchaseMapper.searchByTitle", param);
 		}
-		
-		public List<Purchase> searchByStatus(String status) {
-			return sqlSessionTemplate.selectList("purchaseMapper.searchByStatus", status);
+
+		// 검색 기능 - 상태
+		public List<Purchase> searchByStatus(Map<String, Object> param) {
+		    return sqlSessionTemplate.selectList("purchaseMapper.searchByStatus", param);
 		}
 	
 	//--------------------------------------------------------------------------------------------

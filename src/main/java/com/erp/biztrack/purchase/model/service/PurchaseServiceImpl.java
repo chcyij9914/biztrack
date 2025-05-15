@@ -50,18 +50,22 @@ public class PurchaseServiceImpl implements PurchaseService {
 		}
 		
 	//------------------------------------------------------------------------------------------
-	//검색기능
+		// 검색 기능 - 문서번호
 		@Override
-		public List<Purchase> searchByDocumentId(String documentId) {
-		    return purchaseDao.searchByDocumentId(documentId);
+		public List<Purchase> searchByDocumentId(Map<String, Object> param) {
+		    return purchaseDao.searchByDocumentId(param);
 		}
+
+		// 검색 기능 - 제목
 		@Override
-		public List<Purchase> searchByTitle(String title) {
-		    return purchaseDao.searchByTitle(title);
+		public List<Purchase> searchByTitle(Map<String, Object> param) {
+		    return purchaseDao.searchByTitle(param);
 		}
+
+		// 검색 기능 - 상태
 		@Override
-		public List<Purchase> searchByStatus(String status) {
-		    return purchaseDao.searchByStatus(status);
+		public List<Purchase> searchByStatus(Map<String, Object> param) {
+		    return purchaseDao.searchByStatus(param);
 		}
 		
 		

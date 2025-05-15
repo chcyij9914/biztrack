@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,7 +13,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>purchase document</title>
+<title>payment document</title>
 
 <!-- Fonts & Styles -->
 <link
@@ -75,7 +76,7 @@
 							<!-- 우측: 문서작성 + 검색 폼 -->
 							<div class="d-flex align-items-center">
 								<a href="#" class="btn btn-primary px-3 py-2 mr-3"
-									onclick="window.open('${pageContext.request.contextPath}/purchase/new-purchase.do', 'newWindow', 'width=1000,height=800'); return false;">
+									onclick="window.open('${pageContext.request.contextPath}/purchase/new-payment.do', 'newWindow', 'width=1000,height=800'); return false;">
 									+ 지출결의서 </a>
 
 								<!-- 검색 기준 -->
@@ -87,12 +88,14 @@
 								</select>
 
 								<form id="searchForm" method="get" class="form-inline"
-									action="csearchName.do">
+									action="searchByDocumentId.do">
+									    <input type="hidden" name="documentTypeId" value="T" />
+									
 									<!-- 텍스트 입력 -->
 									<input type="text" id="keywordInput" name="keyword"
 										class="form-control mr-2" placeholder="문서번호를 입력하세요.">
 
-									<!-- 상태 드롭다운 (초기에는 숨김) -->
+									<!-- 상태 드롭다운 -->
 									<select name="statusParam" id="statusSelect"
 										class="form-control mr-2 d-none">
 										<option value="상신">상신</option>
@@ -101,14 +104,8 @@
 										<option value="반려">반려</option>
 									</select>
 
-									<!-- 카테고리 드롭다운 (숨김, 현재 사용 안 함) -->
-									<select name="categoryId" class="form-control mr-2 d-none">
-										<c:forEach var="cat" items="${categoryList}">
-											<option value="${cat.categoryId}">${cat.categoryName}</option>
-										</c:forEach>
-									</select>
-
-									<button type="submit" class="btn btn-primary">검색</button>
+									<button type="submit" class="btn btn-primary"
+										onclick="updateSearchAction()">검색</button>
 								</form>
 							</div>
 						</div>
@@ -118,9 +115,9 @@
 						<div class="mt-2">
 							<a
 								href="${pageContext.request.contextPath}/purchase/purchase-document.do"
-								class="btn btn-primary btn-sm">품의서</a> <a
+								class="btn btn-outline-primary btn-sm">품의서</a> <a
 								href="${pageContext.request.contextPath}/purchase/payment-document.do"
-								class="btn btn-outline-primary btn-sm">지출결의서</a>
+								class="btn btn-primary btn-sm">지출결의서</a>
 						</div>
 					</div>
 
@@ -213,35 +210,50 @@
 							<script
 								src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
 							<script>
-								document
-										.getElementById("searchType")
-										.addEventListener(
-												"change",
-												function() {
-													const type = this.value;
-													const keywordInput = document
-															.getElementById("keywordInput");
-													const statusSelect = document
-															.getElementById("statusSelect");
+								function updateSearchAction() {
+									const selected = document
+											.getElementById("searchType").value;
+									const searchForm = document
+											.getElementById("searchForm");
+									const keywordInput = document
+											.getElementById("keywordInput");
+									const statusSelect = document
+											.getElementById("statusSelect");
 
-													if (type === "documentId") {
-														keywordInput.classList
-																.remove("d-none");
-														statusSelect.classList
-																.add("d-none");
-														keywordInput.placeholder = "문서번호를 입력하세요.";
-													} else if (type === "title") {
-														keywordInput.classList
-																.remove("d-none");
-														statusSelect.classList
-																.add("d-none");
-														keywordInput.placeholder = "제목을 입력하세요.";
-													} else if (type === "status") {
-														keywordInput.classList
-																.add("d-none");
-														statusSelect.classList
-																.remove("d-none");
-													}
+									if (selected === "documentId") {
+										searchForm.action = "searchByDocumentId.do";
+										keywordInput.classList.remove("d-none");
+										keywordInput.name = "keyword";
+										keywordInput.placeholder = "문서번호를 입력하세요.";
+										statusSelect.classList.add("d-none");
+										statusSelect.name = "statusParam";
+									} else if (selected === "title") {
+										searchForm.action = "searchByTitle.do";
+										keywordInput.classList.remove("d-none");
+										keywordInput.name = "keyword";
+										keywordInput.placeholder = "내용을 입력하세요.";
+										statusSelect.classList.add("d-none");
+										statusSelect.name = "statusParam";
+									} else if (selected === "status") {
+										searchForm.action = "searchByStatus.do";
+										keywordInput.classList.add("d-none");
+										keywordInput.name = "";
+										statusSelect.classList.remove("d-none");
+										statusSelect.name = "status";
+									}
+								}
+
+								// select 박스 바뀔 때마다 호출되도록 연결
+								document
+										.addEventListener(
+												'DOMContentLoaded',
+												function() {
+													document
+															.getElementById(
+																	'searchType')
+															.addEventListener(
+																	'change',
+																	updateSearchAction);
 												});
 							</script>
 </body>

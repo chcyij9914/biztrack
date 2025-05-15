@@ -24,12 +24,14 @@ public interface PurchaseService {
     int selectDocumentListCountByTypeT(String documentTypeId);
     ArrayList<DocumentDTO> selectDocumentListByTypeT(Map<String, Object> param);
     
-    // 검색 기능
-    List<Purchase> searchByDocumentId(String documentId);
-	List<Purchase> searchByTitle(String title);
-	List<Purchase> searchByStatus(String status);
+    // 검색 기능 (문서번호)
+    List<Purchase> searchByDocumentId(Map<String, Object> param);
+    // 검색 기능 (제목)
+    List<Purchase> searchByTitle(Map<String, Object> param);
+    // 검색 기능 (상태)
+    List<Purchase> searchByStatus(Map<String, Object> param);
 
-
+    
 	// 문서 상세보기
 	Purchase selectPurchaseDetail(String documentId);
 
