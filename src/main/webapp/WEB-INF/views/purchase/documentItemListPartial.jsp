@@ -28,7 +28,6 @@
             <c:forEach var="p" items="${productList}">
               <option value="${p.productId}"
                       data-name="${p.productName}"
-                      data-price="${p.salePrice}"
                       data-category="${p.categoryId}"
                       ${p.productId == item.productId ? 'selected' : ''}>
                 ${p.productId} - ${p.productName}
@@ -38,7 +37,7 @@
         </td>
         <td><input type="text" name="items[${status.index}].productName" class="form-control" value="${item.productName}" readonly /></td>
         <td><input type="number" name="items[${status.index}].quantity" class="form-control" value="${item.quantity}" oninput="handleQuantityInput(this)" /></td>
-        <td><input type="number" name="items[${status.index}].salePrice" class="form-control" value="${item.salePrice}" readonly /></td>
+        <td><input type="number" name="items[${status.index}].unitPrice" class="form-control" value="${item.unitPrice}"/></td>
         <td><input type="number" name="items[${status.index}].amount" class="form-control" readonly /></td>
         <td><button type="button" class="btn btn-danger btn-sm btn-delete" onclick="removeRow(this)">삭제</button></td>
       </tr>
@@ -106,14 +105,14 @@ function updatePrice(select) {
   const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
   const selected = select.options[select.selectedIndex];
   row.querySelector('[name$=".productName"]').value = selected.getAttribute('data-name');
-  row.querySelector('[name$=".salePrice"]').value = selected.getAttribute('data-price');
+  row.querySelector('[name$=".unitPrice"]').value = selected.getAttribute('data-price');
   calculateAmount(idx);
 }
 
 function calculateAmount(idx) {
   const row = document.querySelectorAll('#itemTable tbody tr')[idx];
   const qty = parseInt(row.querySelector('[name$=".quantity"]').value || 0);
-  const price = parseInt(row.querySelector('[name$=".salePrice"]').value || 0);
+  const price = parseInt(row.querySelector('[name$=".unitPrice"]').value || 0);
   row.querySelector('[name$=".amount"]').value = qty * price;
   updateTotalAmount();
 }

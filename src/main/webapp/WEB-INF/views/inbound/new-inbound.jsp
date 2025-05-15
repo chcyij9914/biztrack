@@ -165,7 +165,7 @@ td button.btn-sm {
 								<td><select name="items[0].productId"
 									class="form-control product-select"
 									onchange="updatePrice(this)">
-										<option value="" disabled selected>-- 품목 선택 --</option>
+									<option value="" disabled selected>-- 품목 선택 --</option>
 										<c:forEach var="p" items="${productList}">
 											<option value="${p.productId}" data-name="${p.productName}"
 												data-category="${p.categoryId}">${p.productId}-
@@ -231,104 +231,117 @@ td button.btn-sm {
 	</div>
 
 	<script>
+/* -------------------------------------
+   품목 필터링 및 행 추가 기능 스크립트
+-------------------------------------- */
+
+let productOptionBackup = null;
+
 $(function () {
-	  // 최초 로딩 시 상품 select 옵션 백업
-	  $('.product-select').each(function () {
-	    $(this).data('original-options', $(this).html());
-	  });
+  // 초기: 모든 product-select 드롭다운 옵션 백업
+  $('.product-select').each(function () {
+    $(this).data('original-options', $(this).html());
+  });
 
-	  // 거래처 선택 시: 같은 카테고리의 상품만 필터링
-	  $('#clientId').on('change', function () {
-	    const selectedCategoryId = $(this).find('option:selected').data('category');
+  // 거래처 선택 시 → 해당 거래처 카테고리에 맞는 상품 필터링
+  $('#clientId').on('change', function () {
+    const selectedCategoryId = $(this).find('option:selected').data('category');
 
-	    $('#itemTable tbody tr').each(function () {
-	    	  const $select = $(this).find('.product-select');
-	    	  const backup = $select.data('original-options');
-	    	  if (!backup) return;
+    $('#itemTable tbody tr').each(function () {
+      const $select = $(this).find('.product-select');
+      const backup = $select.data('original-options');
 
-	    	  const selectedValue = $select.val(); // 선택된 값 저장
+      if (!backup) return;
 
-	    	  const options = $('<div>' + backup + '</div>').find('option');
-	    	  const filtered = options.filter(function () {
-	    	    return $(this).data('category') == selectedCategoryId;
-	    	  });
+      const selectedValue = $select.val(); // 기존 선택값 유지
+      const options = $('<select>' + backup + '</select>').find('option');
 
-	    	  $select.empty().append('<option value="">-- 품목 선택 --</option>').append(filtered);
+      const filtered = options.filter(function () {
+        return $(this).attr('data-category') == selectedCategoryId;
+      });
 
-	    	  // 다시 선택 복원 (있을 경우만)
-	    	  if (filtered.filter('[value="' + selectedValue + '"]').length > 0) {
-	    	    $select.val(selectedValue);
-	    	  }
-	    	});
-	  });
+      $select.empty()
+             .append('<option value="" disabled selected>-- 품목 선택 --</option>')
+             .append(filtered)
+             .val('');
+    });
+  });
 
-	  // 상품 선택 시: 같은 카테고리의 거래처만 표시
-	  $(document).on('change', '.product-select', function () {
-	    const selectedCategory = $(this).find('option:selected').data('category');
-	    if (!selectedCategory) return;
+  // 상품 선택 시 → 거래처도 해당 카테고리만 보이게 필터링
+  $(document).on('change', '.product-select', function () {
+    const selectedCategory = $(this).find('option:selected').data('category');
+    if (!selectedCategory) return;
 
-	    $('#clientId option').each(function () {
-	      const catId = $(this).data('category');
-	      if ($(this).val() === "" || catId == selectedCategory) {
-	        $(this).show();
-	      } else {
-	        $(this).hide();
-	      }
-	    });
-	  });
-	});
-	
-	// 금액 계산 --> 품목이름 업데이트
-	function updatePrice(select) {
-	  const row = select.closest('tr');
- 	 const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
+    $('#clientId option').each(function () {
+      const catId = $(this).data('category');
+      if ($(this).val() === "" || catId == selectedCategory) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+});
 
- 	 const option = select.options[select.selectedIndex];
- 	 row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
- 	 calculateAmount(idx);
-	}
+// 품목 선택 시 → 이름 자동 입력 + 금액 계산 함수 호출
+function updatePrice(select) {
+  const row = select.closest('tr');
+  const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
 
-	// 품목 행 추가 시: 거래처 필터 유지
-	function addItemRow() {
-	  const table = document.querySelector('#itemTable tbody');
-	  const rowCount = table.rows.length;
-	  const clone = table.rows[0].cloneNode(true);
-	  clone.querySelector('input[name$=".itemId"]').value = "";
-	  clone.querySelector('input[name$=".documentId"]').value = "";
-	  clone.querySelector('td').innerText = rowCount + 1;
+  const option = select.options[select.selectedIndex];
+  row.querySelector('[name="items[' + idx + '].productName"]').value = option.getAttribute('data-name');
 
-	  clone.querySelectorAll('input, select').forEach(el => {
-	    const name = el.name.replace(/\[\d+\]/, '[' + rowCount + ']');
-	    el.name = name;
-	
-	    if (el.tagName === 'INPUT') {
-	      el.value = (el.type === 'number' || el.type === 'text') ? '' : el.value;
-	    }
-	  });
-	
-	  table.appendChild(clone);
+  calculateAmount(idx); // 총액 계산 함수 (별도로 정의돼 있어야 함)
+}
 
-	  // 거래처 카테고리 기준 필터링
-	  const selectedCategoryId = $('#clientId option:selected').data('category');
-	  const $select = $(clone).find('.product-select');
-	  const backup = $select.data('original-options') || $select.html();
-	  $select.data('original-options', backup);
+// 품목 행 추가 시 실행되는 함수
+function addItemRow() {
+  const tbody = document.querySelector('#itemTable tbody');
+  const rowCount = tbody.rows.length;
+  const clone = tbody.rows[0].cloneNode(true);
 
-	  const options = $('<div>' + backup + '</div>').find('option');
-	  const filtered = options.filter(function () {
-	    return $(this).data('category') == selectedCategoryId;
-	  });
+  // input, select 초기화 및 인덱스 재설정
+  clone.querySelectorAll('input, select').forEach(el => {
+    el.name = el.name.replace(/\[\d+\]/, '[' + rowCount + ']');
+    if (el.tagName === 'INPUT' && !el.name.includes('itemId') && !el.name.includes('documentId')) {
+      el.value = '';
+    }
+  });
 
-	  $select.empty().append('<option value="">-- 품목 선택 --</option>').append(filtered);
-	}
+  // select 옵션 백업 가져오기
+  const $newSelect = $(clone).find('.product-select');
+  const backup = $('.product-select:first').data('original-options');
+  const $options = $('<select>' + backup + '</select>').find('option');
 
-	// 행 삭제
-	function removeRow(btn) {
-	  const table = document.querySelector('#itemTable tbody');
-	  if (table.rows.length > 1) btn.closest('tr').remove();
-	  updateTotalAmount(); // ← 총합 업데이트 호출
-	}
+  const selectedCategoryId = $('#clientId option:selected').data('category');
 
+  // 거래처 선택 여부에 따라 필터링 or 전체
+  let filtered;
+  if (selectedCategoryId) {
+    filtered = $options.filter(function () {
+      return $(this).attr('data-category') == selectedCategoryId;
+    });
+  } else {
+    filtered = $options;
+  }
+
+  $newSelect
+    .empty()
+    .append(filtered)
+    .val("");
+
+  // 옵션 백업도 저장
+  $newSelect.data('original-options', backup);
+
+  tbody.appendChild(clone);
+}
+
+// 행 삭제 버튼 클릭 시 호출
+function removeRow(btn) {
+  const table = document.querySelector('#itemTable tbody');
+  if (table.rows.length > 1) btn.closest('tr').remove();
+  updateTotalAmount(); // 총합 재계산 함수 (정의돼 있어야 함)
+}
 </script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.erp.biztrack.purchase.model.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 
 @Repository("purchaseDao")
@@ -21,16 +23,42 @@ public class PurchaseDao {
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 
-	public ArrayList<Purchase> selectList(Paging paging) {
-		List<Purchase> list = sqlSessionTemplate.selectList("purchaseMapper.selectList", paging);
-		return (ArrayList<Purchase>) list;
-	}
+	//품의서 개수 카운트
+	public int selectDocumentListCountByType(String documentTypeId) {
+        return sqlSessionTemplate.selectOne("purchaseMapper.selectDocumentListCountByType", documentTypeId);
+    }
+	
+	//품의서 조회
+	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("purchaseMapper.selectDocumentListByType", param);
+        return (ArrayList<DocumentDTO>) list;
+    }
+	
+	//지출결의서 개수 카운트
+		public int selectDocumentListCountByTypeT(String documentTypeId) {
+	        return sqlSessionTemplate.selectOne("purchaseMapper.selectDocumentListCountByTypeT", documentTypeId);
+	    }
+		
+		//지출결의서 조회
+		public ArrayList<DocumentDTO> selectDocumentListByTypeT(Map<String, Object> param) {
+	        List<DocumentDTO> list = sqlSessionTemplate.selectList("purchaseMapper.selectDocumentListByTypeT", param);
+	        return (ArrayList<DocumentDTO>) list;
+	    }
+	//--------------------------------------------------------------------------------------------
+	//검색기능
+		public List<Purchase> searchByDocumentId(String documentId) {
+			return sqlSessionTemplate.selectList("purchaseMapper.searchByDocumentId", documentId);
+		}
 
-	public int selectListCount() {
-		return sqlSessionTemplate.selectOne("purchaseMapper.selectListCount");
-	}
-
-
+		public List<Purchase> searchByTitle(String title) {
+			return sqlSessionTemplate.selectList("purchaseMapper.searchByTitle", title);
+		}
+		
+		public List<Purchase> searchByStatus(String status) {
+			return sqlSessionTemplate.selectList("purchaseMapper.searchByStatus", status);
+		}
+	
+	//--------------------------------------------------------------------------------------------
 	// 문서 상세보기
 	public Purchase selectPurchaseDetail(String documentId) {
 		return sqlSessionTemplate.selectOne("purchaseMapper.selectPurchaseDetail", documentId);
@@ -151,5 +179,4 @@ public class PurchaseDao {
   	public String selectContractFilePath(String clientId) {
   		return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
   	}
-
 }

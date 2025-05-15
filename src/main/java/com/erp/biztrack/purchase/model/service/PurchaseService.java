@@ -2,6 +2,7 @@ package com.erp.biztrack.purchase.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.common.ApproveDTO;
@@ -9,6 +10,7 @@ import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 
 public interface PurchaseService {
@@ -16,7 +18,16 @@ public interface PurchaseService {
 	int selectListCount();
 
 	// 문서 목록 조회
-	ArrayList<Purchase> selectList(Paging paging);
+	int selectDocumentListCountByType(String documentTypeId);
+    ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
+    
+    int selectDocumentListCountByTypeT(String documentTypeId);
+    ArrayList<DocumentDTO> selectDocumentListByTypeT(Map<String, Object> param);
+    
+    // 검색 기능
+    List<Purchase> searchByDocumentId(String documentId);
+	List<Purchase> searchByTitle(String title);
+	List<Purchase> searchByStatus(String status);
 
 
 	// 문서 상세보기
@@ -50,5 +61,4 @@ public interface PurchaseService {
     int deleteApprove(String documentId);
 
 	List<Client> selectAllClients();
-
 }

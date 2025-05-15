@@ -20,39 +20,36 @@
 				<td><input type="hidden" name="items[${status.index}].itemId"
 					value="${item.itemId}" /> <input type="hidden"
 					name="items[${status.index}].documentId" value="${item.documentId}" />
-					${status.index + 1}</td>
+					${status.index + 1}
 				<td><select name="items[${status.index}].productId"
 					class="form-control product-select" onchange="updatePrice(this)">
 						<option value="" disabled selected>-- 품목 선택 --</option>
 						<c:forEach var="p" items="${productList}">
 							<option value="${p.productId}" data-name="${p.productName}"
-								data-price="${p.salePrice}" data-category="${p.categoryId}"
+								data-category="${p.categoryId}"
 								${p.productId == item.productId ? 'selected' : ''}>
 								${p.productId} - ${p.productName}</option>
 						</c:forEach>
 				</select></td>
-				<td><input type="text" name="items[0].productName"
-					class="form-control" value="${item.productName}" readonly /></td>
-				<td><input type="number" name="items[0].quantity"
+				<td><input type="text"
+					name="items[${status.index}].productName" class="form-control"
+					value="${item.productName}" readonly /></td>
+				<td><input type="number" name="items[${status.index}].quantity"
 					class="form-control" value="${item.quantity}"
 					oninput="handleQuantityInput(this)" /></td>
 				<td><input type="number"
 					name="items[${status.index}].unitPrice" class="form-control"
 					value="${item.unitPrice}" /></td>
-
-				<td>
-					<button type="button" class="btn btn-danger btn-sm btn-delete"
-						onclick="removeRow(this)">삭제</button>
-				</td>
+				<td><button type="button"
+						class="btn btn-danger btn-sm btn-delete" onclick="removeRow(this)">삭제</button></td>
 			</tr>
 		</c:forEach>
 	</tbody>
 </table>
 
-<!-- + 버튼과 총합 -->
+<!-- + 버튼 -->
 <button type="button" class="btn btn-outline-primary mb-3"
 	onclick="addItemRow()">+ 품목 추가</button>
-
 
 
 <script>
@@ -98,11 +95,26 @@ function updatePrice(select) {
   const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
   const selected = select.options[select.selectedIndex];
   row.querySelector('[name$=".productName"]').value = selected.getAttribute('data-name');
-  row.querySelector('[name$=".salePrice"]').value = selected.getAttribute('data-price');
+  row.querySelector('[name$=".unitPrice"]').value = selected.getAttribute('data-price');
   calculateAmount(idx);
 }
 
+function calculateAmount(idx) {
+  const row = document.querySelectorAll('#itemTable tbody tr')[idx];
+  const qty = parseInt(row.querySelector('[name$=".quantity"]').value || 0);
+  const price = parseInt(row.querySelector('[name$=".unitPrice"]').value || 0);
+  row.querySelector('[name$=".amount"]').value = qty * price;
+  updateTotalAmount();
+}
 
+function updateTotalAmount() {
+  let total = 0;
+  document.querySelectorAll('[name$=".amount"]').forEach(el => {
+    const val = parseInt(el.value || 0);
+    if (!isNaN(val)) total += val;
+  });
+  document.getElementById('totalAmountDisplay').innerText = total.toLocaleString();
+}
 
 function removeRow(btn) {
   const tbody = document.querySelector('#itemTable tbody');
