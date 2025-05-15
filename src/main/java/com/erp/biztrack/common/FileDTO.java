@@ -1,18 +1,23 @@
 package com.erp.biztrack.common;
 
+import java.sql.Date;
+
 public class FileDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -9167851553414504848L;
 
 	// Field
 	private int uploadFileId; 						// UPLOAD_FILE_ID NUMBER(38,0)
 	private Integer noticeNo; 						// NOTICE_NO NUMBER(38,0)
-	private String documentId; 					// DOCUMENT_ID VARCHAR2(30 BYTE)
+	private String documentId; 						// DOCUMENT_ID VARCHAR2(30 BYTE)
 	private String trainingId; 						// TRAINING_ID VARCHAR2(30 BYTE)
-	private String clientId;							// CLIENT_ID	VARCHAR2(30 BYTE)
-	private String filePath; 						// FILE_NAME VARCHAR2(255 BYTE) + 파일경로
+	private String clientId;						// CLIENT_ID VARCHAR2(30 BYTE)
+	private String filePath; 						// FILE_PATH VARCHAR2(255 BYTE)
 	private String originalFileName; 				// ORIGINAL_FILENAME VARCHAR2(100 BYTE)
 	private String renameFileName; 				// RENAME_FILENAME VARCHAR2(100 BYTE)
 	private int uploadFileSize; 					// UPLOAD_FILE_SIZE NUMBER
+
+	// JOIN된 문서 작성일자
+	private Date createdDate; 						// DOCUMENT.CREATED_DATE
 
 	// Constructor
 	public FileDTO() {
@@ -20,7 +25,7 @@ public class FileDTO implements java.io.Serializable {
 	}
 
 	public FileDTO(int uploadFileId, Integer noticeNo, String documentId, String trainingId, String clientId,
-			String filePath, String originalFileName, String renameFileName, int uploadFileSize) {
+			String filePath, String originalFileName, String renameFileName, int uploadFileSize, Date createdDate) {
 		super();
 		this.uploadFileId = uploadFileId;
 		this.noticeNo = noticeNo;
@@ -31,9 +36,10 @@ public class FileDTO implements java.io.Serializable {
 		this.originalFileName = originalFileName;
 		this.renameFileName = renameFileName;
 		this.uploadFileSize = uploadFileSize;
+		this.createdDate = createdDate;
 	}
 
-	// getters and setters
+	// Getters and Setters
 	public int getUploadFileId() {
 		return uploadFileId;
 	}
@@ -65,13 +71,14 @@ public class FileDTO implements java.io.Serializable {
 	public void setTrainingId(String trainingId) {
 		this.trainingId = trainingId;
 	}
-	
+
 	public String getClientId() {
-        return clientId;
-    }
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
 
 	public String getFilePath() {
 		return filePath;
@@ -105,15 +112,29 @@ public class FileDTO implements java.io.Serializable {
 		this.uploadFileSize = uploadFileSize;
 	}
 
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
 	@Override
 	public String toString() {
-		return "FileDTO [uploadFileId=" + uploadFileId + ", noticeNo=" + noticeNo + ", documentId=" + documentId
-				+ ", trainingId=" + trainingId + ", clientId=" + clientId + ", filePath=" + filePath
-				+ ", originalFileName=" + originalFileName + ", renameFileName=" + renameFileName + ", uploadFileSize="
-				+ uploadFileSize + "]";
+		return "FileDTO [uploadFileId=" + uploadFileId
+				+ ", noticeNo=" + noticeNo
+				+ ", documentId=" + documentId
+				+ ", trainingId=" + trainingId
+				+ ", clientId=" + clientId
+				+ ", filePath=" + filePath
+				+ ", originalFileName=" + originalFileName
+				+ ", renameFileName=" + renameFileName
+				+ ", uploadFileSize=" + uploadFileSize
+				+ ", createdDate=" + createdDate + "]";
 	}
 }

@@ -103,7 +103,7 @@
                   <td>${doc.clientName}</td>
                   <td><span class="badge badge-secondary">${doc.status}</span></td>
                   <td>
-                    <a href="${pageContext.request.contextPath}/businessdocument/detail.do?documentId=${doc.documentId}"
+                    <a href="${pageContext.request.contextPath}/businessdocument/outboundDetail.do?documentId=${doc.documentId}"
                        class="btn btn-sm"
                        style="background-color: #e7f1ff; color: #004085; border: 1px solid #b8daff;">상세</a>
                   </td>

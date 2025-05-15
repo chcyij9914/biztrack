@@ -51,12 +51,17 @@ public class DocumentPaging implements java.io.Serializable {
     }
 
     // ----- Getter & Setter -----
+
     public int getCurrentPage() {
         return currentPage;
     }
 
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
+
+        // 현재 페이지 변경 시 start/end 자동 계산
+        this.start = (this.currentPage - 1) * limit + 1;
+        this.end = this.start + limit - 1;
     }
 
     public int getStart() {
@@ -87,20 +92,20 @@ public class DocumentPaging implements java.io.Serializable {
         return total;
     }
 
-    // ⚠️ 핵심 로직: total 설정 시 totalPage, startPage, endPage까지 자동 계산
+    // 핵심 로직: 총 게시물 수를 설정하면 totalPage, startPage, endPage도 자동 계산
     public void setTotal(int total) {
         this.total = total;
 
         // 총 페이지 수 계산
         this.totalPage = (int) Math.ceil((double) total / limit);
 
-        // 시작 페이지 = 현재 페이지 기준으로 계산
+        // 시작 페이지 계산
         this.startPage = ((currentPage - 1) / pageBlock) * pageBlock + 1;
 
-        // 끝 페이지 = 시작 페이지 + pageBlock - 1
+        // 끝 페이지 계산
         this.endPage = startPage + pageBlock - 1;
 
-        // 끝 페이지가 총 페이지 수를 초과하면 조정
+        // 끝 페이지가 총 페이지 수를 넘지 않도록 조정
         if (endPage > totalPage) {
             endPage = totalPage;
         }
@@ -166,12 +171,13 @@ public class DocumentPaging implements java.io.Serializable {
         return serialVersionUID;
     }
 
-    // 디버깅용 toString()
+    // 디버깅용
     @Override
     public String toString() {
-        return "DocumentPaging [currentPage=" + currentPage + ", start=" + start + ", end=" + end + ", limit=" + limit
-                + ", total=" + total + ", totalPage=" + totalPage + ", startPage=" + startPage + ", endPage=" + endPage
-                + ", documentTypeId=" + documentTypeId + ", searchType=" + searchType + ", keyword=" + keyword
-                + ", approveStep=" + approveStep + ", approveStatus=" + approveStatus + "]";
+        return "DocumentPaging [currentPage=" + currentPage + ", start=" + start + ", end=" + end
+                + ", limit=" + limit + ", total=" + total + ", totalPage=" + totalPage
+                + ", startPage=" + startPage + ", endPage=" + endPage + ", documentTypeId=" + documentTypeId
+                + ", searchType=" + searchType + ", keyword=" + keyword + ", approveStep=" + approveStep
+                + ", approveStatus=" + approveStatus + "]";
     }
 }

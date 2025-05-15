@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
 import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
+import com.erp.biztrack.common.ApproveDTO;
+import com.erp.biztrack.common.FileDTO;
 
 public interface BusinessDocumentService {
 	
@@ -28,6 +30,21 @@ public interface BusinessDocumentService {
     
     // 품목 ID 시퀀스 조회 
     String selectNextItemId();
+    
+    // 출고서 상세정보 조회
+    BusinessDocument selectOneDocument(String documentId);
+    
+    // 첨부파일 조회
+    FileDTO selectOneFileByDocumentId(String documentId);
+    
+    // 결재자 정보 조회
+    ApproveDTO selectApprovalInfo(String documentId);
+    
+    // 품목 리스트 추가 조회
+    List<BusinessDocument> selectDocumentItemList(String documentId);
+    
+    // 결재자 정보 입력
+    int insertApprovalInfo(BusinessDocument document);
 
     // 세금계산서 목록 조회
     ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(DocumentPaging pageInfo);
