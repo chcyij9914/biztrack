@@ -176,11 +176,6 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public int selectDocumentListCountByType(String documentTypeId) {
-	    return clientDao.selectDocumentListCountByType(documentTypeId);
-	}
-
-	@Override
 	public int insertDocument(DocumentDTO document) {
 		return clientDao.insertDocument(document);
 	}
@@ -311,12 +306,42 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
-		return clientDao.selectDocumentListByType(param);
+	public int updateContractPeriod(Client client) {
+		return clientDao.updateContractPeriod(client);
 	}
 
 	@Override
-	public int updateContractPeriod(Client client) {
-		return clientDao.updateContractPeriod(client);
+	public ArrayList<DocumentDTO> selectDocumentListByWriter(Map<String, Object> param) {
+		return clientDao.selectDocumentListByWriter(param);
+	}
+
+	@Override
+	public int selectDocumentCountByWriter(Map<String, Object> param) {
+		return clientDao.selectDocumentCountByWriter(param);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByApprover(Map<String, Object> param) {
+		return clientDao.selectDocumentListByApprover(param);
+	}
+
+	@Override
+	public int selectDocumentCountByApprover(Map<String, Object> param) {
+		return clientDao.selectDocumentCountByApprover(param);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectAllDocumentList(Map<String, Object> param) {
+		return clientDao.selectAllDocumentList(param);
+	}
+
+	@Override
+	public int selectAllDocumentCount(Map<String, Object> param) {
+		return clientDao.selectAllDocumentCount(param);
+	}
+
+	@Override
+	public int updateApprovalStatus(ApproveDTO approve) {
+		return clientDao.updateApprovalStatus(approve);
 	}
 }

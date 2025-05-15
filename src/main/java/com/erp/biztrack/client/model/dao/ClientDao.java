@@ -147,17 +147,42 @@ public class ClientDao {
         return sqlSessionTemplate.delete("clientMapper.deleteClient", clientId);
     }
     
-	// 거래처 문서 목록 조회
-    public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
-        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByType", param);
+    // 문서 관련 -------------------------------
+    // 문서 목록 조회 관련 -----------------------------------
+    // 본인 작성 문서 목록 조회
+    public ArrayList<DocumentDTO> selectDocumentListByWriter(Map<String, Object> param) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByWriter", param);
         return (ArrayList<DocumentDTO>) list;
     }
-    
-    // 거래처 문서 전체 수
-    public int selectDocumentListCountByType(String documentTypeId) {
-        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentListCountByType", documentTypeId);
+
+    // 본인 작성 문서 수 조회
+    public int selectDocumentCountByWriter(Map<String, Object> param) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentCountByWriter", param);
     }
     
+    // 결재자 문서 목록 조회
+    public ArrayList<DocumentDTO> selectDocumentListByApprover(Map<String, Object> param) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByApprover", param);
+        return (ArrayList<DocumentDTO>) list;
+    }
+
+    // 결재자 문서 수 조회
+    public int selectDocumentCountByApprover(Map<String, Object> param) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectDocumentCountByApprover", param);
+    }
+    
+    // 전체 문서 목록 조회
+    public ArrayList<DocumentDTO> selectAllDocumentList(Map<String, Object> param) {
+        List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectAllDocumentList", param);
+        return (ArrayList<DocumentDTO>) list;
+    }
+
+    // 전체 문서 수 조회
+    public int selectAllDocumentCount(Map<String, Object> param) {
+        return sqlSessionTemplate.selectOne("clientMapper.selectAllDocumentCount", param);
+    }
+    
+    // 문서 등록 관련 -----------------------------------------------
     // 문서 등록
     public int insertDocument(DocumentDTO document) {
     	return sqlSessionTemplate.insert("clientMapper.insertDocument", document);
@@ -284,5 +309,10 @@ public class ClientDao {
     public ArrayList<DocumentDTO> selectDocumentListByStatus(Search search) {
         List<DocumentDTO> list = sqlSessionTemplate.selectList("clientMapper.selectDocumentListByStatus", search);
         return (ArrayList<DocumentDTO>) list;
+    }
+    
+    // 결재자 결재 상태 수정 기능
+    public int updateApprovalStatus(ApproveDTO approve) {
+        return sqlSessionTemplate.update("clientMapper.updateApprovalStatus", approve);
     }
 }

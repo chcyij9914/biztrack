@@ -45,8 +45,12 @@ public interface ClientService {
     // 거래처 삭제
     int deleteClient(String clientId);
     //거래처 문서 목록 조회 관련 ---------------------------------------------
-    int selectDocumentListCountByType(String documentTypeId);
-    ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
+    ArrayList<DocumentDTO> selectDocumentListByWriter(Map<String, Object> param);
+    int selectDocumentCountByWriter(Map<String, Object> param);
+    ArrayList<DocumentDTO> selectDocumentListByApprover(Map<String, Object> param);
+    int selectDocumentCountByApprover(Map<String, Object> param);
+    ArrayList<DocumentDTO> selectAllDocumentList(Map<String, Object> param);
+    int selectAllDocumentCount(Map<String, Object> param);
     //문서등록관련---------------------------------
     int insertDocument(DocumentDTO document);
     int insertDocumentItem(DocumentItemDTO item);
@@ -77,5 +81,7 @@ public interface ClientService {
     ArrayList<DocumentDTO> selectDocumentListByClientName(Search search);
     int selectDocumentCountByStatus(Search search);
     ArrayList<DocumentDTO> selectDocumentListByStatus(Search search);
+    //결재자 결재 상태 수정
+    int updateApprovalStatus(ApproveDTO approve);
 }
 
