@@ -47,8 +47,6 @@ import jakarta.servlet.http.HttpSession;
 public class PurchaseController {
 
 	private final AdminServiceImpl adminServiceImpl;
-	// 이 클래스 안의 메소드들이 잘 동작하는지, 매개변수 또는 리턴값을 확인하는 용도로 로그 객체를 생성함
-	private static final Logger logger = LoggerFactory.getLogger(PurchaseController.class);
 
 	@Autowired
 	private PurchaseService purchaseService;
@@ -66,43 +64,62 @@ public class PurchaseController {
 		this.adminServiceImpl = adminServiceImpl;
 	}
 
-	// 뷰 페이지 내보내기용 메소드 -----------------------------------------------------
-	// 공지사항 전체 목록보기 요청 처리용 (페이징 처리 : 한 페이지에 10개씩 출력 처리)
+	// 문서 개수 카운팅 및 조회 (품의서)
 	@RequestMapping("purchase-document.do")
-	public ModelAndView purchaseListMethod(ModelAndView mv, @RequestParam(name = "page", required = false) String page,
-			@RequestParam(name = "limit", required = false) String slimit) {
-		// 페이징 처리
-		int currentPage = 1;
-		if (page != null) {
-			currentPage = Integer.parseInt(page);
-		}
+	public ModelAndView selectDocumentList(@RequestParam(name = "type", defaultValue = "R") String type,
+			@RequestParam(name = "page", required = false) String page,
+			@RequestParam(name = "limit", required = false) String slimit, ModelAndView mv) {
 
-		// 한 페이지에 출력할 목록 갯수 기본 10개로 지정함
-		int limit = 10;
-		if (slimit != null) {
-			limit = Integer.parseInt(slimit);
-		}
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
 
-		// 총 목록 갯수 조회해서, 총 페이지 수 계산함
-		int listCount = purchaseService.selectListCount();
-		// 페이지 관련 항목들 계산 처리
+		int listCount = purchaseService.selectDocumentListCountByType(type);
+
 		Paging paging = new Paging(listCount, limit, currentPage, "purchase-document.do");
 		paging.calculate();
 
-		// 서비스 모델로 페이징 적용된 목록 조회 요청하고 결과받기
-		ArrayList<Purchase> list = purchaseService.selectList(paging);
+		Map<String, Object> param = new HashMap<>();
+		param.put("startRow", paging.getStartRow());
+		param.put("endRow", paging.getEndRow());
+		param.put("documentTypeId", type);
 
-		if (list != null && list.size() > 0) { // 조회 성공시
-			// ModelAndView : Model + View
-			mv.addObject("list", list); // request.setAttribute("list", list) 와 같음
-			mv.addObject("paging", paging);
-			mv.setViewName("purchase/purchase-document");
+		ArrayList<DocumentDTO> documentList = purchaseService.selectDocumentListByType(param);
 
-		} else { // 조회 실패시
-			mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
-		}
+		mv.addObject("docType", type);
+		mv.addObject("documentList", documentList);
+		mv.addObject("paging", paging);
+		mv.setViewName("purchase/purchase-document");
+
 		return mv;
+	}
 
+	// 문서 개수 카운팅 및 조회 (지출결의서)
+	@RequestMapping("payment-document.do")
+	public ModelAndView selectDocumentListT(@RequestParam(name = "type", defaultValue = "T") String type,
+			@RequestParam(name = "page", required = false) String page,
+			@RequestParam(name = "limit", required = false) String slimit, ModelAndView mv) {
+
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
+
+		int listCount = purchaseService.selectDocumentListCountByTypeT(type);
+
+		Paging paging = new Paging(listCount, limit, currentPage, "payment-document.do");
+		paging.calculate();
+
+		Map<String, Object> param = new HashMap<>();
+		param.put("startRow", paging.getStartRow());
+		param.put("endRow", paging.getEndRow());
+		param.put("documentTypeId", type);
+
+		ArrayList<DocumentDTO> documentList = purchaseService.selectDocumentListByTypeT(param);
+
+		mv.addObject("docType", type);
+		mv.addObject("documentList", documentList);
+		mv.addObject("paging", paging);
+		mv.setViewName("purchase/payment-document");
+
+		return mv;
 	}
 
 	// 문서 작성 페이지로 이동 처리용(품의서)
@@ -115,6 +132,31 @@ public class PurchaseController {
 	@RequestMapping("new-payment.do")
 	public String moveNewPaymentDocumentPage() {
 		return "purchase/new-payment";
+	}
+
+	// 검색기능-------------------------------------------------------------------------------------
+	// 검색기능 - 문서번호로 검색
+	@RequestMapping("searchByDocumentId.do")
+	public String searchByDocumentId(@RequestParam("keyword") String documentId, Model model) {
+		List<Purchase> result = purchaseService.searchByDocumentId(documentId);
+		model.addAttribute("documentList", result);
+		return "purchase/purchase-document";
+	}
+
+	// 검색기능 - 제목으로 검색
+	@RequestMapping("searchByTitle.do")
+	public String searchByTitle(@RequestParam("keyword") String title, Model model) {
+		List<Purchase> result = purchaseService.searchByTitle(title);
+		model.addAttribute("documentList", result);
+		return "purchase/purchase-document";
+	}
+
+	// 검색기능 - 상태로 검색
+	@RequestMapping("searchByStatus.do")
+	public String searchByStatus(@RequestParam("status") String status, Model model) {
+		List<Purchase> result = purchaseService.searchByStatus(status);
+		model.addAttribute("documentList", result);
+		return "purchase/purchase-document";
 	}
 
 	// 품의서 등록 -------------------------------------------
@@ -166,7 +208,7 @@ public class PurchaseController {
 		approve.setSecondApproveStatus("결재 대기");
 		purchaseService.insertApproval(approve);
 
-		// 6. 파일 업로드 처리 
+		// 6. 파일 업로드 처리
 		if (uploadFile != null && !uploadFile.isEmpty()) {
 			String path = request.getServletContext().getRealPath("/resources/upload/purchase");
 			new File(path).mkdirs();
@@ -202,7 +244,7 @@ public class PurchaseController {
 		List<DocumentItemDTO> itemList = purchaseService.selectDocumentItemList(documentId);
 		int totalAmount = 0;
 		for (DocumentItemDTO item : itemList) {
-			int amount = item.getQuantity() * item.getSalePrice();
+			int amount = item.getQuantity() * item.getUnitPrice();
 			item.setAmount(amount);
 			totalAmount += amount;
 		}
@@ -228,7 +270,7 @@ public class PurchaseController {
 	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
 			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
 
-		String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/proposal");
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/purchase");
 
 		File downFile = new File(savePath + File.separator + renameFileName);
 		File originFile = new File(originalFileName);
@@ -364,5 +406,4 @@ public class PurchaseController {
 
 		return "redirect:/purchase/purchase-document.do";
 	}
-
 }

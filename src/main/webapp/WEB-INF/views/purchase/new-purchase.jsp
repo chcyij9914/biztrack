@@ -249,6 +249,10 @@ td button.btn-sm {
 	</div>
 
 	<script>
+	let productOptionBackup = null;
+	productOptionBackup = $('.product-select').first().html();
+
+	
 $(function () {
 	  // 최초 로딩 시 상품 select 옵션 백업
 	  $('.product-select').each(function () {
@@ -261,7 +265,7 @@ $(function () {
 
 	    $('#itemTable tbody tr').each(function () {
 	    	  const $select = $(this).find('.product-select');
-	    	  const backup = $select.data('original-options');
+	    	  $select.html(productOptionBackup);
 	    	  if (!backup) return;
 
 	    	  const selectedValue = $select.val(); // 선택된 값 저장
@@ -328,7 +332,7 @@ $(function () {
 	  // 거래처 카테고리 기준 필터링
 	  const selectedCategoryId = $('#clientId option:selected').data('category');
 	  const $select = $(clone).find('.product-select');
-	  const backup = $select.data('original-options') || $select.html();
+	  $select.html(productOptionBackup);
 	  $select.data('original-options', backup);
 
 	  const options = $('<div>' + backup + '</div>').find('option');

@@ -64,6 +64,8 @@ public class Inbound implements java.io.Serializable{
 		private int unitPrice;
 		private int salePrice;
 		
+		private String status;
+		
 		public Inbound() {
 			super();
 		}
@@ -76,7 +78,8 @@ public class Inbound implements java.io.Serializable{
 				Date contractStartDate, Date contractEndDate, String firstManagerId, String currentManagerId,
 				String directorName, String directorPhone, String email, String approveId, String empId,
 				String approver1Id, Date approve1Date, String approve1Status, String approver2d, Date approve2Date,
-				String approve2Status, String productName, String subCategoryId, int unitPrice, int salePrice) {
+				String approve2Status, String productName, String subCategoryId, int unitPrice, int salePrice,
+				String status) {
 			super();
 			this.documentId = documentId;
 			this.documentTypeId = documentTypeId;
@@ -121,6 +124,7 @@ public class Inbound implements java.io.Serializable{
 			this.subCategoryId = subCategoryId;
 			this.unitPrice = unitPrice;
 			this.salePrice = salePrice;
+			this.status = status;
 		}
 
 		public String getDocumentId() {
@@ -467,6 +471,14 @@ public class Inbound implements java.io.Serializable{
 			this.salePrice = salePrice;
 		}
 
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
 		public static long getSerialversionuid() {
 			return serialVersionUID;
 		}
@@ -488,13 +500,8 @@ public class Inbound implements java.io.Serializable{
 					+ ", approve1Date=" + approve1Date + ", approve1Status=" + approve1Status + ", approver2d="
 					+ approver2d + ", approve2Date=" + approve2Date + ", approve2Status=" + approve2Status
 					+ ", productName=" + productName + ", subCategoryId=" + subCategoryId + ", unitPrice=" + unitPrice
-					+ ", salePrice=" + salePrice + "]";
+					+ ", salePrice=" + salePrice + ", status=" + status + "]";
 		}
 
-		public DocumentItemDTO[] getItems() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
 		
 }

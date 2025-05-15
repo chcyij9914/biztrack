@@ -2,6 +2,7 @@ package com.erp.biztrack.inbound.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.common.ApproveDTO;
@@ -10,14 +11,20 @@ import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.inbound.model.dto.Inbound;
+import com.erp.biztrack.purchase.model.dto.Purchase;
 
 public interface InboundService {
-	// 목록 카운트
-	int selectListCount();
 
-	// 목록 조회
-	ArrayList<Inbound> selectList(Paging paging);
-
+	// 문서 목록 조회
+		int selectDocumentListCountByType(String documentTypeId);
+	    ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
+	
+    // 검색 기능
+    List<Inbound> searchByDocumentId(String documentId);
+	List<Inbound> searchByTitle(String title);
+	List<Inbound> searchByStatus(String status);
+    
+	 
 	// 문서 상세보기
 	Inbound selectInboundDetail(String documentId);
 	
