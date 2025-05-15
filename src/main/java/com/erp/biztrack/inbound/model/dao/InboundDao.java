@@ -17,6 +17,7 @@ import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.inbound.model.dto.Inbound;
+import com.erp.biztrack.purchase.model.dto.Purchase;
 
 @Repository("inboundDao")
 public class InboundDao {
@@ -24,19 +25,32 @@ public class InboundDao {
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 
-	public ArrayList<Inbound> selectList(Paging paging) {
-		List<Inbound> list = sqlSessionTemplate.selectList("inboundMapper.selectList", paging);
-		return (ArrayList<Inbound>) list;
+	// 입고서 개수 카운트
+	public int selectDocumentListCountByType(String documentTypeId) {
+		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentListCountByType", documentTypeId);
 	}
 
-	public int selectListCount() {
-		return sqlSessionTemplate.selectOne("inboundMapper.selectListCount");
+	// 입고서 조회
+	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
+		List<DocumentDTO> list = sqlSessionTemplate.selectList("inboundMapper.selectDocumentListByType", param);
+		return (ArrayList<DocumentDTO>) list;
 	}
+	
+	//--------------------------------------------------------------------------------------------
+		//검색기능
+			public List<Inbound> searchByDocumentId(String documentId) {
+				return sqlSessionTemplate.selectList("inboundMapper.searchByDocumentId", documentId);
+			}
 
-	// 입고 상세보기
-	public Inbound selectInboundDetail(String documentId) {
-		return sqlSessionTemplate.selectOne("inboundMapper.selectInboundDetail", documentId);
-	}
+			public List<Inbound> searchByTitle(String title) {
+				return sqlSessionTemplate.selectList("inboundMapper.searchByTitle", title);
+			}
+			
+			public List<Inbound> searchByStatus(String status) {
+				return sqlSessionTemplate.selectList("inboundMapper.searchByStatus", status);
+			}
+		
+		//--------------------------------------------------------------------------------------------
 
 	// ------------------
 	// 문서 등록
@@ -58,7 +72,6 @@ public class InboundDao {
 	public String selectNextDocumentIdI() {
 		return sqlSessionTemplate.selectOne("inboundMapper.selectNextDocumentIdI");
 	}
-
 
 	// 결재 ID 시퀀스 조회
 	public String selectNextApproveId() {
@@ -99,41 +112,41 @@ public class InboundDao {
 	// 재고 수량 변경---------------------------------------
 	// 품목 ID로 단일 품목 조회
 	public DocumentItemDTO selectInboundItemById(String itemId) {
-	    return sqlSessionTemplate.selectOne("inboundMapper.selectItemById", itemId);
+		return sqlSessionTemplate.selectOne("inboundMapper.selectItemById", itemId);
 	}
 
 	// 문서 ID로 모든 품목 조회
 	public List<DocumentItemDTO> selectItemsByDocumentId(String documentId) {
-	    return sqlSessionTemplate.selectList("inboundMapper.selectItemsByDocumentId", documentId);
+		return sqlSessionTemplate.selectList("inboundMapper.selectItemsByDocumentId", documentId);
 	}
 
 	// 재고 수량 갱신 (기존 수량에 diff 만큼 더하거나 뺌)
 	public int updateStock(String productId, int quantityDiff) {
-	    Map<String, Object> param = new HashMap<>();
-	    param.put("productId", productId);
-	    param.put("quantityDiff", quantityDiff);
-	    return sqlSessionTemplate.update("inboundMapper.updateStock", param);
+		Map<String, Object> param = new HashMap<>();
+		param.put("productId", productId);
+		param.put("quantityDiff", quantityDiff);
+		return sqlSessionTemplate.update("inboundMapper.updateStock", param);
 	}
 
 	// 단가(unit price) 갱신
 	public int updateUnitPrice(String productId, int unitPrice) {
-	    Map<String, Object> param = new HashMap<>();
-	    param.put("productId", productId);
-	    param.put("unitPrice", unitPrice);
-	    return sqlSessionTemplate.update("inboundMapper.updateUnitPrice", param);
+		Map<String, Object> param = new HashMap<>();
+		param.put("productId", productId);
+		param.put("unitPrice", unitPrice);
+		return sqlSessionTemplate.update("inboundMapper.updateUnitPrice", param);
 	}
-	
-	//직전 입고서 조회 
+
+	// 직전 입고서 조회
 	public Date selectDocumentDate(String documentId) {
-	    return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentDate", documentId);
+		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentDate", documentId);
 	}
-	
-	//직전 입고서의 물품 단가 조회 (입고서 삭제 시 단가 원상복귀)
+
+	// 직전 입고서의 물품 단가 조회 (입고서 삭제 시 단가 원상복귀)
 	public Integer selectLatestUnitPrice(String productId, Date deletedDate) {
-	    Map<String, Object> param = new HashMap<>();
-	    param.put("productId", productId);
-	    param.put("deletedDate", deletedDate);
-	    return sqlSessionTemplate.selectOne("inboundMapper.selectLatestUnitPrice", param);
+		Map<String, Object> param = new HashMap<>();
+		param.put("productId", productId);
+		param.put("deletedDate", deletedDate);
+		return sqlSessionTemplate.selectOne("inboundMapper.selectLatestUnitPrice", param);
 	}
 
 	// 문서 수정 관련 ------------------------------------------------------
@@ -171,21 +184,22 @@ public class InboundDao {
 	public int deleteFileByDocumentId(String documentId) {
 		return sqlSessionTemplate.delete("inboundMapper.deleteFileByDocumentId", documentId);
 	}
+
 	// -----------------------------------
 	// 거래처 계약 상태 => 거래처 전체 조회
-		public ArrayList<Client> selectAllClients() {
-			List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectAllClients");
-			return (ArrayList<Client>) list;
-		}
+	public ArrayList<Client> selectAllClients() {
+		List<Client> list = sqlSessionTemplate.selectList("clientMapper.selectAllClients");
+		return (ArrayList<Client>) list;
+	}
 
-		// 거래처 상세 조회
-		public Client selectClientDetail(String clientId) {
-			return sqlSessionTemplate.selectOne("clientMapper.selectClientDetail", clientId);
-		}
+	// 거래처 상세 조회
+	public Client selectClientDetail(String clientId) {
+		return sqlSessionTemplate.selectOne("clientMapper.selectClientDetail", clientId);
+	}
 
-		// 계약서 파일 경로 조회
-		public String selectContractFilePath(String clientId) {
-			return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
-		}
+	// 계약서 파일 경로 조회
+	public String selectContractFilePath(String clientId) {
+		return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
+	}
 
 }

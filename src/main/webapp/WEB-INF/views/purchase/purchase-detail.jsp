@@ -128,7 +128,7 @@
 		        <td>${item.productId}</td>
 		        <td>${item.productName}</td>
 		        <td>${item.quantity}</td>
-		        <td><fmt:formatNumber value="${item.salePrice}" pattern="#,##0"/>원</td>
+		        <td><fmt:formatNumber value="${item.unitPrice}" pattern="#,##0"/>원</td>
 		        <td><fmt:formatNumber value="${item.amount}" pattern="#,##0"/>원</td>
 		      </tr>
 		    </c:forEach>
@@ -155,7 +155,7 @@
 		        </a>
 		
 		        <a class="btn btn-sm btn-outline-primary"
-		           href="${pageContext.request.contextPath}//documentDownload.do?ofile=${file.originalFileName}&rfile=${file.renameFileName}">
+		           href="${pageContext.request.contextPath}/purchase/documentDownload.do?ofile=${file.originalFileName}&rfile=${file.renameFileName}">
 		           <i class="fas fa-download"></i> 다운로드
 		        </a>
 		    </c:when>

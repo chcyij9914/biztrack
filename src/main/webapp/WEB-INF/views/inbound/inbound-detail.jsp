@@ -47,7 +47,7 @@
 		    <tr>
 		      <th>작성일</th>
 		      <td><fmt:formatDate value="${document.createdDate}" pattern="yyyy-MM-dd"/></td>
-		      <th>거래일자</th>
+		      <th>입고일자</th>
 		      <td><fmt:formatDate value="${document.documentDate}" pattern="yyyy-MM-dd"/></td>
 		      <th>결제수단</th>
 		      <td>${document.paymentMethod}</td>
@@ -149,7 +149,7 @@
 		        </a>
 		
 		        <a class="btn btn-sm btn-outline-primary"
-		           href="${pageContext.request.contextPath}//documentDownload.do?ofile=${file.originalFileName}&rfile=${file.renameFileName}">
+		           href="${pageContext.request.contextPath}/inbound/documentDownload.do?ofile=${file.originalFileName}&rfile=${file.renameFileName}">
 		           <i class="fas fa-download"></i> 다운로드
 		        </a>
 		    </c:when>

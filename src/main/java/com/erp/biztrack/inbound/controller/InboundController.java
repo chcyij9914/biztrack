@@ -37,6 +37,7 @@ import com.erp.biztrack.inbound.model.service.InboundService;
 import com.erp.biztrack.login.model.dto.LoginDto;
 import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
+import com.erp.biztrack.purchase.model.dto.Purchase;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,47 +61,63 @@ public class InboundController {
 	@Autowired
 	private EmployeeService employeeService;
 	
-	// 뷰 페이지 내보내기용 메소드 -----------------------------------------------------
-	// 공지사항 전체 목록보기 요청 처리용 (페이징 처리 : 한 페이지에 10개씩 출력 처리)
-	@RequestMapping("inbound-document.do")
-	public ModelAndView inboundListMethod(ModelAndView mv, @RequestParam(name = "page", required = false) String page,
-			@RequestParam(name = "limit", required = false) String slimit) {
-		// 페이징 처리
-		int currentPage = 1;
-		if (page != null) {
-			currentPage = Integer.parseInt(page);
-		}
+	// 입고서 조회  -----------------------------------------------------
+	// 문서 개수 카운팅 및 조회 (품의서)
+		@RequestMapping("inbound-document.do")
+		public ModelAndView selectDocumentList(@RequestParam(name = "type", defaultValue = "R") String type,
+				@RequestParam(name = "page", required = false) String page,
+				@RequestParam(name = "limit", required = false) String slimit, ModelAndView mv) {
 
-		// 한 페이지에 출력할 목록 갯수 기본 10개로 지정함
-		int limit = 10;
-		if (slimit != null) {
-			limit = Integer.parseInt(slimit);
-		}
+			int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+			int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
 
-		// 총 목록 갯수 조회해서, 총 페이지 수 계산함
-		int listCount = inboundService.selectListCount();
-		// 페이지 관련 항목들 계산 처리
-		Paging paging = new Paging(listCount, limit, currentPage, "inbound-document.do");
-		paging.calculate();
+			int listCount = inboundService.selectDocumentListCountByType(type);
 
-		// 서비스 모델로 페이징 적용된 목록 조회 요청하고 결과받기
-		ArrayList<Inbound> list = inboundService.selectList(paging);
+			Paging paging = new Paging(listCount, limit, currentPage, "inbound-document.do");
+			paging.calculate();
 
-		if (list != null && list.size() > 0) { // 조회 성공시
-			// ModelAndView : Model + View
-			mv.addObject("list", list); // request.setAttribute("list", list) 와 같음
+			Map<String, Object> param = new HashMap<>();
+			param.put("startRow", paging.getStartRow());
+			param.put("endRow", paging.getEndRow());
+			param.put("documentTypeId", type);
+
+			ArrayList<DocumentDTO> documentList = inboundService.selectDocumentListByType(param);
+
+			mv.addObject("docType", type);
+			mv.addObject("documentList", documentList);
 			mv.addObject("paging", paging);
 			mv.setViewName("inbound/inbound-document");
 
-		} else { // 조회 실패시
-			mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
-			mv.setViewName("common/error");
+			return mv;
+		}
+	
+		// 검색기능-------------------------------------------------------------------------------------
+		// 검색기능 - 문서번호로 검색
+		@RequestMapping("searchByDocumentId.do")
+		public String searchByDocumentId(@RequestParam("keyword") String documentId, Model model) {
+			List<Inbound> result = inboundService.searchByDocumentId(documentId);
+			model.addAttribute("documentList", result);
+			return "inbound/inbound-document";
 		}
 
-		return mv;
-	}
+		// 검색기능 - 제목으로 검색
+		@RequestMapping("searchByTitle.do")
+		public String searchByTitle(@RequestParam("keyword") String title, Model model) {
+			List<Inbound> result = inboundService.searchByTitle(title);
+			model.addAttribute("documentList", result);
+			return "inbound/inbound-document";
+		}
 
-
+		// 검색기능 - 상태로 검색
+		@RequestMapping("searchByStatus.do")
+		public String searchByStatus(@RequestParam("status") String status, Model model) {
+			List<Inbound> result = inboundService.searchByStatus(status);
+			model.addAttribute("documentList", result);
+			return "inbound/inbound-document";
+		}
+	
+		
+	//-------------------------------------------------------------------------------------------------	
 	// 입고 작성
 	@RequestMapping("new-inbound.do")
 	public String moveNewInboundPage() {

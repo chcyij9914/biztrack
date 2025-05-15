@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +17,7 @@ import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
+import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.purchase.model.dao.PurchaseDao;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 
@@ -25,17 +27,45 @@ public class PurchaseServiceImpl implements PurchaseService {
 	@Autowired
 	private PurchaseDao purchaseDao;
 
+	//문서카운팅
 	@Override
-	public int selectListCount() {
-		return purchaseDao.selectListCount();
+	public int selectDocumentListCountByType(String documentTypeId) {
+	    return purchaseDao.selectDocumentListCountByType(documentTypeId);
 	}
-
+	//문서조회
 	@Override
-	public ArrayList<Purchase> selectList(Paging paging) {
-		return purchaseDao.selectList(paging);
+	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
+	    return purchaseDao.selectDocumentListByType(param);
 	}
-
 	
+	//문서카운팅
+		@Override
+		public int selectDocumentListCountByTypeT(String documentTypeId) {
+		    return purchaseDao.selectDocumentListCountByTypeT(documentTypeId);
+		}
+		//문서조회
+		@Override
+		public ArrayList<DocumentDTO> selectDocumentListByTypeT(Map<String, Object> param) {
+		    return purchaseDao.selectDocumentListByTypeT(param);
+		}
+		
+	//------------------------------------------------------------------------------------------
+	//검색기능
+		@Override
+		public List<Purchase> searchByDocumentId(String documentId) {
+		    return purchaseDao.searchByDocumentId(documentId);
+		}
+		@Override
+		public List<Purchase> searchByTitle(String title) {
+		    return purchaseDao.searchByTitle(title);
+		}
+		@Override
+		public List<Purchase> searchByStatus(String status) {
+		    return purchaseDao.searchByStatus(status);
+		}
+		
+		
+	//-------------------------------------------------------------------------------------------
 	//문서 상세보기
 	@Override
 	public Purchase selectPurchaseDetail(String documentId) {
@@ -164,5 +194,4 @@ public class PurchaseServiceImpl implements PurchaseService {
 		return purchaseDao.deleteApprove(documentId);
 	}
 }
-
 
