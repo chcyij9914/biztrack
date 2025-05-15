@@ -79,7 +79,7 @@
     <div class="bg-white py-2 collapse-inner rounded">
       
       <!-- ✅ 조직도 메뉴: 항상 보이게 -->
-      <a class="collapse-item" href="${pageContext.request.contextPath}/organization/organizationList.do">조직도</a>
+      <a class="collapse-item" href="${pageContext.request.contextPath}/department/chart.do">조직도</a>
 
       <!-- ✅ 직원평가 메뉴: A1, A2, A3인 경우만 -->
       <c:if test="${loginInfo.roleId == 'A1' || loginInfo.roleId == 'A2' || loginInfo.roleId == 'A3'}">

@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -26,7 +27,6 @@
           </div>
         </div>
 
-        <!-- 중복 방지를 위해 바로 재귀 호출만 수행 -->
         <jsp:include page="orgTreeChildren.jsp">
           <jsp:param name="parentId" value="${child.deptId}" />
         </jsp:include>
