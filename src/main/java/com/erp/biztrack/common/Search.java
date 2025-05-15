@@ -15,6 +15,8 @@ public class Search {
 	private String categoryName; // 카테고리 명
 	private String filter; // 검색기준
 	private String documentTypeId;  // 계약서(C), 제안서(D) 구분용
+	private String roleId;
+	private String empId;
 	
 	public Search() {
 		super();
@@ -108,10 +110,27 @@ public class Search {
 		this.documentTypeId = documentTypeId;
 	}
 
+	public String getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
+
+	public String getEmpId() {
+		return empId;
+	}
+
+	public void setEmpId(String empId) {
+		this.empId = empId;
+	}
+
 	@Override
 	public String toString() {
 		return "Search [keyword=" + keyword + ", startRow=" + startRow + ", endRow=" + endRow + ", begin=" + begin
 				+ ", end=" + end + ", status=" + status + ", scType=" + scType + ", categoryId=" + categoryId
-				+ ", categoryName=" + categoryName + ", filter=" + filter + ", documentTypeId=" + documentTypeId + "]";
+				+ ", categoryName=" + categoryName + ", filter=" + filter + ", documentTypeId=" + documentTypeId
+				+ ", roleId=" + roleId + ", empId=" + empId + "]";
 	}
 }

@@ -68,43 +68,86 @@
             <th>부서</th>
             <th>결재일</th>
             <th>상태</th>
+            <c:if test="${not empty loginInfo.roleId}">
+		      <th>조치</th>
+		    </c:if>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>1차 결재자</td>
-            <td>${approval.firstApproverId}</td>
-            <td>${approval.firstApproverName}</td>
-            <td>${approval.firstApproverJobTitle}</td>
-            <td>${approval.firstApproverRoleName}</td>
-            <td>${approval.firstApproverDeptName}</td>
-            <td>
-                <c:choose>
-                    <c:when test="${not empty approval.firstApproveDate}">
-                        <fmt:formatDate value="${approval.firstApproveDate}" pattern="yyyy-MM-dd"/>
-                    </c:when>
-                    <c:otherwise>미결재</c:otherwise>
-                </c:choose>
-            </td>
-            <td>${approval.firstApproveStatus}</td>
-        </tr>
+		  <td>1차 결재자</td>
+		  <td>${approval.firstApproverId}</td>
+		  <td>${approval.firstApproverName}</td>
+		  <td>${approval.firstApproverJobTitle}</td>
+		  <td>${approval.firstApproverRoleName}</td>
+		  <td>${approval.firstApproverDeptName}</td>
+		  <td>
+		    <c:choose>
+		      <c:when test="${not empty approval.firstApproveDate}">
+		        <fmt:formatDate value="${approval.firstApproveDate}" pattern="yyyy-MM-dd"/>
+		      </c:when>
+		      <c:otherwise>미결재</c:otherwise>
+		    </c:choose>
+		  </td>
+		  <td>${approval.firstApproveStatus}</td>
+		
+		  <!-- 조치 버튼: 본인이 1차 결재자일 때만 보여줌 -->
+		  <c:if test="${loginInfo.empId == approval.firstApproverId}">
+		    <td>
+		      <c:choose>
+		        <c:when test="${approval.firstApproveStatus == '1차 결재 대기'}">
+		          <a href="${pageContext.request.contextPath}/client/updateApprovalStatus.do?documentId=${document.documentId}&step=1&status=1차 결재 검토"
+		             class="btn btn-warning btn-sm">검토</a>
+		        </c:when>
+		        <c:when test="${approval.firstApproveStatus == '1차 결재 검토'}">
+		          <a href="javascript:void(0);" onclick="goApproval('${document.documentId}', 1, '1차 결재 승인')" class="btn btn-success btn-sm">승인</a>
+		          <a href="javascript:void(0);" onclick="goApproval('${document.documentId}', 1, '반려')" class="btn btn-danger btn-sm">반려</a>
+		        </c:when>
+		        <c:when test="${approval.firstApproveStatus == '1차 결재 승인'}">
+		          <span class="text-success font-weight-bold">완료</span>
+		        </c:when>
+		        <c:otherwise>-</c:otherwise>
+		      </c:choose>
+		    </td>
+		  </c:if>
+		</tr>
         <tr>
-            <td>2차 결재자</td>
-            <td>${approval.secondApproverId}</td>
-            <td>${approval.secondApproverName}</td>
-            <td>${approval.secondApproverJobTitle}</td>
-            <td>${approval.secondApproverRoleName}</td>
-            <td>${approval.secondApproverDeptName}</td>
-            <td>
-                <c:choose>
-                    <c:when test="${not empty approval.secondApproveDate}">
-                        <fmt:formatDate value="${approval.secondApproveDate}" pattern="yyyy-MM-dd"/>
-                    </c:when>
-                    <c:otherwise>미결재</c:otherwise>
-                </c:choose>
-            </td>
-            <td>${approval.secondApproveStatus}</td>
-        </tr>
+		  <td>2차 결재자</td>
+		  <td>${approval.secondApproverId}</td>
+		  <td>${approval.secondApproverName}</td>
+		  <td>${approval.secondApproverJobTitle}</td>
+		  <td>${approval.secondApproverRoleName}</td>
+		  <td>${approval.secondApproverDeptName}</td>
+		  <td>
+		    <c:choose>
+		      <c:when test="${not empty approval.secondApproveDate}">
+		        <fmt:formatDate value="${approval.secondApproveDate}" pattern="yyyy-MM-dd"/>
+		      </c:when>
+		      <c:otherwise>미결재</c:otherwise>
+		    </c:choose>
+		  </td>
+		  <td>${approval.secondApproveStatus}</td>
+		
+		  <!-- 조치 버튼: 본인이 2차 결재자일 때만 보임 -->
+		  <c:if test="${loginInfo.empId == approval.secondApproverId}">
+		    <td>
+		      <c:choose>
+		        <c:when test="${approval.secondApproveStatus == '2차 결재 대기'}">
+		          <a href="${pageContext.request.contextPath}/client/updateApprovalStatus.do?documentId=${document.documentId}&step=2&status=2차 결재 검토"
+		             class="btn btn-warning btn-sm">검토</a>
+		        </c:when>
+		        <c:when test="${approval.secondApproveStatus == '2차 결재 검토'}">
+		          <a href="javascript:void(0);" onclick="goApproval('${document.documentId}', 2, '2차 결재 승인')" class="btn btn-success btn-sm">승인</a>
+		          <a href="javascript:void(0);" onclick="goApproval('${document.documentId}', 2, '반려')" class="btn btn-danger btn-sm">반려</a>
+		        </c:when>
+		        <c:when test="${approval.secondApproveStatus == '2차 결재 승인'}">
+		          <span class="text-success font-weight-bold">완료</span>
+		        </c:when>
+		        <c:otherwise>-</c:otherwise>
+		      </c:choose>
+		    </td>
+		  </c:if>
+		</tr>
     </tbody>
 </table>
 
@@ -167,11 +210,9 @@
         <!-- 하단 버튼 -->
         <div class="text-right mt-4">
         
-        <c:if test="${loginInfo.roleId == 'A2' 
-			          || loginInfo.roleId == 'A3' 
-			          || loginInfo.empId == document.documentManagerId
-			          && approval.firstApproveStatus == '1차 결재 대기'
-			          or approval.firstApproveStatus == '반려'}">
+        <c:if test="${loginInfo.roleId == 'A2' && approval.firstApproveStatus == '1차 결재 대기'
+			          || loginInfo.roleId == 'A3' && approval.firstApproveStatus == '1차 결재 대기'
+			          || loginInfo.empId == document.documentManagerId && approval.firstApproveStatus == '1차 결재 대기'}">
 	        <a href="${pageContext.request.contextPath}/client/documentUpdateForm.do?documentId=${document.documentId}" 
 		       class="btn btn-warning">
 		        <i class="fas fa-edit"></i> 수정
@@ -186,27 +227,42 @@
                 <i class="fas fa-list"></i> 목록으로
             </a>
             
-            <c:if test="${loginInfo.roleId == 'A2'
-			          || loginInfo.roleId == 'A3'
-			          || loginInfo.empId == document.documentManagerId
-			          && approval.firstApproveStatus == '1차 결재 대기'
-			          or approval.firstApproveStatus == '반려'}">
+            <c:if test="${loginInfo.roleId == 'A2' && approval.firstApproveStatus == '1차 결재 대기'
+			          || loginInfo.roleId == 'A3' && approval.firstApproveStatus == '1차 결재 대기'
+			          || loginInfo.empId == document.documentManagerId && approval.firstApproveStatus == '1차 결재 대기'}">
             <button type="button" class="btn btn-danger" onclick="confirmDelete('${document.documentId}')">
 		        <i class="fas fa-trash-alt"></i> 삭제
 		    </button>
 		    </c:if>
-		    
-		    <script>
-			function confirmDelete(documentId) {
-			  if (confirm("정말 이 문서를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {
-			    location.href = '${pageContext.request.contextPath}/client/documentDelete.do?documentId=' + documentId;
-			  }
-			}
-			</script>
+
         </div>
     </div>
 </div>
+<script>
+/**
+ * 결재 상태 변경 요청 (검토 / 승인 / 반려)
+ * @param {string} documentId - 문서 ID
+ * @param {number} step - 결재 단계 (1: 1차, 2: 2차)
+ * @param {string} status - 상태 문자열 (예: '1차 결재 검토', '2차 결재 승인', '반려')
+ */
+ function goApproval(documentId, step, status) {
+	  const encodedStatus = encodeURIComponent(status);
+	  location.href = '${pageContext.request.contextPath}/client/updateApprovalStatus.do'
+	                + '?documentId=' + documentId
+	                + '&step=' + step
+	                + '&status=' + encodedStatus;
+}
 
+/**
+ * 문서 삭제 요청 전 확인 알림
+ * @param {string} documentId - 삭제할 문서 ID
+ */
+function confirmDelete(documentId) {
+  if (confirm("정말 이 문서를 삭제하시겠습니까?\n삭제 후에는 복구할 수 없습니다.")) {
+    location.href = '${pageContext.request.contextPath}/client/documentDelete.do?documentId=' + documentId;
+  }
+}
+</script>
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>

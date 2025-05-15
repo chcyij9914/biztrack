@@ -447,28 +447,55 @@ public class ClientController {
 	    return "redirect:/client/clist.do";
 	}
 	
+	// 문서 관련----------------------------------
 	//문서 관리 목록 조회
-	// 문서 목록 조회
 	@RequestMapping("documentList.do")
 	public ModelAndView selectDocumentList(
 	    @RequestParam(name = "type", defaultValue = "D") String type,
 	    @RequestParam(name = "page", required = false) String page,
 	    @RequestParam(name = "limit", required = false) String slimit,
+	    HttpSession session,
 	    ModelAndView mv) {
+
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    if (loginInfo == null) {
+	        mv.setViewName("redirect:/login.do");
+	        return mv;
+	    }
 
 	    int currentPage = (page != null) ? Integer.parseInt(page) : 1;
 	    int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
 
-	    int listCount = clientService.selectDocumentListCountByType(type);
-	    Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
-	    paging.calculate();
+	    String empId = loginInfo.getEmpId();
+	    String roleId = loginInfo.getRoleId();
 
 	    Map<String, Object> param = new HashMap<>();
-	    param.put("startRow", paging.getStartRow());
-	    param.put("endRow", paging.getEndRow());
+	    param.put("startRow", (currentPage - 1) * limit + 1);
+	    param.put("endRow", currentPage * limit);
 	    param.put("documentTypeId", type);
+	    param.put("empId", empId); // 모든 쿼리에서 공통 사용
 
-	    ArrayList<DocumentDTO> documentList = clientService.selectDocumentListByType(param);
+	    int listCount;
+	    ArrayList<DocumentDTO> documentList;
+
+	    if ("A1".equals(roleId)) {
+	        // 대표이사: 전체 문서
+	        listCount = clientService.selectAllDocumentCount(param);
+	        documentList = clientService.selectAllDocumentList(param);
+
+	    } else if ("A2".equals(roleId) || "A3".equals(roleId)) {
+	        // 팀장/부서장: 작성자 + 결재자 포함 쿼리 (쿼리만 수정, 메서드명 그대로 사용)
+	        listCount = clientService.selectDocumentCountByApprover(param);
+	        documentList = clientService.selectDocumentListByApprover(param);
+
+	    } else {
+	        // 일반 사원: 본인이 작성한 문서만
+	        listCount = clientService.selectDocumentCountByWriter(param);
+	        documentList = clientService.selectDocumentListByWriter(param);
+	    }
+
+	    Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+	    paging.calculate();
 
 	    mv.addObject("docType", type);
 	    mv.addObject("documentList", documentList);
@@ -477,7 +504,6 @@ public class ClientController {
 
 	    return mv;
 	}
-
 	
 	//제안서 등록 관련 -------------------------------------------
 	//제안서 등록(GET)
@@ -525,8 +551,6 @@ public class ClientController {
 
 	    return "client/cdocumentInsertForm";
 	}
-
-
 
 	//제안서 등록(POST)
 	@RequestMapping(value = "documentInsert.do", method = RequestMethod.POST)
@@ -673,7 +697,7 @@ public class ClientController {
 
 	        FileDTO file = new FileDTO();
 	        file.setDocumentId(documentId);
-	        file.setFilePath("/resources/upload/contract/" + renameName);
+	        file.setFilePath("/resources/upload/contract/");
 	        file.setOriginalFileName(originalName);
 	        file.setRenameFileName(renameName);
 	        file.setUploadFileSize((int) saveFile.length());
@@ -749,7 +773,7 @@ public class ClientController {
 	
 	// 문서 수정 관련
 	// 문서 수정폼 이동 (GET)
-	@GetMapping("documentUpdateForm.do")
+	@RequestMapping("documentUpdateForm.do")
 	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
 
 	    // 문서 기본 정보
@@ -779,7 +803,7 @@ public class ClientController {
 	    return "client/documentUpdateForm";
 	}
 
-	@PostMapping("documentUpdate.do")
+	@RequestMapping(value = "documentUpdate.do", method = RequestMethod.POST)
 	public String updateDocument(@ModelAttribute DocumentDTO document,
 	                             @ModelAttribute ApproveDTO approve,
 	                             @RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
@@ -849,7 +873,7 @@ public class ClientController {
 	    return "redirect:/client/documentDetailView.do?documentId=" + document.getDocumentId();
 	}
 
-    @GetMapping("documentManEmpInfo.do")
+	@RequestMapping("documentManEmpInfo.do")
     @ResponseBody
     public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
         Employee emp = employeeService.selectEmpById(empId);
@@ -863,7 +887,7 @@ public class ClientController {
         return result;
     }
     
-    @GetMapping("documentDelete.do")
+	@RequestMapping("documentDelete.do")
     public String deleteDocument(@RequestParam("documentId") String documentId) {
         // 삭제 순서 중요!
     	clientService.deleteDocumentItems(documentId);
@@ -875,20 +899,27 @@ public class ClientController {
     }
     
     // 문서 검색 관련 -------------------------------------------------------------------
-    // 문서 제목으로 검색
-    @GetMapping("documentSearch.do")
+	@RequestMapping("documentSearch.do")
     public String searchDocumentList(@ModelAttribute Search search,
                                      @RequestParam(value = "searchType", required = false) String searchType,
                                      @RequestParam(value = "keyword", required = false) String keyword,
                                      @RequestParam(value = "approveStatus", required = false) String approveStatus,
-                                     @RequestParam(value = "documentTypeId", required = false) String documentTypeId, // 📌 추가
+                                     @RequestParam(value = "documentTypeId", required = false) String documentTypeId,
                                      @RequestParam(value = "page", defaultValue = "1") int currentPage,
+                                     HttpServletRequest request,
                                      Model model) {
+
+        // 로그인 정보에서 empId, roleId 주입
+        LoginDto loginInfo = (LoginDto) request.getSession().getAttribute("loginInfo");
+        if (loginInfo != null) {
+            search.setEmpId(loginInfo.getEmpId());
+            search.setRoleId(loginInfo.getRoleId());
+        }
 
         search.setScType(searchType);
         search.setKeyword(keyword);
         search.setStatus(approveStatus);
-        search.setDocumentTypeId(documentTypeId); // 📌 세팅
+        search.setDocumentTypeId(documentTypeId);
 
         int listCount = 0;
         ArrayList<DocumentDTO> list = null;
@@ -919,9 +950,42 @@ public class ClientController {
         model.addAttribute("documentList", list);
         model.addAttribute("paging", paging);
         model.addAttribute("search", search);
-        model.addAttribute("documentTypeId", documentTypeId); // 탭 유지용
-        model.addAttribute("docType", documentTypeId);// 탭 활성화 및 JS용
+        model.addAttribute("documentTypeId", documentTypeId);
+        model.addAttribute("docType", documentTypeId);
 
         return "client/documentListView";
+    }
+    
+    // 결재자 결재 기능
+    @RequestMapping("updateApprovalStatus.do")
+    public String updateApprovalStatus(@RequestParam("documentId") String documentId,
+                                       @RequestParam("step") int step,
+                                       @RequestParam("status") String status,
+                                       HttpSession session) {
+
+        LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+        if (loginInfo == null) return "redirect:/login.do";
+
+        ApproveDTO approve = new ApproveDTO();
+        approve.setDocumentId(documentId);
+
+        // 1차 결재 처리
+        if (step == 1) {
+            approve.setFirstApproveStatus(status);
+
+            // 1차 승인 시, 자동으로 2차 결재 대기 처리
+            if ("1차 결재 승인".equals(status)) {
+                approve.setSecondApproveStatus("2차 결재 대기");
+            }
+        }
+
+        // 2차 결재 처리
+        else if (step == 2) {
+            approve.setSecondApproveStatus(status);
+        }
+
+        clientService.updateApprovalStatus(approve);
+
+        return "redirect:/client/documentDetailView.do?documentId=" + documentId;
     }
 }
