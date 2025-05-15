@@ -1,6 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<c:if test="${empty sessionScope.loginInfo}">
+  <c:redirect url="/login.do" />
+</c:if>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -26,9 +30,14 @@
             <div class="card-body">
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">사번</label>
-                <div class="col-sm-4">
-                  <input type="text" name="empId" class="form-control" required>
-                </div>
+				<div class="col-sm-4">
+				  <select name="empId" class="form-control" required>
+				    <option value="">-- 사번 선택 --</option>
+				    <c:forEach var="emp" items="${employeeList}">
+				      <option value="${emp.empId}">${emp.empId} - ${emp.empName}</option>
+				    </c:forEach>
+				  </select>
+				</div>
                 <label class="col-sm-2 col-form-label">평가명</label>
                 <div class="col-sm-4">
                   <input type="text" name="evaluationName" class="form-control" required>
@@ -41,15 +50,12 @@
                 </div>
                 <label class="col-sm-2 col-form-label">평가기준</label>
                 <div class="col-sm-4">
-                  <select name="recordId" class="form-control" required>
-                    <option value="2023Q1">25년1분기</option>
-                    <option value="2023Q2">25년2분기</option>
-                    <option value="2023Q3">25년3분기</option>
-                    <option value="2023Q4">25년4분기</option>
-                    <option value="2023H1">25년1반기</option>
-                    <option value="2023H2">25년2반기</option>
-                    <option value="2023ALL">25년전체</option>
-                  </select>
+                 <select name="quarter" class="form-control" required>
+				  <option value="1분기">25년 1분기</option>
+				  <option value="2분기">25년 2분기</option>
+				  <option value="3분기">25년 3분기</option>
+				  <option value="4분기">25년 4분기</option>
+</select>
                 </div>
               </div>
             </div>
@@ -70,16 +76,12 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">교육 점수</label>
-                <div class="col-sm-4">
-                  <input type="number" name="scoreTraining" class="form-control" min="0" max="100" required>
-                </div>
-                <label class="col-sm-2 col-form-label">코멘트</label>
-                <div class="col-sm-4">
-                  <input type="text" name="comments" class="form-control">
-                </div>
-              </div>
-            </div>
+			  <label class="col-sm-2 col-form-label">코멘트</label>
+			  <div class="col-sm-10">
+			    <textarea name="comments" class="form-control" rows="3" placeholder="평가 코멘트를 입력하세요."></textarea>
+			  </div>
+			</div>
+           </div>
           </div>
 
           <!-- 등록 버튼 -->
