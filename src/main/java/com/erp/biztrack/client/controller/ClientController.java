@@ -436,16 +436,27 @@ public class ClientController {
 	//거래처 삭제
 	@RequestMapping("delete.do")
 	public String deleteClient(@RequestParam("clientId") String clientId, RedirectAttributes redirectAttr) {
-	    int result = clientService.deleteClient(clientId);
+	    try {
+	        // 업로드된 모든 파일 삭제 (명함이든 문서든)
+	        clientService.deleteFileByClientIdOnly(clientId);
 
-	    if (result > 0) {
-	        redirectAttr.addFlashAttribute("msg", "거래처가 성공적으로 삭제되었습니다.");
-	    } else {
-	        redirectAttr.addFlashAttribute("msg", "거래처 삭제에 실패했습니다.");
+	        // [2] 거래처 삭제
+	        int result = clientService.deleteClient(clientId);
+
+	        if (result > 0) {
+	            redirectAttr.addFlashAttribute("msg", "거래처가 성공적으로 삭제되었습니다.");
+	        } else {
+	            redirectAttr.addFlashAttribute("msg", "거래처 삭제에 실패했습니다.");
+	        }
+
+	    } catch (Exception e) {
+	        redirectAttr.addFlashAttribute("msg", "삭제 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
 	    }
 
 	    return "redirect:/client/clist.do";
 	}
+
 	
 	// 문서 관련----------------------------------
 	//문서 관리 목록 조회
