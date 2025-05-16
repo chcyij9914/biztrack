@@ -104,7 +104,7 @@ public class InboundController {
 			documentList = inboundService.selectDocumentListByType(param);
 		}
 
-		Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+		Paging paging = new Paging(listCount, limit, currentPage, "inbound-document.do");
 		paging.calculate();
 
 		mv.addObject("docType", type);
@@ -254,7 +254,7 @@ public class InboundController {
 
 			FileDTO file = new FileDTO();
 			file.setDocumentId(documentId);
-			file.setFilePath("/resources/upload/inbound/" + renameName);
+			file.setFilePath("/resources/upload/inbound/");
 			file.setOriginalFileName(originalName);
 			file.setRenameFileName(renameName);
 			file.setUploadFileSize((int) saveFile.length());
