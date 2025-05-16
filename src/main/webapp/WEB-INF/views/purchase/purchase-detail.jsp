@@ -27,8 +27,17 @@
 				<div class="container-fluid">
 					<h1 class="h3 mb-2 text-gray-800">문서 상세보기</h1>
 					<p class="mb-4 small text-muted">
-						등록된 <strong>${document.documentId}</strong> 제안서의 상세 내용을 확인합니다.
+						등록된 <strong>${document.documentId}</strong> 의 상세 내용을 확인합니다.
 					</p>
+					<c:if
+						test="${loginInfo.empId == document.documentWriterId &&
+                           approval.firstApproveStatus == '반려'
+                        or approval.secondApproveStatus == '반려'}">
+						<div class="alert alert-danger font-weight-bold text-center">
+							이 문서는 <strong>반려</strong>되었습니다. <br /> 내용을 참고하여 <span
+								class="text-primary">새 문서를 작성</span>해주세요.
+						</div>
+					</c:if>
 
 					<div class="card shadow mb-4">
 						<div class="card-body">
@@ -138,7 +147,7 @@
 										<!-- 조치 버튼: 본인이 2차 결재자일 때만 보임 -->
 										<c:if test="${loginInfo.empId == approval.secondApproverId}">
 											<td><c:choose>
-														<c:when test="${approval.secondApproveStatus == '결재 대기'}">
+													<c:when test="${approval.secondApproveStatus == '결재 대기'}">
 														<a href="javascript:void(0);"
 															onclick="goApproval('${document.documentId}', 2, '승인')"
 															class="btn btn-success btn-sm">승인</a>

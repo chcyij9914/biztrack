@@ -2,7 +2,9 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false"%>
-
+<c:if test="${empty sessionScope.loginInfo}">
+	<c:redirect url="/login.do" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -35,6 +37,7 @@
 input[readonly] {
 	background-color: #f2f2f2;
 	cursor: not-allowed;
+}
 </style>
 </head>
 
@@ -43,9 +46,13 @@ input[readonly] {
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<h2 class="mb-0">상품 정보</h2>
 		<div>
-			<button type="submit" class="btn btn-primary me-2" form="updateForm">수정</button>
-			<button type="button" class="btn btn-danger"
-				onclick="deleteProduct('${product.productId}')">삭제</button>
+			<c:if
+				test="${loginInfo.roleId == 'A2' 
+			          || loginInfo.roleId == 'A3'}">
+				<button type="submit" class="btn btn-primary me-2" form="updateForm">수정</button>
+				<button type="button" class="btn btn-danger"
+					onclick="deleteProduct('${product.productId}')">삭제</button>
+			</c:if>
 		</div>
 	</div>
 	<hr>
