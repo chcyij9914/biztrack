@@ -88,7 +88,7 @@
 								</select>
 
 								<form id="searchForm" method="get" class="form-inline"
-									action="searchByDocumentId.do">
+									action="searchByDocumentIdT.do">
 									    <input type="hidden" name="documentTypeId" value="T" />
 									
 									<!-- 텍스트 입력 -->
@@ -221,21 +221,21 @@
 											.getElementById("statusSelect");
 
 									if (selected === "documentId") {
-										searchForm.action = "searchByDocumentId.do";
+										searchForm.action = "searchByDocumentIdT.do";
 										keywordInput.classList.remove("d-none");
 										keywordInput.name = "keyword";
 										keywordInput.placeholder = "문서번호를 입력하세요.";
 										statusSelect.classList.add("d-none");
 										statusSelect.name = "statusParam";
 									} else if (selected === "title") {
-										searchForm.action = "searchByTitle.do";
+										searchForm.action = "searchByTitleT.do";
 										keywordInput.classList.remove("d-none");
 										keywordInput.name = "keyword";
 										keywordInput.placeholder = "내용을 입력하세요.";
 										statusSelect.classList.add("d-none");
 										statusSelect.name = "statusParam";
 									} else if (selected === "status") {
-										searchForm.action = "searchByStatus.do";
+										searchForm.action = "searchByStatusT.do";
 										keywordInput.classList.add("d-none");
 										keywordInput.name = "";
 										statusSelect.classList.remove("d-none");

@@ -10,26 +10,51 @@ import com.erp.biztrack.common.DocumentDTO;
 import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 import com.erp.biztrack.common.Paging;
+import com.erp.biztrack.inbound.model.dto.Inbound;
 import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.purchase.model.dto.Purchase;
 
 public interface PurchaseService {
-	// 문서 목록 카운트
-	int selectListCount();
-
 	// 문서 목록 조회
-	int selectDocumentListCountByType(String documentTypeId);
-    ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
-    
-    int selectDocumentListCountByTypeT(String documentTypeId);
-    ArrayList<DocumentDTO> selectDocumentListByTypeT(Map<String, Object> param);
-    
-    // 검색 기능 (문서번호)
-    List<Purchase> searchByDocumentId(Map<String, Object> param);
-    // 검색 기능 (제목)
-    List<Purchase> searchByTitle(Map<String, Object> param);
-    // 검색 기능 (상태)
-    List<Purchase> searchByStatus(Map<String, Object> param);
+		ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
+	    int selectDocumentListCountByType(Map<String, Object> param);
+	    ArrayList<DocumentDTO> selectDocumentListByType2(Map<String, Object> param);
+	    int selectDocumentListCountByType2(Map<String, Object> param);
+	    ArrayList<DocumentDTO> selectDocumentListByType3(Map<String, Object> param);
+	    int selectDocumentListCountByType3(Map<String, Object> param);
+	    
+	    ArrayList<DocumentDTO> selectDocumentListByTypeT(Map<String, Object> param);
+	    int selectDocumentListCountByTypeT(Map<String, Object> param);
+	    ArrayList<DocumentDTO> selectDocumentListByTypeT2(Map<String, Object> param);
+	    int selectDocumentListCountByTypeT2(Map<String, Object> param);
+	    ArrayList<DocumentDTO> selectDocumentListByTypeT3(Map<String, Object> param);
+	    int selectDocumentListCountByTypeT3(Map<String, Object> param);
+
+    //검색기능------품의서---------------------------------------------------------------
+	    List<Purchase> searchByDocumentId(String documentId, String empId);
+	    List<Purchase> searchByDocumentId2(String documentId, String empId);
+	    List<Purchase> searchByDocumentId3(String documentId, String empId);
+	    
+	    List<Purchase> searchByTitle(String title, String empId);
+	    List<Purchase> searchByTitle2(String title, String empId);
+	    List<Purchase> searchByTitle3(String title, String empId);
+
+	    List<Purchase> searchByStatus(String status, String empId);
+	    List<Purchase> searchByStatus2(String status, String empId);
+	    List<Purchase> searchByStatus3(String status, String empId);
+	    
+    //검색기능------지출결의서---------------------------------------------------------------
+	    List<Purchase> searchByDocumentIdT(String documentId, String empId);
+	    List<Purchase> searchByDocumentIdT2(String documentId, String empId);
+	    List<Purchase> searchByDocumentIdT3(String documentId, String empId);
+	    
+	    List<Purchase> searchByTitleT(String title, String empId);
+	    List<Purchase> searchByTitleT2(String title, String empId);
+	    List<Purchase> searchByTitleT3(String title, String empId);
+
+	    List<Purchase> searchByStatusT(String status, String empId);
+	    List<Purchase> searchByStatusT2(String status, String empId);
+	    List<Purchase> searchByStatusT3(String status, String empId);
 
     
 	// 문서 상세보기
@@ -63,4 +88,7 @@ public interface PurchaseService {
     int deleteApprove(String documentId);
 
 	List<Client> selectAllClients();
+	
+	 //결재자 결재 상태 수정----------------------------------------
+    int updateApprovalStatus(ApproveDTO approve);
 }
