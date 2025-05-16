@@ -77,14 +77,14 @@ td button.btn-sm {
 			</div>
 			<div class="card-body">
 				<form
-					action="${pageContext.request.contextPath}/purchase/new-purchase.do"
+					action="${pageContext.request.contextPath}/purchase/new-payment.do"
 					method="post" enctype="multipart/form-data">
 
 					<!-- 상단 필드 -->
 					<div class="form-row mb-3">
 						<div class="col-md-2">
 							<label>문서유형</label> <label>문서유형</label> <input type="hidden"
-								name="documentTypeId" value="R" /> <input type="text"
+								name="documentTypeId" value="T" /> <input type="text"
 								class="form-control" value="지출결의서" />
 						</div>
 						<div class="col-md-2">
@@ -172,7 +172,9 @@ td button.btn-sm {
 						</thead>
 						<tbody>
 							<tr>
-								<td>1</td>
+								<td><input type="hidden" name="items[0].itemId" value="" />
+									<input type="hidden" name="items[0].documentId" value="" /> 1
+								</td>
 								<td><select name="items[0].productId"
 									class="form-control product-select"
 									onchange="updatePrice(this)">
@@ -247,6 +249,10 @@ td button.btn-sm {
 	</div>
 
 	<script>
+	let productOptionBackup = null;
+	productOptionBackup = $('.product-select').first().html();
+
+	
 $(function () {
 	  // 최초 로딩 시 상품 select 옵션 백업
 	  $('.product-select').each(function () {
@@ -259,7 +265,7 @@ $(function () {
 
 	    $('#itemTable tbody tr').each(function () {
 	    	  const $select = $(this).find('.product-select');
-	    	  const backup = $select.data('original-options');
+	    	  $select.html(productOptionBackup);
 	    	  if (!backup) return;
 
 	    	  const selectedValue = $select.val(); // 선택된 값 저장
@@ -299,7 +305,8 @@ $(function () {
 	  const table = document.querySelector('#itemTable tbody');
 	  const rowCount = table.rows.length;
 	  const clone = table.rows[0].cloneNode(true);
-	
+	  clone.querySelector('input[name$=".itemId"]').value = "";
+	  clone.querySelector('input[name$=".documentId"]').value = "";
 	  clone.querySelector('td').innerText = rowCount + 1;
 
 	  clone.querySelectorAll('input, select').forEach(el => {
@@ -325,7 +332,7 @@ $(function () {
 	  // 거래처 카테고리 기준 필터링
 	  const selectedCategoryId = $('#clientId option:selected').data('category');
 	  const $select = $(clone).find('.product-select');
-	  const backup = $select.data('original-options') || $select.html();
+	  $select.html(productOptionBackup);
 	  $select.data('original-options', backup);
 
 	  const options = $('<div>' + backup + '</div>').find('option');
@@ -343,7 +350,7 @@ $(function () {
 	  updateTotalAmount(); // ← 총합 업데이트 호출
 	}
 
-	// 금액 계산
+	// 금액 계산 --> 품목이름 업데이트
 	function updatePrice(select) {
 	  const row = select.closest('tr');
 	  const idx = Array.from(document.querySelectorAll('#itemTable tbody tr')).indexOf(row);
@@ -357,7 +364,7 @@ $(function () {
 		  const row = document.querySelectorAll('#itemTable tbody tr')[idx];
 		  const qty = parseInt(row.querySelector('[name="items[' + idx + '].quantity"]').value || 0);
 		  const price = parseInt(row.querySelector('[name="items[' + idx + '].unitPrice"]').value || 0);
-		  const amount = qty * price * 1.1;
+		  const amount = qty * price;
 		  row.querySelector('[name="items[' + idx + '].amount"]').value = Math.floor(amount); // 소수점 버림
 		  updateTotalAmount(); // ← 총합 업데이트 호출
 		}

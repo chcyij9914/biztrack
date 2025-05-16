@@ -25,32 +25,129 @@ public class InboundDao {
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 
-	// 입고서 개수 카운트
-	public int selectDocumentListCountByType(String documentTypeId) {
-		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentListCountByType", documentTypeId);
-	}
-
-	// 입고서 조회
+	// 문서 목록 조회 관련--
+	// -------------------------------------------------------------------
+	// 본인 작성 문서 목록 조회
 	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
 		List<DocumentDTO> list = sqlSessionTemplate.selectList("inboundMapper.selectDocumentListByType", param);
 		return (ArrayList<DocumentDTO>) list;
 	}
-	
-	//--------------------------------------------------------------------------------------------
-		//검색기능
-			public List<Inbound> searchByDocumentId(String documentId) {
-				return sqlSessionTemplate.selectList("inboundMapper.searchByDocumentId", documentId);
-			}
 
-			public List<Inbound> searchByTitle(String title) {
-				return sqlSessionTemplate.selectList("inboundMapper.searchByTitle", title);
-			}
-			
-			public List<Inbound> searchByStatus(String status) {
-				return sqlSessionTemplate.selectList("inboundMapper.searchByStatus", status);
-			}
-		
-		//--------------------------------------------------------------------------------------------
+	// 본인 작성 문서 수 조회
+	public int selectDocumentListCountByType(Map<String, Object> param) {
+		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentListCountByType", param);
+	}
+
+	// 결재자 문서 목록 조회
+	public ArrayList<DocumentDTO> selectDocumentListByType2(Map<String, Object> param) {
+		List<DocumentDTO> list = sqlSessionTemplate.selectList("inboundMapper.selectDocumentListByType2", param);
+		return (ArrayList<DocumentDTO>) list;
+	}
+
+	// 결재자 문서 수 조회
+	public int selectDocumentListCountByType2(Map<String, Object> param) {
+		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentListCountByType2", param);
+	}
+
+	// 전체 문서 목록 조회
+	public ArrayList<DocumentDTO> selectDocumentListByType3(Map<String, Object> param) {
+		List<DocumentDTO> list = sqlSessionTemplate.selectList("inboundMapper.selectDocumentListByType3", param);
+		return (ArrayList<DocumentDTO>) list;
+	}
+
+	// 전체 문서 수 조회
+	public int selectDocumentListCountByType3(Map<String, Object> param) {
+		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentListCountByType3", param);
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// 검색기능
+	// 문서번호-사원
+	public List<Inbound> searchByDocumentId(String documentId, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("documentId", documentId);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByDocumentId", param);
+	}
+
+	// 문서번호-팀장/부서장
+	public List<Inbound> searchByDocumentId2(String documentId, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("documentId", documentId);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByDocumentId2", param);
+	}
+
+	// 문서번호-대표이사
+	public List<Inbound> searchByDocumentId3(String documentId, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("documentId", documentId);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByDocumentId3", param);
+	}
+
+	// ------------------------------------------------------------------------------------------------
+	// 검색기능
+	// 제목-사원
+	public List<Inbound> searchByTitle(String title, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("title", title);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByTitle", param);
+	}
+
+	// 제목-팀장/부서장
+	public List<Inbound> searchByTitle2(String title, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("title", title);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByTitle2", param);
+	}
+
+	// 제목-대표이사
+	public List<Inbound> searchByTitle3(String title, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("title", title);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByTitle3", param);
+	}
+
+	// ------------------------------------------------------------------------------------------------
+	// 검색기능
+	// 상태-사원
+	public List<Inbound> searchByStatus(String status, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("status", status);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByStatus", param);
+	}
+
+	// 상태-팀장/부서장
+	public List<Inbound> searchByStatus2(String status, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("status", status);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByStatus2", param);
+	}
+
+	// 상태-대표이사
+	public List<Inbound> searchByStatus3(String status, String empId) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("status", status);
+		param.put("empId", empId);
+
+		return sqlSessionTemplate.selectList("inboundMapper.searchByStatus3", param);
+	}
+
+	// --------------------------------------------------------------------------------------------
 
 	// ------------------
 	// 문서 등록
@@ -118,6 +215,11 @@ public class InboundDao {
 	// 문서 ID로 모든 품목 조회
 	public List<DocumentItemDTO> selectItemsByDocumentId(String documentId) {
 		return sqlSessionTemplate.selectList("inboundMapper.selectItemsByDocumentId", documentId);
+	}
+
+	// 문서 ID로 문서내역조회 조회
+	public DocumentDTO selectDocumentById(String documentId) {
+		return sqlSessionTemplate.selectOne("inboundMapper.selectDocumentById", documentId);
 	}
 
 	// 재고 수량 갱신 (기존 수량에 diff 만큼 더하거나 뺌)
@@ -202,4 +304,9 @@ public class InboundDao {
 		return sqlSessionTemplate.selectOne("clientMapper.selectContractFilePath", clientId);
 	}
 
+	// --------------------------------
+	// 결재자 결재 상태 수정 기능
+	public int updateApprovalStatus(ApproveDTO approve) {
+		return sqlSessionTemplate.update("inboundMapper.updateApprovalStatus", approve);
+	}
 }

@@ -25,34 +25,98 @@ public class InboundServiceImpl implements InboundService {
 	@Autowired
 	private InboundDao inboundDao;
 
-	// 문서카운팅
-	@Override
-	public int selectDocumentListCountByType(String documentTypeId) {
-		return inboundDao.selectDocumentListCountByType(documentTypeId);
-	}
-
-	// 문서조회
+	// 문서조회 -------------------------------------
 	@Override
 	public ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param) {
 		return inboundDao.selectDocumentListByType(param);
 	}
 
+	@Override
+	public int selectDocumentListCountByType(Map<String, Object> param) {
+		return inboundDao.selectDocumentListCountByType(param);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByType2(Map<String, Object> param) {
+		return inboundDao.selectDocumentListByType2(param);
+	}
+
+	@Override
+	public int selectDocumentListCountByType2(Map<String, Object> param) {
+		return inboundDao.selectDocumentListCountByType2(param);
+	}
+
+	@Override
+	public ArrayList<DocumentDTO> selectDocumentListByType3(Map<String, Object> param) {
+		return inboundDao.selectDocumentListByType3(param);
+	}
+
+	@Override
+	public int selectDocumentListCountByType3(Map<String, Object> param) {
+		return inboundDao.selectDocumentListCountByType3(param);
+	}
+
 	// ------------------------------------------------------------------------------------------
 	// 검색기능
+	// 문서번호검색 (사원)
 	@Override
-	public List<Inbound> searchByDocumentId(String documentId) {
-		return inboundDao.searchByDocumentId(documentId);
+	public List<Inbound> searchByDocumentId(String documentId, String empId) {
+		return inboundDao.searchByDocumentId(documentId, empId);
 	}
 
+	// 문서번호검색 (팀장/부서장)
 	@Override
-	public List<Inbound> searchByTitle(String title) {
-		return inboundDao.searchByTitle(title);
+	public List<Inbound> searchByDocumentId2(String documentId, String empId) {
+		return inboundDao.searchByDocumentId2(documentId, empId);
 	}
 
+	// 문서번호검색 (대표이사)
 	@Override
-	public List<Inbound> searchByStatus(String status) {
-		return inboundDao.searchByStatus(status);
+	public List<Inbound> searchByDocumentId3(String documentId, String empId) {
+		return inboundDao.searchByDocumentId3(documentId, empId);
 	}
+//----------------------------------------------------------------------------------------------
+
+	// 검색기능
+	// 제목검색 (사원)
+	@Override
+	public List<Inbound> searchByTitle(String title, String empId) {
+		return inboundDao.searchByTitle(title, empId);
+	}
+
+	// 제목검색 (팀장/부서장)
+	@Override
+	public List<Inbound> searchByTitle2(String title, String empId) {
+		return inboundDao.searchByTitle2(title, empId);
+	}
+
+	// 제목검색 (대표이사)
+	@Override
+	public List<Inbound> searchByTitle3(String title, String empId) {
+		return inboundDao.searchByTitle3(title, empId);
+	}
+
+	// ----------------------------------------------------------------------------------------------
+
+	// 검색기능
+		// 상태검색 (사원)
+		@Override
+		public List<Inbound> searchByStatus(String status, String empId) {
+			return inboundDao.searchByStatus(status, empId);
+		}
+
+		// 상태검색 (팀장/부서장)
+		@Override
+		public List<Inbound> searchByStatus2(String status, String empId) {
+			return inboundDao.searchByStatus2(status, empId);
+		}
+
+		// 상태검색 (대표이사)
+		@Override
+		public List<Inbound> searchByStatus3(String status, String empId) {
+			return inboundDao.searchByStatus3(status, empId);
+		}
+
 
 	// -------------------------------------------------------------------------------------------
 
@@ -94,46 +158,25 @@ public class InboundServiceImpl implements InboundService {
 
 	// 재고 수량 변경-----------------------------------------
 	@Override
-	public void insertInbound(DocumentDTO document) {
-		List<DocumentItemDTO> items = document.getItems();
-		for (DocumentItemDTO item : items) {
-			inboundDao.updateStock(item.getProductId(), item.getQuantity());
-			inboundDao.updateUnitPrice(item.getProductId(), item.getUnitPrice());
-		}
+	public void insertInbound(String documentId) {
+	    // 1. 문서 정보 조회
+	    DocumentDTO document = inboundDao.selectDocumentById(documentId);
+
+	    // 2. 해당 문서의 품목 목록 조회
+	    List<DocumentItemDTO> items = inboundDao.selectItemsByDocumentId(documentId);
+	    document.setItems(items);
+
+	    // 3. 기존 재고/단가 갱신 로직 호출
+	    insertInbound(document);
 	}
-
+	
 	@Override
-	public void updateInbound(DocumentDTO document) {
-		List<DocumentItemDTO> newItems = document.getItems();
-
-		// 1. 기존 수량들을 먼저 조회해서 Map에 저장
-		Map<String, Integer> originalQuantities = new HashMap<>();
-
-		for (DocumentItemDTO newItem : newItems) {
-			DocumentItemDTO oldItem = inboundDao.selectInboundItemById(newItem.getItemId());
-			if (oldItem != null) {
-				originalQuantities.put(newItem.getItemId(), oldItem.getQuantity());
-			}
-		}
-
-		// 2. 새 값과 비교해서 재고/단가 갱신
-		for (DocumentItemDTO newItem : newItems) {
-			Integer oldQty = originalQuantities.get(newItem.getItemId());
-			if (oldQty == null)
-				oldQty = 0;
-			int diff = newItem.getQuantity() - oldQty;
-
-			// 재고 반영
-			if (diff != 0) {
-				inboundDao.updateStock(newItem.getProductId(), diff);
-			}
-
-			// 단가 반영
-			inboundDao.updateUnitPrice(newItem.getProductId(), newItem.getUnitPrice());
-
-			// 문서 품목 업데이트
-			inboundDao.updateDocumentItem(newItem);
-		}
+	public void insertInbound(DocumentDTO document) {
+	    List<DocumentItemDTO> items = document.getItems();
+	    for (DocumentItemDTO item : items) {
+	        inboundDao.updateStock(item.getProductId(), item.getQuantity());
+	        inboundDao.updateUnitPrice(item.getProductId(), item.getUnitPrice());
+	    }
 	}
 
 	@Override
@@ -248,6 +291,12 @@ public class InboundServiceImpl implements InboundService {
 	@Override
 	public int deleteApprove(String documentId) {
 		return inboundDao.deleteApprove(documentId);
+	}
+
+
+	@Override
+	public int updateApprovalStatus(ApproveDTO approve) {
+		return inboundDao.updateApprovalStatus(approve);
 	}
 
 }

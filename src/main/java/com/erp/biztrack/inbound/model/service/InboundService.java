@@ -16,13 +16,26 @@ import com.erp.biztrack.purchase.model.dto.Purchase;
 public interface InboundService {
 
 	// 문서 목록 조회
-		int selectDocumentListCountByType(String documentTypeId);
-	    ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
-	
+	ArrayList<DocumentDTO> selectDocumentListByType(Map<String, Object> param);
+    int selectDocumentListCountByType(Map<String, Object> param);
+    ArrayList<DocumentDTO> selectDocumentListByType2(Map<String, Object> param);
+    int selectDocumentListCountByType2(Map<String, Object> param);
+    ArrayList<DocumentDTO> selectDocumentListByType3(Map<String, Object> param);
+    int selectDocumentListCountByType3(Map<String, Object> param);
+    
+		    
     // 검색 기능
-    List<Inbound> searchByDocumentId(String documentId);
-	List<Inbound> searchByTitle(String title);
-	List<Inbound> searchByStatus(String status);
+    List<Inbound> searchByDocumentId(String documentId, String empId);
+    List<Inbound> searchByDocumentId2(String documentId, String empId);
+    List<Inbound> searchByDocumentId3(String documentId, String empId);
+    
+    List<Inbound> searchByTitle(String title, String empId);
+    List<Inbound> searchByTitle2(String title, String empId);
+    List<Inbound> searchByTitle3(String title, String empId);
+
+    List<Inbound> searchByStatus(String status, String empId);
+    List<Inbound> searchByStatus2(String status, String empId);
+    List<Inbound> searchByStatus3(String status, String empId);
     
 	 
 	// 문서 상세보기
@@ -38,8 +51,9 @@ public interface InboundService {
 	    int insertFile(FileDTO file);
 	
 	//재고 수량 변경----------------------------------
-	    void insertInbound(DocumentDTO document);// 입고 등록 시 재고 + 단가 증가
-	    void updateInbound(DocumentDTO document); // 입고 수정 시 재고 조정
+	    void insertInbound(String documentId);// 입고 등록 시 재고 + 단가 증가
+	    void insertInbound(DocumentDTO document);
+	    
 	    void deleteInbound(String documentId);         // 입고 삭제 시 재고 감소
 	
 	//문서 상세정보 관련 -------------------------------------
@@ -60,6 +74,8 @@ public interface InboundService {
     //문서 삭제 관련 ----------------------------------------------
     int deleteDocumentOnly(String documentId);
     int deleteApprove(String documentId);
-
+    
+    //-----------------------------
+    int updateApprovalStatus(ApproveDTO approve);
 
 }

@@ -54,337 +54,426 @@ public class InboundController {
 
 	@Autowired
 	private ProductService productService;
-	
+
 	@Autowired
 	private ClientService clientService;
-	
+
 	@Autowired
 	private EmployeeService employeeService;
-	
-	// 입고서 조회  -----------------------------------------------------
-	// 문서 개수 카운팅 및 조회 (품의서)
-		@RequestMapping("inbound-document.do")
-		public ModelAndView selectDocumentList(@RequestParam(name = "type", defaultValue = "R") String type,
-				@RequestParam(name = "page", required = false) String page,
-				@RequestParam(name = "limit", required = false) String slimit, ModelAndView mv) {
 
-			int currentPage = (page != null) ? Integer.parseInt(page) : 1;
-			int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
+	// 입고서 조회 -----------------------------------------------------
+	// 문서 개수 카운팅 및 조회 
+	@RequestMapping("inbound-document.do")
+	public ModelAndView selectDocumentList(@RequestParam(name = "type", defaultValue = "I") String type,
+			@RequestParam(name = "page", required = false) String page,
+			@RequestParam(name = "limit", required = false) String slimit, HttpSession session, ModelAndView mv) {
 
-			int listCount = inboundService.selectDocumentListCountByType(type);
-
-			Paging paging = new Paging(listCount, limit, currentPage, "inbound-document.do");
-			paging.calculate();
-
-			Map<String, Object> param = new HashMap<>();
-			param.put("startRow", paging.getStartRow());
-			param.put("endRow", paging.getEndRow());
-			param.put("documentTypeId", type);
-
-			ArrayList<DocumentDTO> documentList = inboundService.selectDocumentListByType(param);
-
-			mv.addObject("docType", type);
-			mv.addObject("documentList", documentList);
-			mv.addObject("paging", paging);
-			mv.setViewName("inbound/inbound-document");
-
+		LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+		if (loginInfo == null) {
+			mv.setViewName("redirect:/login.do");
 			return mv;
 		}
-	
-		// 검색기능-------------------------------------------------------------------------------------
-		// 검색기능 - 문서번호로 검색
-		@RequestMapping("searchByDocumentId.do")
-		public String searchByDocumentId(@RequestParam("keyword") String documentId, Model model) {
-			List<Inbound> result = inboundService.searchByDocumentId(documentId);
-			model.addAttribute("documentList", result);
-			return "inbound/inbound-document";
+
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int limit = (slimit != null) ? Integer.parseInt(slimit) : 10;
+
+		String empId = loginInfo.getEmpId();
+		String roleId = loginInfo.getRoleId();
+
+		Map<String, Object> param = new HashMap<>();
+		param.put("startRow", (currentPage - 1) * limit + 1);
+		param.put("endRow", currentPage * limit);
+		param.put("documentTypeId", type);
+		param.put("empId", empId); // 모든 쿼리에서 공통 사용
+		int listCount;
+		ArrayList<DocumentDTO> documentList;
+
+		if ("A1".equals(roleId)) {
+			// 대표이사: 전체 문서
+			listCount = inboundService.selectDocumentListCountByType3(param);
+			documentList = inboundService.selectDocumentListByType3(param);
+
+		} else if ("A2".equals(roleId) || "A3".equals(roleId)) {
+			// 팀장/부서장: 작성자 + 결재자 포함 쿼리 (쿼리만 수정, 메서드명 그대로 사용)
+			listCount = inboundService.selectDocumentListCountByType2(param);
+			documentList = inboundService.selectDocumentListByType2(param);
+
+		} else {
+			// 일반 사원: 본인이 작성한 문서만
+			listCount = inboundService.selectDocumentListCountByType(param);
+			documentList = inboundService.selectDocumentListByType(param);
 		}
 
-		// 검색기능 - 제목으로 검색
-		@RequestMapping("searchByTitle.do")
-		public String searchByTitle(@RequestParam("keyword") String title, Model model) {
-			List<Inbound> result = inboundService.searchByTitle(title);
-			model.addAttribute("documentList", result);
-			return "inbound/inbound-document";
-		}
+		Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+		paging.calculate();
 
-		// 검색기능 - 상태로 검색
-		@RequestMapping("searchByStatus.do")
-		public String searchByStatus(@RequestParam("status") String status, Model model) {
-			List<Inbound> result = inboundService.searchByStatus(status);
-			model.addAttribute("documentList", result);
-			return "inbound/inbound-document";
-		}
+		mv.addObject("docType", type);
+		mv.addObject("documentList", documentList);
+		mv.addObject("paging", paging);
+		mv.setViewName("inbound/inbound-document");
+
+		return mv;
+	}
+
+	// 검색기능-------------------------------------------------------------------------------------
+	// 검색기능 - 문서번호로 검색
+	@RequestMapping("searchByDocumentId.do")
+	public String searchByDocumentId(@RequestParam("keyword") String documentId,
+	                                 HttpSession session,
+	                                 Model model) {
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    String empId = loginInfo.getEmpId();
+	    String roleId = loginInfo.getRoleId(); // A1, A2, A3 등
+
+	    List<Inbound> result;
+
+	    if ("A1".equals(roleId)) {
+	        result = inboundService.searchByDocumentId3(documentId, empId);
+	    } else if ("A2".equals(roleId) || "A3".equals(roleId)) {
+	        result = inboundService.searchByDocumentId2(documentId, empId);
+	    } else {
+	        result = inboundService.searchByDocumentId(documentId, empId);
+	    }
+
+	    model.addAttribute("documentList", result);
+	    return "inbound/inbound-document";
+	}
+
+	// 검색기능 - 제목으로 검색
+	@RequestMapping("searchByTitle.do")
+	public String searchByTitle(@RequestParam("keyword") String title,
+	                                 HttpSession session,
+	                                 Model model) {
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    String empId = loginInfo.getEmpId();
+	    String roleId = loginInfo.getRoleId(); // A1, A2, A3 등
+
+	    List<Inbound> result;
+
+	    if ("A1".equals(roleId)) {
+	        result = inboundService.searchByTitle3(title, empId);
+	    } else if ("A2".equals(roleId) || "A3".equals(roleId)) {
+	        result = inboundService.searchByTitle2(title, empId);
+	    } else {
+	        result = inboundService.searchByTitle(title, empId);
+	    }
+
+	    model.addAttribute("documentList", result);
+	    return "inbound/inbound-document";
+	}
 	
-		
-	//-------------------------------------------------------------------------------------------------	
+	// 검색기능 - 상태로 검색
+	@RequestMapping("searchByStatus.do")
+	public String searchByStatus(@RequestParam("status") String status,
+	                                 HttpSession session,
+	                                 Model model) {
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    String empId = loginInfo.getEmpId();
+	    String roleId = loginInfo.getRoleId(); // A1, A2, A3 등
+
+	    List<Inbound> result;
+
+	    if ("A1".equals(roleId)) {
+	        result = inboundService.searchByStatus3(status, empId);
+	    } else if ("A2".equals(roleId) || "A3".equals(roleId)) {
+	        result = inboundService.searchByStatus2(status, empId);
+	    } else {
+	        result = inboundService.searchByStatus(status, empId);
+	    }
+
+	    model.addAttribute("documentList", result);
+	    return "inbound/inbound-document";
+	}
+
+
+	// -------------------------------------------------------------------------------------------------
 	// 입고 작성
 	@RequestMapping("new-inbound.do")
 	public String moveNewInboundPage() {
 		return "inbound/new-inbound";
 	}
 
-	
 	// 입고서 등록 -------------------------------------------
-		// 입고서 등록(GET)
-		@GetMapping("new-inbound.do")
-		public String showDocumentInsertForm(Model model) {
-			model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
-			model.addAttribute("productList", productService.selectAll()); // 상품 목록
-			return "inbound/new-inbound"; // JSP 경로adminServiceImpl
+	// 입고서 등록(GET)
+	@GetMapping("new-inbound.do")
+	public String showDocumentInsertForm(Model model) {
+		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
+		model.addAttribute("productList", productService.selectAll()); // 상품 목록
+		return "inbound/new-inbound"; // JSP 경로adminServiceImpl
+	}
+
+	// 입고서 등록(POST)
+	@PostMapping("new-inbound.do")
+	public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
+			@RequestParam("approver2Info") String approver2Id,
+			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request,
+			HttpServletResponse response, HttpSession session) throws IOException {
+
+		// 1.문서 ID생성
+		String documentId = inboundService.selectNextDocumentIdI();
+		document.setDocumentId(documentId);
+		document.setDocumentTypeId("I");
+
+		LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+		String empId = loginInfo.getEmpId();
+
+		// 2. 작성자/담당자 ID 설정
+		document.setDocumentWriterId(empId);
+		document.setDocumentManagerId(empId);
+
+		// 3. 문서 등록
+		inboundService.insertDocument(document);
+
+		// 4. 품목 목록 등록
+		for (DocumentItemDTO item : document.getItems()) {
+			item.setDocumentId(documentId);
+			item.setItemId(inboundService.selectNextItemId());
+			inboundService.insertDocumentItem(item);
 		}
 
-		// 입고서 등록(POST)
-		@PostMapping("new-inbound.do")
-		public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
-				@RequestParam("approver2Info") String approver2Id,
-				@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request,
-				HttpServletResponse response, HttpSession session) throws IOException {
+		// 5. 결재 정보 등록
+		ApproveDTO approve = new ApproveDTO();
+		approve.setApproveId(inboundService.selectNextApproveId());
+		approve.setDocumentId(documentId);
+		approve.setEmpId(empId);
+		approve.setFirstApproverId(approver1Id);
+		approve.setSecondApproverId(approver2Id);
+		approve.setFirstApproveStatus("결재 대기");
+		approve.setSecondApproveStatus("결재 대기");
+		inboundService.insertApproval(approve);
 
-			// 1.문서 ID생성
-			String documentId = inboundService.selectNextDocumentIdI();
-			document.setDocumentId(documentId);
-			document.setDocumentTypeId("I");
+		// 6. 파일 업로드 처리
+		if (uploadFile != null && !uploadFile.isEmpty()) {
+			String path = request.getServletContext().getRealPath("/resources/upload/inbound");
+			new File(path).mkdirs();
 
-			LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
-			String empId = loginInfo.getEmpId();
+			String originalName = uploadFile.getOriginalFilename();
+			String renameName = FileRenameUtil.changeFileName(originalName);
+			File saveFile = new File(path, renameName);
+			uploadFile.transferTo(saveFile);
 
-			// 2. 작성자/담당자 ID 설정
-			document.setDocumentWriterId(empId);
-			document.setDocumentManagerId(empId);
+			FileDTO file = new FileDTO();
+			file.setDocumentId(documentId);
+			file.setFilePath("/resources/upload/inbound/" + renameName);
+			file.setOriginalFileName(originalName);
+			file.setRenameFileName(renameName);
+			file.setUploadFileSize((int) saveFile.length());
+			inboundService.insertFile(file);
+		}
 
-			// 3. 문서 등록
-			inboundService.insertDocument(document);
+		// 창 닫기 + 부모 창 새로고침
+		response.setContentType("text/html; charset=UTF-8");
+		response.getWriter().write("<script>" + "alert('문서가 성공적으로 등록되었습니다.');" + "window.opener.location.href='"
+				+ request.getContextPath() + "/inbound/inbound-document.do';" + "window.close();" + "</script>");
+	}
+	
 
-			// 4. 품목 목록 등록
+	// 문서 상세보기 이동용 컨트롤러------------------------------------------------------------
+	@GetMapping("inbound-detail.do")
+	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
+
+		// 1. 문서 기본 정보 조회
+		DocumentDTO document = inboundService.selectOneDocument(documentId);
+
+		// 2. 품목 목록 + 금액 계산
+		List<DocumentItemDTO> itemList = inboundService.selectDocumentItemList(documentId);
+		int totalAmount = 0;
+		for (DocumentItemDTO item : itemList) {
+			int amount = item.getQuantity() * item.getSalePrice();
+			item.setAmount(amount);
+			totalAmount += amount;
+		}
+		document.setItems(itemList);
+		document.setTotalAmount(totalAmount);
+
+		// 3. 첨부파일 정보
+		FileDTO file = inboundService.selectFileByDocumentId(documentId);
+		model.addAttribute("file", file);
+
+		// 4. 결재 정보
+		ApproveDTO approval = inboundService.selectApprovalByDocumentId(documentId);
+		model.addAttribute("approval", approval);
+
+		// 5. 문서 모델 등록
+		model.addAttribute("document", document);
+
+		return "inbound/inbound-detail";
+	}
+
+	// 문서 파일 다운로드
+	@RequestMapping("documentDownload.do")
+	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
+			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
+
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/inbound");
+
+		File downFile = new File(savePath + File.separator + renameFileName);
+		File originFile = new File(originalFileName);
+
+		mv.setViewName("filedown");
+		mv.addObject("originFile", originFile);
+		mv.addObject("renameFile", downFile);
+
+		return mv;
+	}
+
+	// 문서 수정 관련-------------------------------
+	// 문서 수정폼 이동 (GET)
+	@GetMapping("inbound-update.do")
+	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
+
+		// 문서 기본 정보
+		DocumentDTO document = inboundService.selectOneDocument(documentId);
+		model.addAttribute("document", document);
+
+		// 문서 품목 목록
+		List<DocumentItemDTO> documentItemList = inboundService.selectDocumentItemList(documentId);
+		model.addAttribute("documentItemList", documentItemList);
+
+		// 결재자 정보
+		ApproveDTO approve = inboundService.selectApprovalByDocumentId(documentId);
+		model.addAttribute("approve", approve);
+
+		// 첨부파일 정보
+		FileDTO file = inboundService.selectFileByDocumentId(documentId);
+		model.addAttribute("file", file);
+
+		// 거래처 목록
+		List<Client> clientList = inboundService.selectAllClients();
+		model.addAttribute("clientList", clientList);
+
+		// 상품 목록 (품목 select 용)
+		List<Product> productList = productService.selectAll();
+		model.addAttribute("productList", productList);
+
+		return "inbound/inbound-update";
+	}
+
+	@PostMapping("inbound-update.do")
+	public String updateDocument(@ModelAttribute DocumentDTO document, @ModelAttribute ApproveDTO approve,
+			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
+			@RequestParam(name = "deleteFlag", required = false) String deleteFlag,
+			@RequestParam(name = "originalClientId", required = false) String originalClientId,
+			HttpServletRequest request, Model model) {
+
+		String savePath = request.getServletContext().getRealPath("/resources/upload/inbound");
+
+		// 파일 삭제 + 업로드
+		if ((deleteFlag != null && deleteFlag.equals("yes")) || (uploadFile != null && !uploadFile.isEmpty())) {
+			inboundService.deleteFileByDocumentId(document.getDocumentId()); // 기존 파일 삭제
+		}
+
+		if (uploadFile != null && !uploadFile.isEmpty()) {
+			String origin = uploadFile.getOriginalFilename();
+			String rename = FileRenameUtil.changeFileName(origin);
+
+			try {
+				uploadFile.transferTo(new File(savePath + "/" + rename));
+			} catch (Exception e) {
+				model.addAttribute("errorMsg", "파일 업로드 실패");
+				return "common/errorPage";
+			}
+
+			FileDTO fileDto = new FileDTO();
+			fileDto.setDocumentId(document.getDocumentId());
+			fileDto.setOriginalFileName(origin);
+			fileDto.setRenameFileName(rename);
+			fileDto.setFilePath("/resources/upload/inbound");
+			fileDto.setUploadFileSize((int) uploadFile.getSize());
+
+			inboundService.insertFile(fileDto);
+		}
+
+		// 문서 정보 업데이트
+		inboundService.updateDocument(document);
+
+		// 결재자 정보 업데이트
+		approve.setDocumentId(document.getDocumentId());
+		inboundService.updateApprove(approve);
+
+		// 품목 처리
+		boolean isPurchaseChanged = !document.getClientId().equals(originalClientId);
+
+		if (isPurchaseChanged) {
+			// 거래처 변경 시: 기존 품목 삭제 후 새로 insert (itemId도 새로 생성)
+			inboundService.deleteDocumentItems(document.getDocumentId());
+
 			for (DocumentItemDTO item : document.getItems()) {
-				item.setDocumentId(documentId);
-				item.setItemId(inboundService.selectNextItemId());
+				item.setDocumentId(document.getDocumentId());
+
+				// itemId 시퀀스로 새로 생성
+				String newItemId = inboundService.selectNextItemId();
+				item.setItemId(newItemId);
+
 				inboundService.insertDocumentItem(item);
 			}
+		} else {
 
-			// 5. 결재 정보 등록
-			ApproveDTO approve = new ApproveDTO();
-			approve.setApproveId(inboundService.selectNextApproveId());
-			approve.setDocumentId(documentId);
-			approve.setEmpId(empId);
-			approve.setFirstApproverId(approver1Id);
-			approve.setSecondApproverId(approver2Id);
-			approve.setFirstApproveStatus("결재 대기");
-			approve.setSecondApproveStatus("결재 대기");
-			inboundService.insertApproval(approve);
-
-			
-			// 6. 재고 + 단가 갱신
-			inboundService.insertInbound(document);
-			
-			// 7. 파일 업로드 처리 
-			if (uploadFile != null && !uploadFile.isEmpty()) {
-				String path = request.getServletContext().getRealPath("/resources/upload/inbound");
-				new File(path).mkdirs();
-
-				String originalName = uploadFile.getOriginalFilename();
-				String renameName = FileRenameUtil.changeFileName(originalName);
-				File saveFile = new File(path, renameName);
-				uploadFile.transferTo(saveFile);
-
-				FileDTO file = new FileDTO();
-				file.setDocumentId(documentId);
-				file.setFilePath("/resources/upload/inbound/" + renameName);
-				file.setOriginalFileName(originalName);
-				file.setRenameFileName(renameName);
-				file.setUploadFileSize((int) saveFile.length());
-				inboundService.insertFile(file);
+			// 거래처 동일: 기존 itemId로 update
+			for (DocumentItemDTO item : document.getItems()) {
+				inboundService.updateDocumentItem(item);
 			}
-
-			// 창 닫기 + 부모 창 새로고침
-			response.setContentType("text/html; charset=UTF-8");
-			response.getWriter().write("<script>" + "alert('문서가 성공적으로 등록되었습니다.');" + "window.opener.location.href='"
-					+ request.getContextPath() + "/inbound/inbound-document.do';" + "window.close();" + "</script>");
 		}
-		
-	
- // 문서 상세보기 이동용 컨트롤러
- 	@GetMapping("inbound-detail.do")
- 	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
 
- 		// 1. 문서 기본 정보 조회
- 		DocumentDTO document = inboundService.selectOneDocument(documentId);
+		return "redirect:/inbound/inbound-detail.do?documentId=" + document.getDocumentId();
+	}
 
- 		// 2. 품목 목록 + 금액 계산
- 		List<DocumentItemDTO> itemList = inboundService.selectDocumentItemList(documentId);
- 		int totalAmount = 0;
- 		for (DocumentItemDTO item : itemList) {
- 			int amount = item.getQuantity() * item.getSalePrice();
- 			item.setAmount(amount);
- 			totalAmount += amount;
- 		}
- 		document.setItems(itemList);
- 		document.setTotalAmount(totalAmount);
+	@GetMapping("documentManEmpInfo.do")
+	@ResponseBody
+	public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
+		Employee emp = employeeService.selectEmpById(empId);
 
- 		// 3. 첨부파일 정보
- 		FileDTO file = inboundService.selectFileByDocumentId(documentId);
- 		model.addAttribute("file", file);
+		Map<String, String> result = new HashMap<>();
+		if (emp != null) {
+			result.put("empId", emp.getEmpId());
+			result.put("empName", emp.getEmpName());
+			result.put("jobTitle", emp.getJobTitle());
+		}
+		return result;
+	}
 
- 		// 4. 결재 정보
- 		ApproveDTO approval = inboundService.selectApprovalByDocumentId(documentId);
- 		model.addAttribute("approval", approval);
+	@GetMapping("documentDelete.do")
+	public String deleteDocument(@RequestParam("documentId") String documentId) {
+		// 재고 및 단가 복원
+		inboundService.deleteInbound(documentId);
 
- 		// 5. 문서 모델 등록
- 		model.addAttribute("document", document);
+		// 삭제 순서 중요!
+		inboundService.deleteDocumentItems(documentId);
+		inboundService.deleteApprove(documentId);
+		inboundService.deleteFileByDocumentId(documentId);
+		inboundService.deleteDocumentOnly(documentId);
 
- 		return "inbound/inbound-detail";
- 	}
+		return "redirect:/inbound/inbound-document.do";
+	}
 
- 	// 문서 파일 다운로드
- 	@RequestMapping("documentDownload.do")
- 	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
- 			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
+	//------------------------------
+	  // 결재자 결재 기능
+    @RequestMapping("updateApprovalStatus.do")
+    public String updateApprovalStatus(@RequestParam("documentId") String documentId,
+                                       @RequestParam("step") int step,
+                                       @RequestParam("status") String status,
+                                       HttpSession session) {
 
- 		String savePath = request.getSession().getServletContext().getRealPath("/resources/upload/inbound");
+        LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+        if (loginInfo == null) return "redirect:/login.do";
 
- 		File downFile = new File(savePath + File.separator + renameFileName);
- 		File originFile = new File(originalFileName);
+        ApproveDTO approve = new ApproveDTO();
+        approve.setDocumentId(documentId);
 
- 		mv.setViewName("filedown");
- 		mv.addObject("originFile", originFile);
- 		mv.addObject("renameFile", downFile);
+        // 1차 결재 처리
+        if (step == 1) {
+            approve.setFirstApproveStatus(status);
+        }
 
- 		return mv;
- 	}
+        // 2차 결재 처리
+        else if (step == 2) {
+            approve.setSecondApproveStatus(status);
+        }
 
- 	// 문서 수정 관련-------------------------------
- 	// 문서 수정폼 이동 (GET)
- 	@GetMapping("inbound-update.do")
- 	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
-
- 		// 문서 기본 정보
- 		DocumentDTO document = inboundService.selectOneDocument(documentId);
- 		model.addAttribute("document", document);
-
- 		// 문서 품목 목록
- 		List<DocumentItemDTO> documentItemList = inboundService.selectDocumentItemList(documentId);
- 		model.addAttribute("documentItemList", documentItemList);
-
- 		// 결재자 정보
- 		ApproveDTO approve = inboundService.selectApprovalByDocumentId(documentId);
- 		model.addAttribute("approve", approve);
-
- 		// 첨부파일 정보
- 		FileDTO file = inboundService.selectFileByDocumentId(documentId);
- 		model.addAttribute("file", file);
-
- 		// 거래처 목록
- 		List<Client> clientList = inboundService.selectAllClients();
- 		model.addAttribute("clientList", clientList);
-
- 		// 상품 목록 (품목 select 용)
- 		List<Product> productList = productService.selectAll();
- 		model.addAttribute("productList", productList);
-
- 		return "inbound/inbound-update";
- 	}
-
- 	@PostMapping("inbound-update.do")
- 	public String updateDocument(@ModelAttribute DocumentDTO document, @ModelAttribute ApproveDTO approve,
- 			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
- 			@RequestParam(name = "deleteFlag", required = false) String deleteFlag,
- 			@RequestParam(name = "originalClientId", required = false) String originalClientId,
- 			HttpServletRequest request, Model model) {
-
- 		String savePath = request.getServletContext().getRealPath("/resources/upload/inbound");
-
- 		// 파일 삭제 + 업로드
- 		if ((deleteFlag != null && deleteFlag.equals("yes")) || (uploadFile != null && !uploadFile.isEmpty())) {
- 			inboundService.deleteFileByDocumentId(document.getDocumentId()); // 기존 파일 삭제
- 		}
-
- 		if (uploadFile != null && !uploadFile.isEmpty()) {
- 			String origin = uploadFile.getOriginalFilename();
- 			String rename = FileRenameUtil.changeFileName(origin);
-
- 			try {
- 				uploadFile.transferTo(new File(savePath + "/" + rename));
- 			} catch (Exception e) {
- 				model.addAttribute("errorMsg", "파일 업로드 실패");
- 				return "common/errorPage";
- 			}
-
- 			FileDTO fileDto = new FileDTO();
- 			fileDto.setDocumentId(document.getDocumentId());
- 			fileDto.setOriginalFileName(origin);
- 			fileDto.setRenameFileName(rename);
- 			fileDto.setFilePath("/resources/upload/inbound");
- 			fileDto.setUploadFileSize((int) uploadFile.getSize());
-
- 			inboundService.insertFile(fileDto);
- 		}
-
- 		// 문서 정보 업데이트
- 		inboundService.updateDocument(document);
-
- 		// 결재자 정보 업데이트
- 		approve.setDocumentId(document.getDocumentId());
- 		inboundService.updateApprove(approve);
-
- 		// 품목 처리
- 		boolean isPurchaseChanged = !document.getClientId().equals(originalClientId);
-
- 		if (isPurchaseChanged) {
- 			// 거래처 변경 시: 기존 품목 삭제 후 새로 insert (itemId도 새로 생성)
- 			inboundService.deleteDocumentItems(document.getDocumentId());
-
- 			for (DocumentItemDTO item : document.getItems()) {
- 				item.setDocumentId(document.getDocumentId());
-
- 				// itemId 시퀀스로 새로 생성
- 				String newItemId = inboundService.selectNextItemId();
- 				item.setItemId(newItemId);
-
- 				inboundService.insertDocumentItem(item);
- 			}
- 		} else {
-
- 	 	    // 재고 및 단가 업데이트 
- 	 	    inboundService.updateInbound(document);
- 	 	    
- 			// 거래처 동일: 기존 itemId로 update
- 			for (DocumentItemDTO item : document.getItems()) {
- 				inboundService.updateDocumentItem(item);
- 			}
- 		}
-
- 	    
- 		return "redirect:/inbound/inbound-detail.do?documentId=" + document.getDocumentId();
- 	}
-
- 	@GetMapping("documentManEmpInfo.do")
- 	@ResponseBody
- 	public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
- 		Employee emp = employeeService.selectEmpById(empId);
-
- 		Map<String, String> result = new HashMap<>();
- 		if (emp != null) {
- 			result.put("empId", emp.getEmpId());
- 			result.put("empName", emp.getEmpName());
- 			result.put("jobTitle", emp.getJobTitle());
- 		}
- 		return result;
- 	}
-
- 	@GetMapping("documentDelete.do")
- 	public String deleteDocument(@RequestParam("documentId") String documentId) {
- 	    // 재고 및 단가 복원
- 	    inboundService.deleteInbound(documentId);
- 	    
- 		// 삭제 순서 중요!
- 		inboundService.deleteDocumentItems(documentId);
- 		inboundService.deleteApprove(documentId);
- 		inboundService.deleteFileByDocumentId(documentId);
- 		inboundService.deleteDocumentOnly(documentId);
-
- 		return "redirect:/inbound/inbound-document.do";
- 	}
-
-
+        inboundService.updateApprovalStatus(approve);
+        if (step == 2 && "승인".equals(status)) {
+            inboundService.insertInbound(documentId);
+        }
+        return "redirect:/inbound/inbound-detail.do?documentId=" + documentId;
+    }
 }
