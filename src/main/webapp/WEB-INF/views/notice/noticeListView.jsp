@@ -4,7 +4,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<%-- <c:if test="${empty sessionScope.loginInfo}">
+  <c:redirect url="/login.do" />
+</c:if> --%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -100,7 +102,7 @@
 							&nbsp;&nbsp;
 							<%-- </c:if> --%>
 
-<!-- 
+							<!-- 
 							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
 							&nbsp;&nbsp; -->
 							<!-- <button type="submit" class="btn btn-danger">삭제</button>&nbsp;&nbsp; -->
@@ -218,115 +220,102 @@
 
 											</tr>
 										</thead>
-										<tbody class="text-center bg-white">
-											<!-- 🔸 중요공지 먼저 출력 -->
-											<c:forEach var="notice" items="${noticeList}">
-												<c:if test="${notice.importance == 'Y'}">
-													<tr style="background-color: #fff3cd;">
-														<%-- <td><input type="radio" name="selectedId"
+
+										
+								<tbody class="text-center bg-white">
+								
+									<!-- 🔸 중요공지 먼저 출력 -->
+									<c:forEach var="notice" items="${noticeList}">
+										<c:if test="${notice.importance == 'Y'}">
+											<tr style="background-color: #fff3cd;">
+												<%-- <td><input type="radio" name="selectedId"
 															value="${item.noticeNo}"></td> --%>
-														<td><span class="badge badge-danger">중요</span></td>
-														<td><a
-															href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
-															${notice.noticeTitle} </a>
-														</td>
-														<td>${notice.noticeContent}</td>
-														<td>${notice.noticeDate}</td>
-														<td>${notice.noticeWriter}</td>
-														<td><fmt:formatDate value="${notice.noticeDate}"
-																pattern="yyyy-MM-dd" /></td>
-														<td>${notice.readCount}</td>
-													</tr>
-												</c:if>
-											</c:forEach>
-
-											<!-- 🔹 일반 공지 출력 -->
-											<c:forEach var="notice" items="${noticeList}">
-												<c:if test="${notice.importance != 'Y'}">
-													<tr>
-														<%-- <td><input type="radio" name="selectedId"
-															value="${item.noticeNo}"></td> --%>
-														<td>${notice.noticeNo}</td>
-														<td><a
-															href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
-																${notice.noticeTitle} </a></td>
-														<td>${notice.noticeContent}</td>
-														<td>${notice.noticeDate}</td>
-														<td>${notice.noticeWriter}</td>
-														<td><fmt:formatDate value="${notice.noticeDate}"
-																pattern="yyyy-MM-dd" /></td>
-														<td>${notice.readCount}</td>
-													</tr>
-												</c:if>
-											</c:forEach>
-
-
-											<%--  조회된 목록 출력 부분 --%>
-											<%-- <c:forEach var="item" items="${notice}">
-												<tr>
-													<td><input type="radio" name="selectedId"
-														value="${item.noticeNo}"></td>
-													<td>${item.noticeNo}</td>
-													<td>${item.noticeTitle}</td>
-													<td>${item.noticeContent}</td>
-													<td>${item.noticeDate}</td>
-													<td>${item.noticeWriter}</td>
-													<td>${item.importance}</td>
-													<td>${item.impEndDate}</td>
-													<td>${item.readCount}</td>
-												</tr>
-											</c:forEach>
- --%>
-										</tbody>
-									</table>
-									</div>
-
-									<div class="d-flex justify-content-center mb-4">
-										<c:if test="${not empty param.action}">
-											<button type="button"
-												class="btn btn-secondary btn-icon-split mr-2"
-												onclick="history.back();">
-												<span class="icon text-white-50"> <i
-													class="fas fa-arrow-left"></i>
-												</span> <span class="text">이전페이지</span>
-											</button>
-
-											<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
-
-											<a href="${pageContext.request.contextPath}/nlist.do"
-												class="btn btn-info btn-icon-split"> <span
-												class="icon text-white-50"> <i class="fas fa-list"></i>
-											</span> <span class="text">목록으로</span>
-											</a>
+												<td><span class="badge badge-danger">중요</span></td>
+												<td><a
+													href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
+														${notice.noticeTitle} </a></td>
+												<td>${notice.noticeContent}</td>
+												<td>${notice.noticeDate}</td>
+												<td>${notice.noticeWriter}</td>
+												<td><fmt:formatDate value="${notice.noticeDate}"
+														pattern="yyyy-MM-dd" /></td>
+												<td>${notice.readCount}</td>
+											</tr>
 										</c:if>
-									</div>
+									</c:forEach>
+
+									<!-- 🔹 일반 공지 출력 -->
+									<c:forEach var="notice" items="${noticeList}">
+										<c:if test="${notice.importance != 'Y'}">
+											<tr>
+												<%-- <td><input type="radio" name="selectedId"
+															value="${item.noticeNo}"></td> --%>
+												<td>${notice.noticeNo}</td>
+												<td><a
+													href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
+														${notice.noticeTitle} </a></td>
+												<td>${notice.noticeContent}</td>
+												<td>${notice.noticeDate}</td>
+												<td>${notice.noticeWriter}</td>
+												<td><fmt:formatDate value="${notice.noticeDate}"
+														pattern="yyyy-MM-dd" /></td>
+												<td>${notice.readCount}</td>
+											</tr>
+										</c:if>
+										
+									</c:forEach>
 
 
-									<!-- 페이징 영역 -->
-									<c:import url="/WEB-INF/views/common/pagingView.jsp" />
-									</div>
+								</tbody>
+							</table>
+						</div>
 
-									</div>
-									<!-- End Page Content -->
+						<div class="d-flex justify-content-center mb-4">
+							<c:if test="${not empty param.action}">
+								<button type="button"
+									class="btn btn-secondary btn-icon-split mr-2"
+									onclick="history.back();">
+									<span class="icon text-white-50"> <i
+										class="fas fa-arrow-left"></i>
+									</span> <span class="text">이전페이지</span>
+								</button>
 
-									<c:import url="/WEB-INF/views/common/footer.jsp" />
+								<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
 
-									</div>
-									</div>
-									</div>
+								<a href="${pageContext.request.contextPath}/nlist.do"
+									class="btn btn-info btn-icon-split"> <span
+									class="icon text-white-50"> <i class="fas fa-list"></i>
+								</span> <span class="text">목록으로</span>
+								</a>
+							</c:if>
+						</div>
 
-									<!-- Scroll to Top Button-->
-									<a class="scroll-to-top rounded" href="#page-top"><i
-										class="fas fa-angle-up"></i></a>
 
-									<!-- JS -->
-									<script
-										src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
-									<script
-										src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-									<script
-										src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
-									<script
-										src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
+						<!-- 페이징 영역 -->
+						<c:import url="/WEB-INF/views/common/pagingView.jsp" />
+					</div>
+
+				</div>
+				<!-- End Page Content -->
+
+				<c:import url="/WEB-INF/views/common/footer.jsp" />
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"><i
+		class="fas fa-angle-up"></i></a>
+
+	<!-- JS -->
+	<script
+		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
 </body>
 </html>

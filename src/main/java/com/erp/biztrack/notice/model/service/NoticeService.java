@@ -30,5 +30,6 @@ public interface NoticeService {
 		ArrayList<Notice> getAllNotices();
 		ArrayList<Notice> selectImportantList();
 		ArrayList<Notice> selectNoticeList(String page);
+	
 		
 	}

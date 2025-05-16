@@ -116,6 +116,7 @@ public class NoticeController {
 
 	    // 통합 리스트 생성 (중요공지 먼저 추가)
 	    ArrayList<Notice> finalList = new ArrayList<>();
+	    
 	    if (importantList != null && !importantList.isEmpty()) {
 	        for (Notice n : importantList) {
 	            n.setNoticeNo(-1); // 번호 대신 '중요' 표시용
@@ -140,35 +141,6 @@ public class NoticeController {
 	    return mv;
 	}
 
-	
-	/*
-	 * @RequestMapping("nlist.do") public ModelAndView noticeListMethod(ModelAndView
-	 * mv, @RequestParam(name = "page", required = false) String page,
-	 * 
-	 * @RequestParam(name = "limit", required = false) String slimit) { // 페이징 처리
-	 * int currentPage = 1; if (page != null) { currentPage =
-	 * Integer.parseInt(page); }
-	 * 
-	 * // 한 페이지에 출력할 목록 갯수 기본 10개로 지정함 int limit = 10; if (slimit != null) { limit =
-	 * Integer.parseInt(slimit); }
-	 * 
-	 * // 총 목록 갯수 조회해서, 총 페이지 수 계산함 int listCount = noticeService.selectListCount();
-	 * // 페이지 관련 항목들 계산 처리 Paging paging = new Paging(listCount, limit, currentPage,
-	 * "nlist.do"); paging.calculate();
-	 * 
-	 * // 서비스 모델로 페이징 적용된 목록 조회 요청하고 결과받기 ArrayList<Notice> list =
-	 * noticeService.selectList(paging);
-	 * 
-	 * if (list != null && list.size() > 0) { // 조회 성공시 // ModelAndView : Model +
-	 * View mv.addObject("notice", list); // request.setAttribute("list", list) 와 같음
-	 * mv.addObject("paging", paging);
-	 * 
-	 * mv.setViewName("notice/noticeListView"); } else { // 조회 실패시
-	 * mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
-	 * mv.setViewName("common/error"); }
-	 * 
-	 * return mv; }
-	 */
 
 	// 공지글 상세보기 요청 처리용
 
@@ -319,7 +291,7 @@ public class NoticeController {
 
 		if (list != null && list.size() > 0) { // 조회 성공시
 			// ModelAndView : Model + View
-			mv.addObject("notice", list); // request.setAttribute("list", list) 와 같음
+			mv.addObject("noticeList", list); // request.setAttribute("list", list) 와 같음
 			mv.addObject("paging", paging);
 			mv.addObject("action", action);
 			mv.addObject("keyword", keyword);
@@ -368,7 +340,7 @@ public class NoticeController {
 
 		if (list != null && list.size() > 0) { // 조회 성공시
 			// ModelAndView : Model + View
-			mv.addObject("notice", list); // request.setAttribute("list", list) 와 같음
+			mv.addObject("noticeList", list); // request.setAttribute("list", list) 와 같음
 			mv.addObject("paging", paging);
 			mv.addObject("action", action);
 			mv.addObject("keyword", keyword);
@@ -417,7 +389,7 @@ public class NoticeController {
 
 		if (list != null && list.size() > 0) { // 조회 성공시
 			// ModelAndView : Model + View
-			mv.addObject("notice", list); // request.setAttribute("list", list) 와 같음
+			mv.addObject("noticeList", list); // request.setAttribute("list", list) 와 같음
 			mv.addObject("paging", paging);
 			mv.addObject("action", action);
 			mv.addObject("keyword", keyword);
@@ -464,7 +436,7 @@ public class NoticeController {
 
 		if (list != null && list.size() > 0) { // 조회 성공시
 			// ModelAndView : Model + View
-			mv.addObject("notice", list); // request.setAttribute("list", list) 와 같음
+			mv.addObject("noticeList", list); // request.setAttribute("list", list) 와 같음
 			mv.addObject("paging", paging);
 			mv.addObject("action", action);
 			mv.addObject("begin", search.getBegin());

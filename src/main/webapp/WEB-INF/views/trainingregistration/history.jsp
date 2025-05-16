@@ -3,7 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%-- <c:if test="${empty sessionScope.loginInfo}">
+  <c:redirect url="/login.do" />
+</c:if> --%>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -82,6 +84,7 @@ style>.card-body {
 									<th>과목명</th>
 									<th>신청 인원</th>
 									<th>정원</th>
+									<th>신청 시작일</th>
 									<th>신청 종료일</th>
 									<th>상태</th>
 								</tr>
@@ -90,8 +93,10 @@ style>.card-body {
 									<c:forEach var="course" items="${courseList}">
 										<tr>
 											<td>${course.TITLE}</td>
-											<td>${course.APPLIEDCOUNT}</td>
+											<td>${course.ENROLLMENTCOUNT}</td>
 											<td>${course.CAPACITY}</td>
+											<td><fmt:formatDate value="${course.START_DATE}"
+													pattern="yyyy-MM-dd" /></td>
 											<td><fmt:formatDate value="${course.END_DATE}"
 													pattern="yyyy-MM-dd" /></td>
 											<td><c:choose>
