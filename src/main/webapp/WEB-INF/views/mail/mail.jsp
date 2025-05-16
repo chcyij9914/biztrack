@@ -135,6 +135,7 @@
             </div>
 
             <button type="submit" class="send-btn">메일 보내기</button>
+            <button type="button" class="send-btn" onclick="history.back();">뒤로가기</button>
         </form>
     </div>
 </div>
