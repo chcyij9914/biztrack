@@ -6,6 +6,7 @@ import java.util.List;
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
 import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
 import com.erp.biztrack.common.ApproveDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 
 public interface BusinessDocumentService {
@@ -20,10 +21,10 @@ public interface BusinessDocumentService {
     int insertOutboundDocument(BusinessDocument document);
 
     // 출고서 품목 등록
-    int insertDocumentItem(BusinessDocument item);
+    int insertDocumentItem(DocumentItemDTO item);
     
     // 품목 리스트 일괄 등록용
-    int insertDocumentItemList(List<BusinessDocument> items);
+    int insertDocumentItemList(List<DocumentItemDTO> items);
     
     // 출고서 문서번호 시퀀스 조회
     String selectNextOutboundId();
@@ -41,14 +42,24 @@ public interface BusinessDocumentService {
     ApproveDTO selectApprovalInfo(String documentId);
     
     // 품목 리스트 추가 조회
-    List<BusinessDocument> selectDocumentItemList(String documentId);
+    List<DocumentItemDTO> selectDocumentItemList(String documentId);
     
     // 결재자 정보 입력
     int insertApprovalInfo(BusinessDocument document);
+    
+    // 출고서 정보 수정
+    int updateOutboundDocument(BusinessDocument  document);
 
-    // 세금계산서 목록 조회
-    ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(DocumentPaging pageInfo);
+    // 출고 품목 전체 업데이트 (delete → insert 방식)
+    void updateOutboundItems(String documentId, List<DocumentItemDTO> items);
 
-    // 세금계산서 개수
-    int selectTaxInvoiceListCount(DocumentPaging pageInfo);
+    // 첨부파일 insert
+    int insertUploadFile(FileDTO file);
+
+	/*
+	 * // 세금계산서 목록 조회 ArrayList<BusinessDocument>
+	 * selectTaxInvoiceDocumentList(DocumentPaging pageInfo);
+	 * 
+	 * // 세금계산서 개수 int selectTaxInvoiceListCount(DocumentPaging pageInfo);
+	 */
 }

@@ -21,7 +21,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <a href="${pageContext.request.contextPath}/businessdocument/OutboundList.do" class="btn btn-primary btn-sm">출고서 목록</a>
-      <a href="${pageContext.request.contextPath}/businessdocument/TaxinvoiceList.do" class="btn btn-outline-primary btn-sm">세금계산서 목록</a>
+      <%-- <a href="${pageContext.request.contextPath}/businessdocument/TaxinvoiceList.do" class="btn btn-outline-primary btn-sm">세금계산서 목록</a> --%>
     </div>
 
     <div class="d-flex">
