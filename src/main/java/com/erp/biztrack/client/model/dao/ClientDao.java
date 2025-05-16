@@ -145,7 +145,7 @@ public class ClientDao {
     // 거래처 삭제
     public int deleteClient(String clientId) {
         return sqlSessionTemplate.delete("clientMapper.deleteClient", clientId);
-    }
+    };
     
     // 문서 관련 -------------------------------
     // 문서 목록 조회 관련 -----------------------------------
