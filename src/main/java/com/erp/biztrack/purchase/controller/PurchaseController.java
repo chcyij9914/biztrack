@@ -386,7 +386,7 @@ public class PurchaseController {
 
 			FileDTO file = new FileDTO();
 			file.setDocumentId(documentId);
-			file.setFilePath("/resources/upload/purchase/" + renameName);
+			file.setFilePath("/resources/upload/purchase/");
 			file.setOriginalFileName(originalName);
 			file.setRenameFileName(renameName);
 			file.setUploadFileSize((int) saveFile.length());

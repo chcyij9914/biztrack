@@ -254,7 +254,7 @@ public class InboundController {
 
 			FileDTO file = new FileDTO();
 			file.setDocumentId(documentId);
-			file.setFilePath("/resources/upload/inbound/" + renameName);
+			file.setFilePath("/resources/upload/inbound/");
 			file.setOriginalFileName(originalName);
 			file.setRenameFileName(renameName);
 			file.setUploadFileSize((int) saveFile.length());
