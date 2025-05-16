@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:if test="${empty sessionScope.loginInfo}">
+	<c:redirect url="/login.do" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -73,7 +76,26 @@
 
 					<div class="d-flex justify-content-end mb-3">
 
-						<form method="post"
+						<c:if
+							test="${loginInfo.roleId == 'A1' 
+          || loginInfo.roleId == 'A2' 
+          || loginInfo.roleId == 'A3'}">
+							<form method="post"
+								action="${pageContext.request.contextPath}/training/delete.do"
+								style="display: inline;">
+								<input type="hidden" name="trainingId"
+									value="${training.trainingId}" />
+								<button type="submit" class="btn btn-danger btn-icon-split">
+									<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
+									<span class="text">삭제</span>
+								</button>
+							</form>
+						</c:if>
+					</div>
+
+
+
+						<%-- <form method="post"
 							action="${pageContext.request.contextPath}/training/delete.do"
 							style="display: inline;">
 							<input type="hidden" name="trainingId"
@@ -83,75 +105,85 @@
 								<span class="text">삭제</span>
 							</button>
 						</form>
-						<%-- 	</c:if> --%>
+					
 					</div>
+ --%>
+
+						<!-- 상세 정보 -->
+						<div class="card shadow mb-4">
+							<div class="card-body">
+								<form
+									action="${pageContext.request.contextPath}/training/update.do"
+									method="post">
+
+									<input type="hidden" name="trainingId"
+										value="${training.trainingId}" />
 
 
-					<!-- 상세 정보 -->
-					<div class="card shadow mb-4">
-						<div class="card-body">
-							<form
-								action="${pageContext.request.contextPath}/training/update.do"
-								method="post">
+									<div class="form-group">
+										<label>교육명</label> <input type="text" class="form-control"
+											name="title" value="${training.title}" />
+									</div>
 
-								<input type="hidden" name="trainingId"
-									value="${training.trainingId}" />
+									<div class="form-group">
+										<label>강사</label> <input type="text" class="form-control"
+											name="instructorName" value="${training.instructorName}" />
+									</div>
 
+									<div class="form-group">
+										<label>시작일</label> <input type="date" class="form-control"
+											name="startDate" value="${training.startDate}" />
+									</div>
 
-								<div class="form-group">
-									<label>교육명</label> <input type="text" class="form-control"
-										name="title" value="${training.title}" />
-								</div>
+									<div class="form-group">
+										<label>종료일</label> <input type="date" class="form-control"
+											name="endDate" value="${training.endDate}" />
+									</div>
 
-								<div class="form-group">
-									<label>강사</label> <input type="text" class="form-control"
-										name="instructorName" value="${training.instructorName}" />
-								</div>
+									<div class="form-group">
+										<label>교육내용</label> <input type="text" class="form-control"
+											name="courseContent" value="${training.courseContent}" />
+									</div>
 
-								<div class="form-group">
-									<label>시작일</label> <input type="date" class="form-control"
-										name="startDate" value="${training.startDate}" />
-								</div>
+									<div class="form-group">
+										<label>정원</label> <input type="number" class="form-control"
+											name="capacity" value="${training.capacity}" />
+									</div>
 
-								<div class="form-group">
-									<label>종료일</label> <input type="date" class="form-control"
-										name="endDate" value="${training.endDate}" />
-								</div>
+									<div class="form-group">
+										<label>장소</label> <input type="text" class="form-control"
+											name="location" value="${training.location}" />
+									</div>
 
-								<div class="form-group">
-									<label>교육내용</label> <input type="text" class="form-control"
-										name="courseContent" value="${training.courseContent}" />
-								</div>
-
-								<div class="form-group">
-									<label>정원</label> <input type="number" class="form-control"
-										name="capacity" value="${training.capacity}" />
-								</div>
-
-								<div class="form-group">
-									<label>장소</label> <input type="text" class="form-control"
-										name="location" value="${training.location}" />
-								</div>
-
-								<div class="form-group">
-									<label>교육 목표</label>
-									<textarea class="form-control" name="detailContent">${training.detailContent}</textarea>
-								</div>
+									<div class="form-group">
+										<label>교육 목표</label>
+										<textarea class="form-control" name="detailContent">${training.detailContent}</textarea>
+									</div>
 
 
-								<div class="d-flex justify-content-center mb-4">
+									<div class="d-flex justify-content-center mb-4">
 
-									<%-- 	<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
-									<c:if test="${isAdmin}"> --%>
+											<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
 
-									<button type="submit"
-										class="btn btn-primary btn-icon-split mr-2">
-										<span class="icon text-white-50"><i class="fas fa-pen"></i></span>
-										<span class="text">수정</span>
-									</button>
+									<c:if
+										test="${loginInfo.roleId == 'A1' 
+          || loginInfo.roleId == 'A2' 
+          || loginInfo.roleId == 'A3'}">
+										<form method="post"
+											action="${pageContext.request.contextPath}/training/update.do"
+											style="display: inline;">
+											<input type="hidden" value="${training.trainingId}" />
+											<button type="submit"
+												class="btn btn-primary btn-icon-split mr-2">
+												<span class="icon text-white-50"><i
+													class="fas fa-pen"></i></span> <span class="text">수정</span>
+											</button>
+										</form>
+									</c:if>
+
+
 									&nbsp;&nbsp;
-									<%-- </c:if>
-									 --%>
+									
 									<!-- 수강신청 버튼 -->
 									<a
 										href="${pageContext.request.contextPath}/training/registrationView.do?id=${training.trainingId}"
@@ -174,18 +206,18 @@
 									</a>
 								</div>
 
-							</form>
+								</form>
+							</div>
 						</div>
 					</div>
+					<!-- /.container-fluid -->
+
 				</div>
-				<!-- /.container-fluid -->
-
+				<!-- End of Content -->
 			</div>
-			<!-- End of Content -->
-		</div>
-		<!-- End of Content Wrapper -->
+			<!-- End of Content Wrapper -->
 
-	</div>
-	<!-- End of Page Wrapper -->
+		</div>
+		<!-- End of Page Wrapper -->
 </body>
 </html>

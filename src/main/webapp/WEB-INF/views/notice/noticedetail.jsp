@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%-- <c:if test="${empty sessionScope.loginInfo}">
-  <c:redirect url="/login.do" />
-</c:if> --%>
+<c:if test="${empty sessionScope.loginInfo}">
+	<c:redirect url="/login.do" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -61,10 +61,7 @@
 							<!-- <p class="text-muted small mb-0">교육 신청 전 상세 커리큘럼과 일정을 꼭
 								확인하세요.</p> -->
 						</div>
-						<!-- <div>
-						<a href="#" class="text-primary small mr-3">수강신청 연계</a>
-						<a href="#" class="text-primary small">수료 여부 확인</a>
-					</div> -->
+
 					</div>
 
 
@@ -75,14 +72,25 @@
 					<c:if test="${isAdmin}"> --%>
 
 					<div class="d-flex justify-content-end mb-3">
+						<c:if
+							test="${loginInfo.roleId == 'A1' 
+				|| loginInfo.roleId == 'A2' 
+				|| loginInfo.roleId == 'A3'}">
+							<form method="post"
+								action="${pageContext.request.contextPath}/notice/delete.do"
+								style="display: inline;">
+								<input type="hidden" name="no" value="${notice.noticeNo}" />
+								<button type="submit" class="btn btn-danger btn-icon-split">
+									<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
+									<span class="text">삭제</span>
+								</button>
+							</form>
+						</c:if>
+					</div>
 
-						<%-- <div class="form-group">
-							<label> <input type="checkbox" name="importance"
-								value="Y" ${notice.importance eq 'Y' ? 'checked' : ''}>
-								중요 공지 여부
-							</label>
-						</div>
- --%>
+
+
+					<%-- <div class="d-flex justify-content-end mb-3">
 						<form method="post"
 							action="${pageContext.request.contextPath}/notice/delete.do"
 							style="display: inline;">
@@ -92,23 +100,7 @@
 								<span class="text">삭제</span>
 							</button>
 						</form>
-
-
-
-						<%-- <form method="post"
-							action="${pageContext.request.contextPath}/notice/delete.do"
-							style="display: inline;">
-							<input type="checkbox" name="importance" value="Y" ${notice.importance eq 'Y' ? 'checked' : ''}>
-							<input type="hidden" name="no"
-								value="${notice.noticeNo}" />
-							<button type="submit" class="btn btn-danger btn-icon-split">
-								<span class="icon text-white-50"><i class="fas fa-trash"></i></span>
-								<span class="text">삭제</span>
-							</button>
-						</form> --%>
-
-						<%-- 	</c:if> --%>
-					</div>
+					</div> --%>
 
 
 					<!-- 상세 정보 -->
@@ -172,9 +164,31 @@
 
 								<div class="d-flex justify-content-center mb-4">
 
-									<%-- 	<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
-									<c:if test="${isAdmin}"> --%>
-									<form method="post"
+									<!-- 수정 / 삭제 버튼 (관리자만 보임) -->
+
+									<c:if
+										test="${loginInfo.roleId == 'A1' 
+			|| loginInfo.roleId == 'A2' 
+			|| loginInfo.roleId == 'A3'}">
+										<form method="post"
+											action="${pageContext.request.contextPath}/notice/update.do"
+											style="display: inline;">
+											<input type="hidden" name="no" value="${notice.noticeNo}" />
+											<button type="submit"
+												class="btn btn-primary btn-icon-split mr-2">
+												<span class="icon text-white-50"><i
+													class="fas fa-pen"></i></span> <span class="text">수정</span>
+											</button>
+										</form>
+									</c:if>
+
+
+
+
+									&nbsp;&nbsp;
+
+
+									<%-- <form method="post"
 										action="${pageContext.request.contextPath}/notice/update.do"
 										style="display: inline;">
 										<input type="hidden" name="no" value="${notice.noticeNo}" />
@@ -184,14 +198,8 @@
 											<span class="text">수정</span>
 										</button>
 									</form>
-									&nbsp;&nbsp;
-									<%-- </c:if>
-									 --%>
-									<%-- <a href="${pageContext.request.contextPath}"
-											class="btn btn-warning btn-icon-split mr-2"> <span
-											class="icon text-white-50"> <i class="fas fa-edit"></i>
-										</span> <span class="text"> 수강신청</span>
- --%>
+									&nbsp;&nbsp; --%>
+
 
 									</a> <a href="javascript:history.back();"
 										class="btn btn-secondary btn-icon-split mr-2"> <span
