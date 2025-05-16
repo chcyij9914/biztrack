@@ -40,7 +40,7 @@ public class OrgChartController {
         model.addAttribute("deptList", departments);
         model.addAttribute("employeeMap", employeeMap);
 
-        return "department/orgChart_full_features";  // 파일 이름과 일치시킬 것
+        return "/department/orgChart_full_features";  // 파일 이름과 일치시킬 것
     }
 
 
@@ -53,19 +53,19 @@ public class OrgChartController {
     	dept.setDeptLevel(departmentService.selectParentLevel(dept.getParentId()) + 1);
     	//새 부서 등록 처리
         departmentService.insertDepartment(dept);
-        return "redirect:chart.do";
+        return "redirect:/department/chart.do";
     }
 
     @RequestMapping(value="/update.do", method=RequestMethod.POST)   
     public String updateDepartment(@ModelAttribute Department dept) {
         departmentService.updateDepartment(dept);
-        return "redirect:chart.do";
+        return "redirect:/department/chart.do";
     }
 
     @RequestMapping(value="/delete.do", method=RequestMethod.POST)     
     public String deleteDepartment(@RequestParam("deptId") String deptId) {
         departmentService.deleteDepartment(deptId);
-        return "redirect:chart.do";
+        return "redirect:/department/chart.do";
     }
 
     @RequestMapping(value="/move.do", method=RequestMethod.POST) 
