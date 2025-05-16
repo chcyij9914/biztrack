@@ -1,11 +1,10 @@
 package com.erp.biztrack.reminder.model.service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.erp.biztrack.common.SolapiReminder;
 import com.erp.biztrack.reminder.model.dao.ReminderDao;
 import com.erp.biztrack.reminder.model.dto.Reminder;
 
@@ -16,31 +15,17 @@ public class ReminderServiceImpl implements ReminderService {
     private ReminderDao reminderDao;
 
     @Override
-    public ArrayList<Reminder> selectReminderList() {
-        return reminderDao.selectReminderList();
-    }
-    
-    @Override
-	public int updateReminderSmsContent(Reminder reminder) {
-		return reminderDao.updateReminderSmsContent(reminder);
+	public List<Reminder> selectAllReminders() {
+    	return reminderDao.selectAllReminders();
 	}
-   
+
     @Override
-    public String sendSms(String reminderId, String phone, String content) {
-    
-            String apiKey ="NCSHBVKWDDPZL1K8";
-            String apiSecret ="F1YR1EKGFTPTWMMDN1LBNJEGMVMPSFGD";
-            String sender ="01086527442"; 
+    public int updateMailContent(Reminder reminder) {
+        return reminderDao.updateMailContent(reminder);
+    }
 
-            String result = SolapiReminder.sendSms(apiKey, apiSecret, sender, phone, content);
-
-            if (result.contains("성공")) {
-                Reminder reminder = new Reminder();
-                reminder.setReminderId(reminderId);
-                reminder.setSmsContent(content);
-                reminderDao.updateReminderSmsContent(reminder);
-            }
-
-            return result;
+    @Override
+    public String selectClientEmail(String clientName) {
+        return reminderDao.selectClientEmail(clientName);
     }
 }

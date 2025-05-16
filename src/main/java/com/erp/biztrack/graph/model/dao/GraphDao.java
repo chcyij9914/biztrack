@@ -25,9 +25,14 @@ public class GraphDao {
         return sqlSessionTemplate.selectList("graphMapper.TransactionCountGraph");
     }
     
- // 부서별 영업실적 데이터 조회
-    public ArrayList<Graph> getDepartmentSalesPerformanceData() {
-        return new ArrayList<>(sqlSessionTemplate.selectList("graphMapper.DepartmentSalesPerformanceGraph"));
+    // 부서별 영업실적 데이터 조회
+    public ArrayList<Graph> getDepartmentSalesPerformance() {
+        return (ArrayList) sqlSessionTemplate.selectList("graphMapper.selectDepartmentSalesPerformance");
+    }
+
+    // 직원별 영업 실적 조회
+    public ArrayList<Graph> getEmployeeSalesPerformance() {
+        return (ArrayList) sqlSessionTemplate.selectList("graphMapper.selectEmployeeSalesPerformance");
     }
 
 }

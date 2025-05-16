@@ -26,11 +26,13 @@ public class GraphServiceImpl implements GraphService {
 		return graphDao.getTransactionCountData();
 	}
 
-	@Override
-	public ArrayList<Graph> getDepartmentSalesPerformanceData() {
-		return graphDao.getDepartmentSalesPerformanceData();
-	}
+	 @Override
+	    public ArrayList<Graph> getDepartmentSalesPerformance() {
+	        return graphDao.getDepartmentSalesPerformance();
+	    }
 
-
-	
+	    @Override
+	    public ArrayList<Graph> getEmployeeSalesPerformance() {
+	        return graphDao.getEmployeeSalesPerformance();
+	    }
 }

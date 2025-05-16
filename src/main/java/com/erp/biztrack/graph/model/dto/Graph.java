@@ -27,6 +27,11 @@ public class Graph implements java.io.Serializable {
     private int deptSalesAmount;        // 총 매출액 (거래금액)
     private int deptTransactionCount;   // 부서별 거래건수
 
+    // ---------------------- 직원별 거래실적 관련 필드 ----------------------
+    private String empName;                 // 직원 이름
+    private int empTransactionCount;        // 직원 거래건수
+    private String empTransactionSummary;   // 직원 거래요약 (예: 건자재마트 - 벽지용 페인트 35개)
+
     // ---------------------- 생성자 ----------------------
     public Graph() {}
 
@@ -102,6 +107,16 @@ public class Graph implements java.io.Serializable {
     public int getDeptTransactionCount() { return deptTransactionCount; }
     public void setDeptTransactionCount(int deptTransactionCount) { this.deptTransactionCount = deptTransactionCount; }
 
+    // ---------------------- Getter / Setter (직원 실적) ----------------------
+    public String getEmpName() { return empName; }
+    public void setEmpName(String empName) { this.empName = empName; }
+
+    public int getEmpTransactionCount() { return empTransactionCount; }
+    public void setEmpTransactionCount(int empTransactionCount) { this.empTransactionCount = empTransactionCount; }
+
+    public String getEmpTransactionSummary() { return empTransactionSummary; }
+    public void setEmpTransactionSummary(String empTransactionSummary) { this.empTransactionSummary = empTransactionSummary; }
+
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
@@ -126,6 +141,10 @@ public class Graph implements java.io.Serializable {
             return "[부서 그래프] 부서명: " + deptName +
                    ", 거래건수: " + deptTransactionCount +
                    ", 매출합계: " + deptSalesAmount;
+        } else if (empName != null) {
+            return "[직원 그래프] 이름: " + empName +
+                   ", 거래건수: " + empTransactionCount +
+                   ", 요약: " + empTransactionSummary;
         } else {
             return "[Graph DTO] 내용 없음";
         }
