@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,7 +29,7 @@ public class AdminController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping("/adminMain.do")
+    @RequestMapping("/adminMain.do")
     public String adminMainPage(
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -48,7 +50,7 @@ public class AdminController {
         return "admin/empmanagement";
     }
 
-    @PostMapping("/employeeInsert.do")
+    @RequestMapping(value="/employeeInsert.do", method=RequestMethod.POST)  
     public String employeeInsert(LoginDto dto) {
         String randomPwd = RandomStringUtils.randomAlphanumeric(10);
         String encPwd = passwordEncoder.encode(randomPwd);
@@ -69,13 +71,13 @@ public class AdminController {
         return "redirect:/adminMain.do";
     }
 
-    @GetMapping("/employeeDetail.do")
+    @RequestMapping("/employeeDetail.do")
     @ResponseBody
     public LoginDto getEmployeeDetail(@RequestParam("empId") String empId) {
         return adminService.getEmployeeById(empId);
     }
     
-    @PostMapping("/employeeUpdate.do")
+    @RequestMapping(value="/employeeUpdate.do", method=RequestMethod.POST)  
     public String updateEmployee(LoginDto dto, HttpSession session) {
         // 세션 체크
         if (session.getAttribute("loginInfo") == null) {
@@ -86,7 +88,7 @@ public class AdminController {
         return "redirect:/adminMain.do";
     }
     
-    @PostMapping("/employeeDelete.do")
+    @RequestMapping(value="/employeeDelete.do", method=RequestMethod.POST)  
     @ResponseBody
     public String deleteEmployee(@RequestParam("empId") String empId, HttpSession session) {
         if (session.getAttribute("loginInfo") == null) return "fail"; // 세션 체크

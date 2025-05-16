@@ -1,6 +1,7 @@
 package com.erp.biztrack.employee.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,5 +16,9 @@ public class EmployeeDao {
 	
 	public List<Employee> selectAll() {
         return sqlSessionTemplate.selectList("employeeMapper.selectAll");
+    }
+	
+	public List<Employee> getEvaluableEmployees(Map<String, Object> paramMap) {
+        return sqlSessionTemplate.selectList("employeeMapper.getEvaluableEmployees", paramMap);
     }
 }

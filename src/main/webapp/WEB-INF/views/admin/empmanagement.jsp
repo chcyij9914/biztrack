@@ -1,8 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:if test="${empty sessionScope.loginInfo}">
-    <c:redirect url="/login.do" />
+	<c:redirect url="/login.do" />
 </c:if>
 <!DOCTYPE html>
 <html lang="ko">
@@ -42,6 +43,23 @@ img.icon {
 	width: 18px;
 	height: 18px;
 }
+
+.table th,
+.table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.table th:nth-child(1), .table td:nth-child(1) { width: 10%; }  /* 직원번호 */
+.table th:nth-child(2), .table td:nth-child(2) { width: 8%; }   /* 직급 */
+.table th:nth-child(3), .table td:nth-child(3) { width: 12%; }  /* 이름 */
+.table th:nth-child(4), .table td:nth-child(4) { width: 15%; }  /* 전화번호 */
+.table th:nth-child(5), .table td:nth-child(5) { width: 25%; }  /* 이메일 */
+.table th:nth-child(6), .table td:nth-child(6),
+.table th:nth-child(7), .table td:nth-child(7) { width: 10%; text-align: center; } /* 수정/삭제 */
+
 
 .modal-overlay {
 	position: fixed;
@@ -142,6 +160,7 @@ img.icon {
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">
+						  <div style="overflow-x: auto;">
 							<table class="table table-bordered"
 								style="table-layout: fixed; width: 100%;">
 								<thead class="text-center bg-light">
@@ -174,6 +193,7 @@ img.icon {
 								</tbody>
 							</table>
 						</div>
+					  </div>
 					</div>
 					<nav aria-label="Page navigation example">
 						<ul class="pagination justify-content-center">
@@ -195,95 +215,93 @@ img.icon {
 				</div>
 			</div>
 			<!-- 수정 모달 -->
-<div id="updateModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <h2>직원 정보 수정</h2>
-    <form id="updateForm" method="post" action="${pageContext.request.contextPath}/employeeUpdate.do">
-      <input type="hidden" name="empId">
-      <div class="form-group">
-        <label>이름</label>
-        <input type="text" name="empName" class="form-control" readonly>
-      </div>
-      <div class="form-group">
-        <label>주민번호</label>
-        <input type="text" name="empNo" class="form-control" readonly>
-      </div>
-      <div class="form-group">
-        <label>부서</label>
-        <select name="deptId" class="form-control">
-          <option value="">-- 선택 --</option>
-			<option value="SA">SA (영업부)</option>
-			<option value="SAR">SAR (영업관리부)</option>
-			<option value="SB">SB (구매부)</option>
-			<option value="IN">IN (자재부)</option>
-			<option value="RET">RET (총무부)</option>
-			<option value="REE">REE (교육부)</option>
-			<option value="REP">REP (인사부)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>직책</label>
-        <select name="roleId" class="form-control">
-          <option value="">-- 선택 --</option>
-          <option value="A2">A2 (부사장)</option>
-		  <option value="A3">A3 (팀장)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>직급</label>
-        <select name="jobId" class="form-control">
-            <option value="">-- 선택 --</option>
-     		<option value="JG1">JG1 (대리)</option>
-			<option value="JG2">JG2 (과장)</option>
-			<option value="JG5">JG3 (차장)</option>
-			<option value="JG5">JG4 (차장)</option>
-			<option value="JG5">JG5 (부장)</option>
-			<option value="JG6">JG6 (이사)</option>
-			<option value="JG7">JG7 (대표이사)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>전화번호</label>
-        <input type="text" name="phone" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>이메일</label>
-        <input type="email" name="email" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>급여</label>
-        <input type="text" name="salary" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>관리자 여부</label>
-        <select name="adminYN" class="form-control">
-          <option value="">-- 선택 --</option>
-          <option value="Y">Y (관리자)</option>
-          <option value="N">N (일반)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>결혼 여부</label>
-        <select name="marriageYN" class="form-control">
-          <option value="">-- 선택 --</option>
-          <option value="Y">Y (기혼)</option>
-          <option value="N">N (미혼)</option>
-        </select>
-      </div>
-      <div class="btn-group">
-        <button type="submit" class="btn btn-primary">수정</button>
-        <button type="button" class="btn btn-secondary" onclick="closeUpdateModal()">취소</button>
-      </div>
-    </form>
-  </div>
-</div>
+			<div id="updateModal" class="modal-overlay" style="display: none;">
+				<div class="modal-content">
+					<h2>직원 정보 수정</h2>
+					<form id="updateForm" method="post"
+						action="${pageContext.request.contextPath}/employeeUpdate.do">
+						<input type="hidden" name="empId">
+						<div class="form-group">
+							<label>이름</label> <input type="text" name="empName"
+								class="form-control" readonly>
+						</div>
+						<div class="form-group">
+							<label>주민번호</label> <input type="text" name="empNo"
+								class="form-control" readonly>
+						</div>
+						<div class="form-group">
+							<label>부서</label> <select name="deptId" class="form-control">
+								<option value="">-- 선택 --</option>
+								<option value="SA">SA (영업부)</option>
+								<option value="SAR">SAR (영업관리부)</option>
+								<option value="SB">SB (구매부)</option>
+								<option value="IN">IN (자재부)</option>
+								<option value="RET">RET (총무부)</option>
+								<option value="REE">REE (교육부)</option>
+								<option value="REP">REP (인사부)</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>직책</label> <select name="roleId" class="form-control">
+								<option value="">-- 선택 --</option>
+								<option value="A2">A2 (부사장)</option>
+								<option value="A3">A3 (팀장)</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>직급</label> <select name="jobId" class="form-control">
+								<option value="">-- 선택 --</option>
+								<option value="JG1">JG1 (대리)</option>
+								<option value="JG2">JG2 (과장)</option>
+								<option value="JG5">JG3 (차장)</option>
+								<option value="JG5">JG4 (차장)</option>
+								<option value="JG5">JG5 (부장)</option>
+								<option value="JG6">JG6 (이사)</option>
+								<option value="JG7">JG7 (대표이사)</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>전화번호</label> <input type="text" name="phone"
+								class="form-control">
+						</div>
+						<div class="form-group">
+							<label>이메일</label> <input type="email" name="email"
+								class="form-control">
+						</div>
+						<div class="form-group">
+							<label>급여</label> <input type="text" name="salary"
+								class="form-control">
+						</div>
+						<div class="form-group">
+							<label>관리자 여부</label> <select name="adminYN" class="form-control">
+								<option value="">-- 선택 --</option>
+								<option value="Y">Y (관리자)</option>
+								<option value="N">N (일반)</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>결혼 여부</label> <select name="marriageYN"
+								class="form-control">
+								<option value="">-- 선택 --</option>
+								<option value="Y">Y (기혼)</option>
+								<option value="N">N (미혼)</option>
+							</select>
+						</div>
+						<div class="btn-group">
+							<button type="submit" class="btn btn-primary">수정</button>
+							<button type="button" class="btn btn-secondary"
+								onclick="closeUpdateModal()">취소</button>
+						</div>
+					</form>
+				</div>
+			</div>
 
-<!-- 등록 모달 -->
-<div id="registerModal" class="modal-overlay" style="display: none;">
-	<div class="modal-content">
-		<h2>직원 등록</h2>
-		<form id="registerForm"
-						action="${pageContext.request.contextPath}/employeeInsert.do" 
+			<!-- 등록 모달 -->
+			<div id="registerModal" class="modal-overlay" style="display: none;">
+				<div class="modal-content">
+					<h2>직원 등록</h2>
+					<form id="registerForm"
+						action="${pageContext.request.contextPath}/employeeInsert.do"
 						method="post">
 
 						<div class="form-group">
@@ -331,8 +349,8 @@ img.icon {
 								<option value="JG1">JG1 (대리)</option>
 								<option value="JG2">JG2 (과장)</option>
 								<option value="JG5">JG3 (차장)</option>
-								<option value="JG5">JG4 (차장)</option>
-								<option value="JG5">JG5 (부장)</option>
+								<option value="JG5">JG4 (부장)</option>
+								<option value="JG5">JG5 (본부장)</option>
 								<option value="JG6">JG6 (이사)</option>
 								<option value="JG7">JG7 (대표이사)</option>
 							</select>
@@ -358,9 +376,10 @@ img.icon {
 						</div>
 
 						<div class="form-group">
-							<label>입사일</label> <input type="text" class="form-control"
-								name="hireDay" placeholder="YY/MM/DD 형식으로 입력해주세요" required>
+							<label>입사일</label> <input type="date" class="form-control"
+								name="hireDay" required>
 						</div>
+
 
 						<div class="form-group">
 							<label>급여</label> <input type="text" class="form-control"
@@ -386,7 +405,7 @@ img.icon {
 			</div>
 
 
-<script>
+			<script>
 function openUpdateModal(empId) {
   fetch("${pageContext.request.contextPath}/employeeDetail.do?empId=" + empId)
 	    .then(res => res.json())
