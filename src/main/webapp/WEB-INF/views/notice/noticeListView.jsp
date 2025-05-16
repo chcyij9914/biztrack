@@ -4,9 +4,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%-- <c:if test="${empty sessionScope.loginInfo}">
-  <c:redirect url="/login.do" />
-</c:if> --%>
+<c:if test="${empty sessionScope.loginInfo}">
+	<c:redirect url="/login.do" />
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -94,13 +94,24 @@
 
 						<div class="d-flex align-items-center">
 
+							<c:if
+								test="${loginInfo.roleId == 'A1' 
+          || loginInfo.roleId == 'A2' 
+          || loginInfo.roleId == 'A3'}">
+								<button type="button" class="btn btn-primary" id="writeBtn"
+									onclick="location.href='${pageContext.servletContext.contextPath}/moveWrite.do';">
+									+ 새 공지글 등록</button>
+	&nbsp;&nbsp;
+</c:if>
+
+
 							<%-- <c:if
-								test="${ !empty sessionScope.loginUser and loginUser.adminYN eq 'Y' }"> --%>
+								test="${ !empty sessionScope.loginUser and loginUser.adminYN eq 'Y' }">
 							<button type="button" class="btn btn-primary" id="writeBtn"
 								onclick="location.href='${pageContext.servletContext.contextPath}/moveWrite.do';">
 								+ 새 공지글 등록</button>
 							&nbsp;&nbsp;
-							<%-- </c:if> --%>
+							</c:if> --%>
 
 							<!-- 
 							<button type="button" class="btn btn-primary" id="detailBtn">상세보기</button>
@@ -221,101 +232,101 @@
 											</tr>
 										</thead>
 
-										
-								<tbody class="text-center bg-white">
-								
-									<!-- 🔸 중요공지 먼저 출력 -->
-									<c:forEach var="notice" items="${noticeList}">
-										<c:if test="${notice.importance == 'Y'}">
-											<tr style="background-color: #fff3cd;">
-												<%-- <td><input type="radio" name="selectedId"
+
+										<tbody class="text-center bg-white">
+
+											<!-- 🔸 중요공지 먼저 출력 -->
+											<c:forEach var="notice" items="${noticeList}">
+												<c:if test="${notice.importance == 'Y'}">
+													<tr style="background-color: #fff3cd;">
+														<%-- <td><input type="radio" name="selectedId"
 															value="${item.noticeNo}"></td> --%>
-												<td><span class="badge badge-danger">중요</span></td>
-												<td><a
-													href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
-														${notice.noticeTitle} </a></td>
-												<td>${notice.noticeContent}</td>
-												<td>${notice.noticeDate}</td>
-												<td>${notice.noticeWriter}</td>
-												<td><fmt:formatDate value="${notice.noticeDate}"
-														pattern="yyyy-MM-dd" /></td>
-												<td>${notice.readCount}</td>
-											</tr>
-										</c:if>
-									</c:forEach>
+														<td><span class="badge badge-danger">중요</span></td>
+														<td><a
+															href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
+																${notice.noticeTitle} </a></td>
+														<td>${notice.noticeContent}</td>
+														<td>${notice.noticeDate}</td>
+														<td>${notice.noticeWriter}</td>
+														<td><fmt:formatDate value="${notice.noticeDate}"
+																pattern="yyyy-MM-dd" /></td>
+														<td>${notice.readCount}</td>
+													</tr>
+												</c:if>
+											</c:forEach>
 
-									<!-- 🔹 일반 공지 출력 -->
-									<c:forEach var="notice" items="${noticeList}">
-										<c:if test="${notice.importance != 'Y'}">
-											<tr>
-												<%-- <td><input type="radio" name="selectedId"
+											<!-- 🔹 일반 공지 출력 -->
+											<c:forEach var="notice" items="${noticeList}">
+												<c:if test="${notice.importance != 'Y'}">
+													<tr>
+														<%-- <td><input type="radio" name="selectedId"
 															value="${item.noticeNo}"></td> --%>
-												<td>${notice.noticeNo}</td>
-												<td><a
-													href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
-														${notice.noticeTitle} </a></td>
-												<td>${notice.noticeContent}</td>
-												<td>${notice.noticeDate}</td>
-												<td>${notice.noticeWriter}</td>
-												<td><fmt:formatDate value="${notice.noticeDate}"
-														pattern="yyyy-MM-dd" /></td>
-												<td>${notice.readCount}</td>
-											</tr>
+														<td>${notice.noticeNo}</td>
+														<td><a
+															href="${pageContext.request.contextPath}/detail.do?no=${notice.noticeNo}">
+																${notice.noticeTitle} </a></td>
+														<td>${notice.noticeContent}</td>
+														<td>${notice.noticeDate}</td>
+														<td>${notice.noticeWriter}</td>
+														<td><fmt:formatDate value="${notice.noticeDate}"
+																pattern="yyyy-MM-dd" /></td>
+														<td>${notice.readCount}</td>
+													</tr>
+												</c:if>
+
+											</c:forEach>
+
+
+										</tbody>
+									</table>
+									</div>
+
+									<div class="d-flex justify-content-center mb-4">
+										<c:if test="${not empty param.action}">
+											<button type="button"
+												class="btn btn-secondary btn-icon-split mr-2"
+												onclick="history.back();">
+												<span class="icon text-white-50"> <i
+													class="fas fa-arrow-left"></i>
+												</span> <span class="text">이전페이지</span>
+											</button>
+
+											<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
+
+											<a href="${pageContext.request.contextPath}/nlist.do"
+												class="btn btn-info btn-icon-split"> <span
+												class="icon text-white-50"> <i class="fas fa-list"></i>
+											</span> <span class="text">목록으로</span>
+											</a>
 										</c:if>
-										
-									</c:forEach>
+									</div>
 
 
-								</tbody>
-							</table>
-						</div>
+									<!-- 페이징 영역 -->
+									<c:import url="/WEB-INF/views/common/pagingView.jsp" />
+									</div>
 
-						<div class="d-flex justify-content-center mb-4">
-							<c:if test="${not empty param.action}">
-								<button type="button"
-									class="btn btn-secondary btn-icon-split mr-2"
-									onclick="history.back();">
-									<span class="icon text-white-50"> <i
-										class="fas fa-arrow-left"></i>
-									</span> <span class="text">이전페이지</span>
-								</button>
+									</div>
+									<!-- End Page Content -->
 
-								<!-- 목록으로 버튼: 검색 결과일 때만 보이기 -->
+									<c:import url="/WEB-INF/views/common/footer.jsp" />
 
-								<a href="${pageContext.request.contextPath}/nlist.do"
-									class="btn btn-info btn-icon-split"> <span
-									class="icon text-white-50"> <i class="fas fa-list"></i>
-								</span> <span class="text">목록으로</span>
-								</a>
-							</c:if>
-						</div>
+									</div>
+									</div>
+									</div>
 
+									<!-- Scroll to Top Button-->
+									<a class="scroll-to-top rounded" href="#page-top"><i
+										class="fas fa-angle-up"></i></a>
 
-						<!-- 페이징 영역 -->
-						<c:import url="/WEB-INF/views/common/pagingView.jsp" />
-					</div>
-
-				</div>
-				<!-- End Page Content -->
-
-				<c:import url="/WEB-INF/views/common/footer.jsp" />
-
-			</div>
-		</div>
-	</div>
-
-	<!-- Scroll to Top Button-->
-	<a class="scroll-to-top rounded" href="#page-top"><i
-		class="fas fa-angle-up"></i></a>
-
-	<!-- JS -->
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
+									<!-- JS -->
+									<script
+										src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
+									<script
+										src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+									<script
+										src="${pageContext.request.contextPath}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+									<script
+										src="${pageContext.request.contextPath}/resources/js/sb-admin-2.min.js"></script>
 </body>
 </html>
