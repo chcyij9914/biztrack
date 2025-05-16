@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -62,7 +62,10 @@
             <form action="${pageContext.request.contextPath}/schedule/ListSchedule.do" method="get" class="mr-2">
               <button type="submit" class="btn btn-primary shadow-sm" style="font-size: 15px; font-weight: 600; padding: 10px 20px; border-radius: 10px;">목록</button>
             </form>
-            <button type="button" class="btn btn-primary shadow-sm" style="font-size: 15px; font-weight: 600; padding: 10px 20px; border-radius: 10px;" onclick="openSchedulePopup();">일정 등록</button>
+           <a href="#" class="btn btn-primary shadow-sm" style="font-size: 15px; font-weight: 600; padding: 10px 20px; border-radius: 10px;"
+               onclick="window.open('${pageContext.request.contextPath}/schedule/AddForm.do', 'schedulePopup', 'width=1200,height=850,resizable=yes,scrollbars=yes'); return false;">
+              일정 등록
+            </a>
           </div>
         </div>
 
@@ -190,19 +193,6 @@
     <c:import url="/WEB-INF/views/common/footer.jsp" />
   </div>
 </div>
-
-<script>
-function openSchedulePopup() {
-  const url = '${pageContext.request.contextPath}/schedule/AddForm.do';
-  const width = 1000;
-  const height = 800;
-  const left = (window.screenLeft || window.screenX || 0) + (window.innerWidth - width) / 2;
-  const top = (window.screenTop || window.screenY || 0) + (window.innerHeight - height) / 2;
-  const popupWindow = window.open(url, 'schedulePopup', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`);
-  if (popupWindow) popupWindow.focus();
-  else alert('팝업이 차단되었습니다.');
-}
-</script>
 
 <script src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -17,61 +17,63 @@ import com.erp.biztrack.graph.model.service.GraphService;
 @Controller
 @RequestMapping("/graph")
 public class GraphController {
-    private static final Logger logger = LoggerFactory.getLogger(GraphController.class);
+	private static final Logger logger = LoggerFactory.getLogger(GraphController.class);
 
-    @Autowired
-    private GraphService graphService;
+	@Autowired
+	private GraphService graphService;
 
-    // 제품별 영업이익 그래프 API
-    @RequestMapping(value = "/api/profitGraph.do", produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public ArrayList<Graph> getProfitData() {
-        return (ArrayList<Graph>) graphService.selectProfitGraphData();
-    }
-    
-    
-    // 거래처별 거래건수 그래프 API
-    @RequestMapping(value = "/api/transactionCountGraph.do", produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public ArrayList<Graph> getTransactionCountData() {
-        return (ArrayList<Graph>) graphService.getTransactionCountData();
-    }
+	// 제품별 영업이익 그래프 API
+	@RequestMapping(value = "/api/profitGraph.do", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ArrayList<Graph> getProfitData() {
+		return (ArrayList<Graph>) graphService.selectProfitGraphData();
+	}
 
+	// 거래처별 거래건수 그래프 API
+	@RequestMapping(value = "/api/transactionCountGraph.do", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ArrayList<Graph> getTransactionCountData() {
+		return (ArrayList<Graph>) graphService.getTransactionCountData();
+	}
 
-    // 부서별 영업실적 그래프 API
-    @RequestMapping(value = "/api/departmentSalesPerformanceGraph.do", produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public ArrayList<Graph> getDepartmentSalesData() {
-        return (ArrayList<Graph>) graphService.getDepartmentSalesPerformanceData();
-    }
+	// 부서별 영업실적 그래프 API
+	@RequestMapping(value = "/api/departmentSalesPerformanceGraph.do", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public ArrayList<Graph> getDepartmentSalesData() {
+		return (ArrayList<Graph>) graphService.getDepartmentSalesPerformance();
+	}
 
-    // 그래프 대시보드 화면
-    @RequestMapping("/dashBoard.do")
-    public String showDashBoardViewPage() {
-        return "/graph/graphDashBoardView";
-    }
+	// 그래프 대시보드 화면
+	@RequestMapping("/dashBoard.do")
+	public String showDashBoardViewPage() {
+		return "/graph/graphDashBoardView";
+	}
 
-    // 제품별 영업이익 그래프
-    @RequestMapping("/profitGraph.do")
-    public String showProfitGraph(Model model) {
-        List<Graph> profitGraphList = graphService.selectProfitGraphData();
-        model.addAttribute("profitGraphList", profitGraphList);
-        return "/graph/profitGraphView";
-    }
+	// 제품별 영업이익 그래프
+	@RequestMapping("/profitGraph.do")
+	public String showProfitGraph(Model model) {
+		List<Graph> profitGraphList = graphService.selectProfitGraphData();
+		model.addAttribute("profitGraphList", profitGraphList);
+		return "/graph/profitGraphView";
+	}
 
-    // 거래건수 그래프
-    @RequestMapping("/transactionCountGraph.do")
-    public String showTransactionCount(Model model) {
-        List<Graph> list = graphService.getTransactionCountData();
-        model.addAttribute("transactionCountList", list);
-        return "graph/transactionCountGraphView";
-    }
+	// 거래건수 그래프
+	@RequestMapping("/transactionCountGraph.do")
+	public String showTransactionCount(Model model) {
+		List<Graph> list = graphService.getTransactionCountData();
+		model.addAttribute("transactionCountList", list);
+		return "graph/transactionCountGraphView";
+	}
 
-    // 부서별 영업실적 그래프
-    @RequestMapping("/departmentSalesPerformanceGraph.do")
-    public String departmentSalesPerformanceGraph(Model model) {
-        List<Graph> deptGraphList = graphService.getDepartmentSalesPerformanceData();
-        model.addAttribute("deptGraphList", deptGraphList);
-        return "graph/departmentSalesPerformanceGraphView";
-    }
+	// 부서별 영업실적 + 직원별 실적 페이지 이동
+	@RequestMapping("/departmentSalesPerformanceGraph.do")
+	public String showDepartmentAndEmployeeGraph(Model model) {
+		ArrayList<Graph> deptGraphList = graphService.getDepartmentSalesPerformance();
+		ArrayList<Graph> empGraphList = graphService.getEmployeeSalesPerformance();
+
+		model.addAttribute("deptGraphList", deptGraphList);
+		model.addAttribute("empGraphList", empGraphList);
+		
+		return "graph/departmentSalesPerformanceGraphView";
+	}
 }
