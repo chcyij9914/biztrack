@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
 import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
 import com.erp.biztrack.common.ApproveDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 
 @Repository("businessdocumentDao")
@@ -34,7 +35,7 @@ public class BusinessDocumentDao {
 	}
 
 	// 출고서 품목 등록
-	public int insertDocumentItem(BusinessDocument item) {
+	public int insertDocumentItem(DocumentItemDTO item) {
 		return sqlSessionTemplate.insert("businessDocumentMapper.insertDocumentItem", item);
 	}
 
@@ -64,7 +65,7 @@ public class BusinessDocumentDao {
     }
     
     // 품목 리스트 추가 조회
-    public List<BusinessDocument> selectDocumentItemList(String documentId) {
+    public List<DocumentItemDTO> selectDocumentItemList(String documentId) {
         return sqlSessionTemplate.selectList("businessDocumentMapper.selectDocumentItemList", documentId);
     }
     
@@ -73,14 +74,34 @@ public class BusinessDocumentDao {
         return sqlSessionTemplate.insert("businessDocumentMapper.insertApprovalInfo", document);
     }
     
-	// 세금계산서 목록 조회
-	public ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(DocumentPaging pageInfo) {
-		return (ArrayList) sqlSessionTemplate.selectList("businessDocumentMapper.selectTaxInvoiceDocumentList",
-				pageInfo);
-	}
+    // 출고서 정보 수정
+    public int updateOutboundDocument(BusinessDocument document) {
+        return sqlSessionTemplate.update("businessDocumentMapper.updateOutboundDocument", document);
+    }
 
-	// 세금계산서 목록 개수 조회
-	public int selectTaxInvoiceListCount(DocumentPaging pageInfo) {
-		return sqlSessionTemplate.selectOne("businessDocumentMapper.selectTaxInvoiceListCount", pageInfo);
-	}
+    // 기존 품목 전체 삭제
+    public int deleteOutboundItems(String documentId) {
+        return sqlSessionTemplate.delete("businessDocumentMapper.deleteOutboundItems", documentId);
+    }
+
+    // 품목 목록 다시 insert
+    public int insertOutboundItem(DocumentItemDTO item) {
+        return sqlSessionTemplate.insert("businessDocumentMapper.insertOutboundItem", item);
+    }
+
+    // 첨부파일 insert
+    public int insertUploadFile(FileDTO file) {
+        return sqlSessionTemplate.insert("businessDocumentMapper.insertUploadFile", file);
+    }
+    
+	/*
+	 * // 세금계산서 목록 조회 public ArrayList<BusinessDocument>
+	 * selectTaxInvoiceDocumentList(DocumentPaging pageInfo) { return (ArrayList)
+	 * sqlSessionTemplate.selectList(
+	 * "businessDocumentMapper.selectTaxInvoiceDocumentList", pageInfo); }
+	 * 
+	 * // 세금계산서 목록 개수 조회 public int selectTaxInvoiceListCount(DocumentPaging
+	 * pageInfo) { return sqlSessionTemplate.selectOne(
+	 * "businessDocumentMapper.selectTaxInvoiceListCount", pageInfo); }
+	 */
 }

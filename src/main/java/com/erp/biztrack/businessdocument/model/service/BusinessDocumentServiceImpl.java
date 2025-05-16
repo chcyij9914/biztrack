@@ -11,6 +11,7 @@ import com.erp.biztrack.businessdocument.model.dao.BusinessDocumentDao;
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
 import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
 import com.erp.biztrack.common.ApproveDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
 
 @Service("businessdocumentService")
@@ -42,15 +43,15 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
 
 	// 출고서 품목 등록 (1개)
 	@Override
-	public int insertDocumentItem(BusinessDocument item) {
+	public int insertDocumentItem(DocumentItemDTO item) {
 		return businessdocumentDao.insertDocumentItem(item);
 	}
 
 	// 품목 목록 일괄 등록 (여러개)
 	@Override
-	public int insertDocumentItemList(List<BusinessDocument> items) {
+	public int insertDocumentItemList(List<DocumentItemDTO> items) {
 		int count = 0;
-		for (BusinessDocument item : items) {
+		for (DocumentItemDTO item : items) {
 			count += businessdocumentDao.insertDocumentItem(item);
 		}
 		return count;
@@ -88,7 +89,7 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
 
 	// 품목 리스트 추가 조회
 	@Override
-	public List<BusinessDocument> selectDocumentItemList(String documentId) {
+	public List<DocumentItemDTO> selectDocumentItemList(String documentId) {
 		return businessdocumentDao.selectDocumentItemList(documentId);
 	}
 	
@@ -97,17 +98,45 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
 	public int insertApprovalInfo(BusinessDocument document) {
 		return businessdocumentDao.insertApprovalInfo(document);
 	}
-
-	// 세금계산서 목록 조회
+	
+	// 출고서 정보 수정
 	@Override
-	public ArrayList<BusinessDocument> selectTaxInvoiceDocumentList(DocumentPaging pageInfo) {
-		return businessdocumentDao.selectTaxInvoiceDocumentList(pageInfo);
+	public int updateOutboundDocument(BusinessDocument document) {
+		return businessdocumentDao.updateOutboundDocument(document);
 	}
 
-	// 세금계산서 목록 개수
+	// 출고 품목 전체 삭제 후 재삽입
 	@Override
-	public int selectTaxInvoiceListCount(DocumentPaging pageInfo) {
-		return businessdocumentDao.selectTaxInvoiceListCount(pageInfo);
+	public void updateOutboundItems(String documentId, List<DocumentItemDTO> items) {
+		
+		// 기존 품목 삭제
+		businessdocumentDao.deleteOutboundItems(documentId);
+
+        // 새로운 품목 목록 등록
+        for (DocumentItemDTO item : items) {
+            item.setDocumentId(documentId); // documentId 세팅 필요
+            item.setItemId(businessdocumentDao.selectNextItemId());
+            businessdocumentDao.insertOutboundItem(item);
+        }
+    }
+
+	// 첨부파일 업로드 후 DB 저장
+	@Override
+	public int insertUploadFile(FileDTO file) {
+		return businessdocumentDao.insertUploadFile(file);
 	}
+
+	/*
+	 * // 세금계산서 목록 조회
+	 * 
+	 * @Override public ArrayList<BusinessDocument>
+	 * selectTaxInvoiceDocumentList(DocumentPaging pageInfo) { return
+	 * businessdocumentDao.selectTaxInvoiceDocumentList(pageInfo); }
+	 * 
+	 * // 세금계산서 목록 개수
+	 * 
+	 * @Override public int selectTaxInvoiceListCount(DocumentPaging pageInfo) {
+	 * return businessdocumentDao.selectTaxInvoiceListCount(pageInfo); }
+	 */
 
 }

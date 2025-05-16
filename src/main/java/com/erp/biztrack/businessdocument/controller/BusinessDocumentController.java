@@ -1,28 +1,26 @@
 package com.erp.biztrack.businessdocument.controller;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.erp.biztrack.businessdocument.model.dto.BusinessDocument;
 import com.erp.biztrack.businessdocument.model.dto.DocumentPaging;
 import com.erp.biztrack.businessdocument.model.service.BusinessDocumentService;
-import com.erp.biztrack.client.model.dto.Client;
 import com.erp.biztrack.client.model.service.ClientService;
-import com.erp.biztrack.common.ApproveDTO;
+import com.erp.biztrack.common.DocumentItemDTO;
 import com.erp.biztrack.common.FileDTO;
-import com.erp.biztrack.employee.model.dto.Employee;
-import com.erp.biztrack.employee.model.service.EmployeeService;
 import com.erp.biztrack.login.model.dto.LoginDto;
-import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,189 +29,187 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/businessdocument")
 public class BusinessDocumentController {
 
-	@Autowired
-	private SqlSessionTemplate sqlSessionTemplate;
+    @Autowired
+    private BusinessDocumentService businessDocumentService;
 
-	@Autowired
-	private BusinessDocumentService businessDocumentService;
+    @Autowired
+    private ClientService clientService;
 
-	@Autowired
-	private ClientService clientService;
+    @Autowired
+    private ProductService productService;
 
-	@Autowired
-	private ProductService productService;
+    // 출고서 목록
+    @RequestMapping("/OutboundList.do")
+    public String showOutboundList(HttpServletRequest request, Model model) {
+        String searchType = request.getParameter("searchType");
+        String keyword = request.getParameter("keyword");
+        String statusOption = request.getParameter("statusOption");
 
-	// 출고서 목록
-	@RequestMapping("/OutboundList.do")
-	public String showOutboundList(HttpServletRequest request, Model model) {
-	    // 1. 파라미터 수집
-	    String searchType = request.getParameter("searchType");
-	    String keyword = request.getParameter("keyword");
+        String approveStep = null;
+        String approveStatus = null;
 
-	    // 상태 검색값 조합 분해 처리
-	    String statusOption = request.getParameter("statusOption");
-	    String approveStep = null;
-	    String approveStatus = null;
+        if ("status".equals(searchType) && statusOption != null && !statusOption.isEmpty()) {
+            String[] parts = statusOption.split("/");
+            if (parts.length == 2) {
+                approveStep = parts[0];
+                approveStatus = parts[1];
+            } else if (parts.length == 1) {
+                approveStatus = parts[0];
+            }
+        }
 
-	    if ("status".equals(searchType) && statusOption != null && !statusOption.isEmpty()) {
-	        String[] parts = statusOption.split("/");
-	        if (parts.length == 2) {
-	            approveStep = parts[0];
-	            approveStatus = parts[1];
-	        } else if (parts.length == 1) {
-	            approveStatus = parts[0];
-	        }
-	    }
+        int currentPage = 1;
+        if (request.getParameter("page") != null) {
+            currentPage = Integer.parseInt(request.getParameter("page"));
+        }
 
-	    // 2. 현재 페이지 설정
-	    int currentPage = 1;
-	    if (request.getParameter("page") != null) {
-	        currentPage = Integer.parseInt(request.getParameter("page"));
-	    }
+        DocumentPaging pageInfo = new DocumentPaging(currentPage, "O");
+        pageInfo.setSearchType(searchType);
+        pageInfo.setKeyword(keyword);
+        pageInfo.setApproveStep(approveStep);
+        pageInfo.setApproveStatus(approveStatus);
 
-	    // 3. 페이징 객체 생성 및 검색조건 세팅
-	    DocumentPaging pageInfo = new DocumentPaging(currentPage, "O"); // 출고서 → documentTypeId = 'O'
-	    pageInfo.setSearchType(searchType);
-	    pageInfo.setKeyword(keyword);
-	    pageInfo.setApproveStep(approveStep);
-	    pageInfo.setApproveStatus(approveStatus);
+        int totalCount = businessDocumentService.selectOutboundListCount(pageInfo);
+        pageInfo.setTotal(totalCount);
+        pageInfo.setStart((currentPage - 1) * pageInfo.getLimit() + 1);
+        pageInfo.setEnd(pageInfo.getStart() + pageInfo.getLimit() - 1);
 
-	    // 4. 총 개수 조회 및 totalPage, startPage, endPage 계산
-	    int totalCount = businessDocumentService.selectOutboundListCount(pageInfo);
-	    pageInfo.setTotal(totalCount);
+        model.addAttribute("documentList", businessDocumentService.selectOutboundDocumentList(pageInfo));
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("approveStep", approveStep);
+        model.addAttribute("approveStatus", approveStatus);
 
-	    // 5. 현재 페이지 기준으로 start/end 재계산
-	    pageInfo.setStart((currentPage - 1) * pageInfo.getLimit() + 1);
-	    pageInfo.setEnd(pageInfo.getStart() + pageInfo.getLimit() - 1);
+        return "businessdocument/outboundDocumentList";
+    }
 
-	    // 6. 리스트 조회
-	    ArrayList<BusinessDocument> list = businessDocumentService.selectOutboundDocumentList(pageInfo);
+    // 출고서 등록 폼
+    @RequestMapping("/outboundInsertForm.do")
+    public String showOutboundInsertForm(Model model) {
+        model.addAttribute("clientList", clientService.selectAllClients());
+        model.addAttribute("productList", productService.selectAll());
+        return "businessdocument/outboundInsertForm";
+    }
 
-	    // 7. 결과 전달
-	    model.addAttribute("documentList", list);
-	    model.addAttribute("pageInfo", pageInfo);
-	    model.addAttribute("approveStep", approveStep); 
-	    model.addAttribute("approveStatus", approveStatus); 
+    // 출고서 등록
+    @RequestMapping(value = "/insertOutbound.do", produces = "text/html; charset=UTF-8")
+    @ResponseBody
+    public String insertOutboundDocument(
+        @ModelAttribute BusinessDocument document,
+        @RequestParam("approver1Id") String approver1Id,
+        @RequestParam("approver2Id") String approver2Id,
+        HttpServletRequest request) {
 
-	    return "businessdocument/outboundDocumentList";
-	}
+        LoginDto loginInfo = (LoginDto) request.getSession().getAttribute("loginInfo");
+        String newDocumentId = businessDocumentService.selectNextOutboundId();
+        document.setDocumentId(newDocumentId);
+        document.setDocumentTypeId("O");
 
-	// 출고서 등록 폼 이동
-	@RequestMapping("/outboundInsertForm.do")
-	public String showOutboundInsertForm(Model model) {
-		ArrayList<Client> clientList = clientService.selectAllClients();
-		ArrayList<Product> productList = productService.selectAll();
+        if (loginInfo != null) {
+            document.setDocumentWriterId(loginInfo.getEmpId());
+            document.setDocumentManagerId(loginInfo.getEmpId());
+        }
 
-		model.addAttribute("clientList", clientList);
-		model.addAttribute("productList", productList);
+        businessDocumentService.insertOutboundDocument(document);
 
-		return "businessdocument/outboundInsertForm";
-	}
+        if (document.getItems() != null && !document.getItems().isEmpty()) {
+            for (DocumentItemDTO item : document.getItems()) {
+                item.setItemId(businessDocumentService.selectNextItemId());
+                item.setDocumentId(newDocumentId);
+                businessDocumentService.insertDocumentItem(item);
+            }
+        }
 
-	// 출고서 등록 처리
-	@RequestMapping(value = "/insertOutbound.do", produces = "text/html; charset=UTF-8")
-	@ResponseBody
-	public String insertOutboundDocument(
-	    @ModelAttribute BusinessDocument document,
-	    @RequestParam("approver1Id") String approver1Id,
-	    @RequestParam("approver2Id") String approver2Id,
-	    HttpServletRequest request) {
+        BusinessDocument approval = new BusinessDocument();
+        approval.setDocumentId(newDocumentId);
+        approval.setApprover1Id(approver1Id);
+        approval.setApprover2Id(approver2Id);
+        approval.setDocumentWriterId(loginInfo.getEmpId());
+        businessDocumentService.insertApprovalInfo(approval);
 
-	    // 1. 로그인 정보 가져오기
-	    LoginDto loginInfo = (LoginDto) request.getSession().getAttribute("loginInfo");
+        return "<script charset='UTF-8'>" +
+                "alert('출고서가 등록되었습니다.');" +
+                "window.opener.location.reload();" +
+                "window.close();" +
+                "</script>";
+    }
 
-	    // 2. 문서번호 생성
-	    String newDocumentId = businessDocumentService.selectNextOutboundId();
-	    document.setDocumentId(newDocumentId);
-	    document.setDocumentTypeId("O"); // 출고서 유형
+    // 출고서 상세 보기
+    @RequestMapping("/outboundDetail.do")
+    public String showOutboundDetail(@RequestParam("documentId") String documentId, Model model) {
+        BusinessDocument document = businessDocumentService.selectOneDocument(documentId);
+        document.setItems(businessDocumentService.selectDocumentItemList(documentId));
 
-	    if (loginInfo != null) {
-	        document.setDocumentWriterId(loginInfo.getEmpId());
-	        document.setDocumentManagerId(loginInfo.getEmpId());
-	    }
+        model.addAttribute("document", document);
+        model.addAttribute("approval", businessDocumentService.selectApprovalInfo(documentId));
+        model.addAttribute("file", businessDocumentService.selectOneFileByDocumentId(documentId));
 
-	    // 3. 문서 저장
-	    businessDocumentService.insertOutboundDocument(document);
+        return "businessdocument/outboundDetailView";
+    }
 
-	    // 4. 품목 저장
-	    List<BusinessDocument> items = document.getItems();
-	    if (items != null && !items.isEmpty()) {
-	        for (BusinessDocument item : items) {
-	            String nextItemId = businessDocumentService.selectNextItemId();
-	            item.setItemId(nextItemId);
-	            item.setDocumentId(newDocumentId);
-	            businessDocumentService.insertDocumentItem(item);
-	        }
-	    }
+    // 출고서 수정 폼
+    @RequestMapping("/outboundUpdateForm.do")
+    public String showOutboundUpdate(@RequestParam("documentId") String documentId, Model model) {
+        BusinessDocument document = businessDocumentService.selectOneDocument(documentId);
+        document.setItems(businessDocumentService.selectDocumentItemList(documentId));
 
-	    // 5. 결재자 정보 저장
-	    BusinessDocument approval = new BusinessDocument();
-	    approval.setDocumentId(newDocumentId);
-	    approval.setApprover1Id(approver1Id);
-	    approval.setApprover2Id(approver2Id);
-	    approval.setDocumentWriterId(loginInfo.getEmpId());
-	    businessDocumentService.insertApprovalInfo(approval);
+        model.addAttribute("document", document);
+        model.addAttribute("itemList", businessDocumentService.selectDocumentItemList(documentId));
+        model.addAttribute("approve", businessDocumentService.selectApprovalInfo(documentId));
+        model.addAttribute("file", businessDocumentService.selectOneFileByDocumentId(documentId));
+        model.addAttribute("productList", productService.selectAll());
+        return "businessdocument/outboundDocumentUpdate";
+    }
 
-	    // 6. 응답 처리
-	    return "<script charset='UTF-8'>" +
-	            "alert('출고서가 등록되었습니다.');" +
-	            "window.opener.location.reload();" +
-	            "window.close();" +
-	            "</script>";
-	}
+    // 출고서 수정
+    @RequestMapping(value = "/outboundUpdate.do", method = RequestMethod.POST)
+    public String updateOutboundDocument(
+        @ModelAttribute("document") BusinessDocument document,
+        @RequestParam(value = "uploadFiles", required = false) List<MultipartFile> uploadFiles,
+        HttpServletRequest request,
+        RedirectAttributes redirectAttr) {
 
-	// 출고서 상세 보기
-	@RequestMapping("/outboundDetail.do")
-	public String showOutboundDetail(@RequestParam("documentId") String documentId, Model model) {
-	    // 1. 문서 기본 정보 조회
-	    BusinessDocument document = businessDocumentService.selectOneDocument(documentId);
+        try {
+            businessDocumentService.updateOutboundDocument(document);
 
-	    // 2. 품목 리스트 추가 조회 
-	    List<BusinessDocument> itemList = businessDocumentService.selectDocumentItemList(documentId);
-	    document.setItems(itemList); // 문서에 품목 리스트 포함
-	    
-	    // 3. 결재 정보 & 첨부파일 정보
-	    ApproveDTO approval = businessDocumentService.selectApprovalInfo(documentId);
-	    FileDTO file = businessDocumentService.selectOneFileByDocumentId(documentId);
+            if (document.getItems() != null && !document.getItems().isEmpty()) {
+                businessDocumentService.updateOutboundItems(document.getDocumentId(), document.getItems());
+            }
 
-	    // 4. JSP 전달
-	    model.addAttribute("document", document);
-	    model.addAttribute("approval", approval);
-	    model.addAttribute("file", file);
+            if (uploadFiles != null && !uploadFiles.isEmpty()) {
+                String uploadDir = request.getServletContext().getRealPath("/resources/upload/outbound");
+                File uploadPath = new File(uploadDir);
+                if (!uploadPath.exists()) {
+                    uploadPath.mkdirs();
+                }
 
-	    return "businessdocument/outboundDetailView";
-	}
+                for (MultipartFile file : uploadFiles) {
+                    if (!file.isEmpty()) {
+                        String originName = file.getOriginalFilename();
+                        String ext = originName.substring(originName.lastIndexOf("."));
+                        String rename = System.currentTimeMillis() + "_" + (int) (Math.random() * 10000) + ext;
 
+                        File saveFile = new File(uploadDir, rename);
+                        file.transferTo(saveFile);
 
-	// 세금계산서 목록
-	@RequestMapping("/TaxinvoiceList.do")
-	public String showTaxInvoiceList(HttpServletRequest request, Model model) {
-		// 1. 파라미터 수집
-		String searchType = request.getParameter("searchType");
-		String keyword = request.getParameter("keyword");
-		String approveStep = request.getParameter("approveStep");
-		String approveStatus = request.getParameter("approveStatus");
+                        FileDTO fileDTO = new FileDTO();
+                        fileDTO.setDocumentId(document.getDocumentId());
+                        fileDTO.setOriginalFileName(originName);
+                        fileDTO.setRenameFileName(rename);
+                        fileDTO.setFilePath("/resources/upload/outbound");
+                        fileDTO.setUploadFileSize((int) file.getSize());
 
-		// 2. 페이징 처리
-		int currentPage = 1;
-		if (request.getParameter("page") != null) {
-			currentPage = Integer.parseInt(request.getParameter("page"));
-		}
+                        businessDocumentService.insertUploadFile(fileDTO);
+                    }
+                }
+            }
 
-		DocumentPaging pageInfo = new DocumentPaging(currentPage, "G"); // 세금계산서 → documentTypeId = 'G'
-		pageInfo.setSearchType(searchType);
-		pageInfo.setKeyword(keyword);
-		pageInfo.setApproveStep(approveStep);
-		pageInfo.setApproveStatus(approveStatus);
+            redirectAttr.addFlashAttribute("msg", "출고서가 성공적으로 수정되었습니다.");
+            return "redirect:/businessdocument/outboundDetail.do?documentId=" + document.getDocumentId();
 
-		// 3. 서비스 호출
-		ArrayList<BusinessDocument> list = businessDocumentService.selectTaxInvoiceDocumentList(pageInfo);
-		pageInfo.setTotal(businessDocumentService.selectTaxInvoiceListCount(pageInfo));
-
-		// 4. 결과 전달
-		model.addAttribute("documentList", list);
-		model.addAttribute("pageInfo", pageInfo);
-
-		return "businessdocument/taxInvoiceDocumentList";
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttr.addFlashAttribute("errorMsg", "출고서 수정 중 오류가 발생했습니다.");
+            return "redirect:/businessdocument/outboundUpdateForm.do?documentId=" + document.getDocumentId();
+        }
+    }
 }

@@ -3,12 +3,12 @@ package com.erp.biztrack.businessdocument.model.dto;
 import java.sql.Date;
 import java.util.List;
 
+import com.erp.biztrack.common.DocumentItemDTO;
+
 public class BusinessDocument implements java.io.Serializable {
     private static final long serialVersionUID = 3017689070795292403L;
 
-    // ======================================
     // [1] 공통 문서 정보
-    // ======================================
     private String documentId;
     private String documentTypeId;
     private String title;
@@ -18,9 +18,7 @@ public class BusinessDocument implements java.io.Serializable {
     private String paymentMethod;
     private String status;
 
-    // ======================================
     // [2] 거래처 정보
-    // ======================================
     private String clientId;
     private String clientName;
     private String clientBusinessNumber;
@@ -28,16 +26,12 @@ public class BusinessDocument implements java.io.Serializable {
     private String address;
     private String email;
 
-    // ======================================
     // [3] 작성자 / 담당자 정보
-    // ======================================
     private String documentWriterId;
     private String documentManagerId;
     private String writerName;
 
-    // ======================================
     // [4] 출고서 전용 필드
-    // ======================================
     private String itemId;
     private String productId;
     private String productName;
@@ -45,9 +39,7 @@ public class BusinessDocument implements java.io.Serializable {
     private int productQuantity;
     private int outboundTotalAmount;
 
-    // ======================================
     // [5] 세금계산서 전용 필드
-    // ======================================
     private java.sql.Date invoiceDate;
     private String supplierName;
     private String supplierBusinessNumber;
@@ -58,9 +50,7 @@ public class BusinessDocument implements java.io.Serializable {
     private int vatAmount;
     private int totalWithVat;
 
-    // ======================================
     // [6] 결재 정보
-    // ======================================
     private String approver1Id;
     private String approver2Id;
     private String approve1Status;
@@ -68,26 +58,19 @@ public class BusinessDocument implements java.io.Serializable {
     private Date approve1Date;
     private Date approve2Date;
 
-    // ======================================
     // [7] 출고서 품목 리스트
-    // ======================================
-    private List<BusinessDocument> items;
+    private List<DocumentItemDTO> items;
 
-    // ======================================
     // [8] 결재자 리스트
-    // ======================================
     private List<BusinessDocument> approvers;
 
-    // ======================================
     // [9] 결재자 개별 정보 (JSP 출력용)
-    // ======================================
     private String empId;
     private String rank;
     private String position;
     private String deptName;
     private int level;
 
-    // 기본 생성자
     public BusinessDocument() {}
 
     // === Getter/Setter ===
@@ -205,8 +188,8 @@ public class BusinessDocument implements java.io.Serializable {
     public Date getApprove2Date() { return approve2Date; }
     public void setApprove2Date(Date approve2Date) { this.approve2Date = approve2Date; }
 
-    public List<BusinessDocument> getItems() { return items; }
-    public void setItems(List<BusinessDocument> items) { this.items = items; }
+    public List<DocumentItemDTO> getItems() { return items; }
+    public void setItems(List<DocumentItemDTO> items) { this.items = items; }
 
     public List<BusinessDocument> getApprovers() { return approvers; }
     public void setApprovers(List<BusinessDocument> approvers) { this.approvers = approvers; }
@@ -275,4 +258,4 @@ public class BusinessDocument implements java.io.Serializable {
             + ", level=" + level
             + "]";
     }
-} 
+}
