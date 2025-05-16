@@ -20,6 +20,14 @@
             <c:import url="/WEB-INF/views/common/topbar.jsp" />
 
             <div class="container-fluid">
+            <c:if test="${loginInfo.empId == document.documentWriterId &&
+            					approval.firstApproveStatus == '반려'
+            				or approval.secondApproveStatus == '반려'}">
+			    <div class="alert alert-danger font-weight-bold text-center">
+			      이 문서는 <strong>반려</strong>되었습니다. <br/>
+			      내용을 참고하여 <span class="text-primary">새 문서를 작성</span>해주세요.
+			    </div>
+			  </c:if>
                 <h1 class="h3 mb-2 text-gray-800">문서 상세보기</h1>
 				<p class="mb-4 small text-muted">등록된 <strong>${document.documentId}</strong> 제안서의 상세 내용을 확인합니다.</p>
 
