@@ -107,7 +107,7 @@ public class PurchaseController {
 			documentList = purchaseService.selectDocumentListByType(param);
 		}
 
-		Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+		Paging paging = new Paging(listCount, limit, currentPage, "purchase-document.do");
 		paging.calculate();
 
 		mv.addObject("docType", type);
@@ -160,7 +160,7 @@ public class PurchaseController {
 			documentList = purchaseService.selectDocumentListByTypeT(param);
 		}
 
-		Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+		Paging paging = new Paging(listCount, limit, currentPage, "payment-document.do");
 		paging.calculate();
 
 		mv.addObject("docType", type);

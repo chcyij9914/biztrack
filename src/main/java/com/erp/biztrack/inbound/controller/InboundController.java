@@ -104,7 +104,7 @@ public class InboundController {
 			documentList = inboundService.selectDocumentListByType(param);
 		}
 
-		Paging paging = new Paging(listCount, limit, currentPage, "documentList.do");
+		Paging paging = new Paging(listCount, limit, currentPage, "inbound-document.do");
 		paging.calculate();
 
 		mv.addObject("docType", type);
