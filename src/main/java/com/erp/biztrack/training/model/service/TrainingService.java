@@ -1,5 +1,6 @@
 package com.erp.biztrack.training.model.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +71,14 @@ public interface TrainingService {
 	
 	/* int insertTrainingRegistration(Map<String, Object> paramMap); */
 	
-	void insertTrainingRegistration(Map<String, Object> data);
+	int insertTrainingRegistration(Map<String, Object> data);
 	boolean insertTrainingRegistration(TrainingRegistration reg);
+	
+	int getCurrentEnrollment(String trainingId);
+	int getTrainingCapacity(String trainingId);
+	Date getTrainingStartDate(String trainingId);
+	Date getTrainingEndDate(String trainingId);
+	
 
 	
 

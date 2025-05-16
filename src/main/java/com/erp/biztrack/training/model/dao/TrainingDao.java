@@ -1,5 +1,6 @@
 package com.erp.biztrack.training.model.dao;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,9 +131,9 @@ public class TrainingDao {
 		return sqlSessionTemplate.selectList(NAMESPACE + "getTrainingListByEmpId", empId);
 	}
 	 
-	public int insertTrainingRegistration(Map<String, Object> paramMap) {
-	    return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", paramMap);
-	}
+//	public int insertTrainingRegistration(Map<String, Object> paramMap) {
+//	    return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", paramMap);
+//	}
 
 	public int checkDuplicateRegistration(Map<String, Object> param) {
 	    return sqlSessionTemplate.selectOne("trainingMapper.checkDuplicateRegistration", param);
@@ -142,6 +143,13 @@ public class TrainingDao {
 		return sqlSessionTemplate.selectOne("trainingMapper.insertTrainingRegistration", reg);
 	}
 
+	public int insertTrainingRegistration(Map<String, Object> data) {
+		return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", data);
+	}
+
+	public Date getTrainingEndDate(String trainingId) {
+		return null;
+	}
 
 	
 }

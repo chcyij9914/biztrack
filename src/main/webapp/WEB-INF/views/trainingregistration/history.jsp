@@ -84,6 +84,7 @@ style>.card-body {
 									<th>과목명</th>
 									<th>신청 인원</th>
 									<th>정원</th>
+									<th>신청 시작일</th>
 									<th>신청 종료일</th>
 									<th>상태</th>
 								</tr>
@@ -92,8 +93,10 @@ style>.card-body {
 									<c:forEach var="course" items="${courseList}">
 										<tr>
 											<td>${course.TITLE}</td>
-											<td>${course.APPLIEDCOUNT}</td>
+											<td>${course.ENROLLMENTCOUNT}</td>
 											<td>${course.CAPACITY}</td>
+											<td><fmt:formatDate value="${course.START_DATE}"
+													pattern="yyyy-MM-dd" /></td>
 											<td><fmt:formatDate value="${course.END_DATE}"
 													pattern="yyyy-MM-dd" /></td>
 											<td><c:choose>

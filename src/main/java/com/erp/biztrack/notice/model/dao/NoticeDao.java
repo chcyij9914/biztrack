@@ -2,6 +2,7 @@ package com.erp.biztrack.notice.model.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,7 @@ public class NoticeDao {
 	public Notice selectLast() {
 		return sqlSessionTemplate.selectOne("noticeMapper.selectLast");
 	}
+
 
 	
 }

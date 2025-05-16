@@ -29,6 +29,8 @@ import com.erp.biztrack.training.model.service.TrainingService;
 import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
 
 import jakarta.servlet.http.HttpSession;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Controller
 
@@ -159,40 +161,139 @@ public class TrainingController {
 
 
 	// 수강신청 등록
+	// 수강신청 등록 (Controller에서 로직 처리 중심)
+
 	@RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> registerTraining(@RequestBody Map<String, Object> data, HttpSession session) {
-	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
-	    
 
 	    Map<String, Object> result = new HashMap<>();
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
 
 	    if (loginInfo == null) {
 	        result.put("status", "fail");
 	        result.put("message", "로그인이 필요합니다.");
 	        return result;
 	    }
-	    
 
-	    data.put("registrationId", loginInfo.getEmpId());
+	    String trainingId = (String) data.get("trainingId");
+	    if (trainingId == null || trainingId.trim().isEmpty()) {
+	        result.put("status", "fail");
+	        result.put("message", "교육 ID가 누락되었습니다.");
+	        return result;
+	    }
+
+	    int currentEnrollment = trainingService.getCurrentEnrollment(trainingId);
+	    int capacity = trainingService.getTrainingCapacity(trainingId);
+	    if (currentEnrollment >= capacity) {
+	        result.put("status", "fail");
+	        result.put("message", "정원이 초과되어 수강신청이 불가합니다.");
+	        return result;
+	    }
+
+	    Date startDate = trainingService.getTrainingStartDate(trainingId);
+	    Date endDate = trainingService.getTrainingEndDate(trainingId);
+	    Date today = new Date(System.currentTimeMillis());
+
+	    if (today.before(startDate) || today.after(endDate)) {
+	        result.put("status", "fail");
+	        result.put("message", "신청 가능한 기간이 아닙니다.");
+	        return result;
+	    }
+
+	    String registrationId = loginInfo.getEmpId();
+	    data.put("registrationId", registrationId);
+	    data.put("isCancelled", "N");
+	    data.put("registrationAt", new Timestamp(System.currentTimeMillis())); // 이건 여전히 Timestamp 유지
 
 	    try {
-	        trainingService.insertTrainingRegistration(data);
-	        result.put("status", "success");
-	    } catch (RuntimeException e) {
-	        result.put("status", "fail");
-	        result.put("message", e.getMessage());
+	        int insertResult = trainingService.insertTrainingRegistration(data);
+
+	        if (insertResult > 0) {
+	            result.put("status", "success");
+	        } else {
+	            result.put("status", "fail");
+	            result.put("message", "수강신청에 실패했습니다.");
+	        }
+
 	    } catch (Exception e) {
-	        result.put("status", "fail");
-	        result.put("message", "DB 오류: " + e.getMessage());
+	        String errorMsg = e.getMessage();
+	        if (errorMsg != null && errorMsg.contains("ORA-00001")) {
+	            result.put("status", "fail");
+	            result.put("message", "이미 신청하신 교육입니다.");
+	        } else {
+	            result.put("status", "fail");
+	            result.put("message", "처리 중 오류가 발생했습니다.");
+	        }
+	        e.printStackTrace();
 	    }
-	   /* } catch (Exception e) {
-	        result.put("status", "fail");
-	        result.put("message", "DB 오류: " + e.getMessage());
-	    }*/
 
 	    return result;
 	}
+
+	/*
+	 * @RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
+	 * 
+	 * @ResponseBody public Map<String, Object> registerTraining(@RequestBody
+	 * Map<String, Object> data, HttpSession session) {
+	 * 
+	 * Map<String, Object> result = new HashMap<>(); LoginDto loginInfo = (LoginDto)
+	 * session.getAttribute("loginInfo");
+	 * 
+	 * // 1. 로그인 여부 확인 if (loginInfo == null) { result.put("status", "fail");
+	 * result.put("message", "로그인이 필요합니다."); return result; }
+	 * 
+	 * // 2. 필수 파라미터 검증 String trainingId = (String) data.get("trainingId"); if
+	 * (trainingId == null || trainingId.trim().isEmpty()) { result.put("status",
+	 * "fail"); result.put("message", "교육 ID가 누락되었습니다."); return result; }
+	 * 
+	 * // 3. 파라미터 조립 String registrationId = loginInfo.getEmpId();
+	 * data.put("registrationId", registrationId); data.put("isCancelled", "N");
+	 * data.put("registrationAt", new
+	 * java.sql.Timestamp(System.currentTimeMillis()));
+	 * 
+	 * try { int insertResult = trainingService.insertTrainingRegistration(data);
+	 * 
+	 * if (insertResult > 0) { result.put("status", "success"); } else {
+	 * result.put("status", "fail"); result.put("message", "수강신청에 실패했습니다."); }
+	 * 
+	 * } catch (Exception e) { String errorMsg = e.getMessage();
+	 * 
+	 * // ORA-00001 = 중복 신청 (무결성 제약조건 위반) if (errorMsg != null &&
+	 * errorMsg.contains("ORA-00001")) { result.put("status", "fail");
+	 * result.put("message", "이미 신청하신 교육입니다."); } else { result.put("status",
+	 * "fail"); result.put("message", "처리 중 오류가 발생했습니다."); }
+	 * 
+	 * // Optional: 개발 중이라면 로그에 원본 에러 남기기 e.printStackTrace(); }
+	 * 
+	 * return result; }
+	 */
+
+
+	/*
+	 * @RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
+	 * 
+	 * @ResponseBody public Map<String, Object> registerTraining(@RequestBody
+	 * Map<String, Object> data, HttpSession session) { LoginDto loginInfo =
+	 * (LoginDto) session.getAttribute("loginInfo");
+	 * 
+	 * 
+	 * Map<String, Object> result = new HashMap<>();
+	 * 
+	 * if (loginInfo == null) { result.put("status", "fail"); result.put("message",
+	 * "로그인이 필요합니다."); return result; }
+	 * 
+	 * 
+	 * data.put("registrationId", loginInfo.getEmpId());
+	 * 
+	 * try { trainingService.insertTrainingRegistration(data); result.put("status",
+	 * "success"); } catch (RuntimeException e) { result.put("status", "fail");
+	 * result.put("message", e.getMessage()); } catch (Exception e) {
+	 * result.put("status", "fail"); result.put("message", "DB 오류: " +
+	 * e.getMessage()); }
+	 * 
+	 * return result; }
+	 */
 
 
 	// 교육 삭제

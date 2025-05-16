@@ -46,38 +46,6 @@ String trainingId = request.getParameter("id");
 	justify-content: start;
 	gap: 10px;
 }
-/*  .card {
-         padding: 2rem;
-            max-width: 800px;
-            margin: auto;
-            margin-top: 30px;
-        }
-        
-         .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-        }
-
-        .table th {
-            width: 20%;
-            background-color: #f9f9f9;
-            font-weight: 600;
-        }
-
-        .table td, .table th {
-            vertical-align: middle !important;
-        }
-
-        .card-header {
-            background-color: #2e59d9;
-            color: white;
-            font-weight: bold;
-        }
-
-        .btn-success, .btn-secondary {
-            min-width: 120px;
-        } */
 </style>
 </head>
 <body id="page-top">
@@ -248,12 +216,6 @@ String trainingId = request.getParameter("id");
 							class="icon text-white-50"> <i class="fas fa-eye"></i>
 						</span> <span class="text">수강신청 확인</span>
 						</a>
-
-
-						<%-- <button type="button" class="btn btn-primary"
-							onclick="location.href='${pageContext.request.contextPath}/training/applicant.do?trainingId=${training.trainingId}'">
-							확인</button>
- --%>
 					</div>
 			</div>
 			</form>
@@ -264,7 +226,7 @@ String trainingId = request.getParameter("id");
 	<!-- 기타 HTML 내용들 -->
 
 	<!-- 모달, 폼 등 모두 작성 후 -->
-	<script>
+	<!-- <script>
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('registrationForm');
     const step1 = document.getElementById('step1');
@@ -306,7 +268,60 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+</script> -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('registrationForm');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); // 폼 기본 제출 막기
+
+        const formData = new FormData(form);
+        const data = {};
+
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        // 필수 파라미터 추가
+        data.registrationAt = new Date().toISOString(); // 수강신청일
+        data.isCancelled = "N"; // 기본값
+
+        fetch("${pageContext.request.contextPath}/training/register.do", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("전송 실패");
+            return res.json();
+        })
+        .then(result => {
+            if (result.status === 'success') {
+                // STEP1 → STEP2 전환
+                step1.classList.add('d-none');
+                step2.classList.remove('d-none');
+
+                // 신청 확인 정보 채우기
+                document.getElementById('confirmName').innerText = data.name;
+                document.getElementById('confirmBirth').innerText = data.birth;
+                document.getElementById('confirmPhone').innerText = data.phone;
+                document.getElementById('confirmEmail').innerText = data.email;
+                document.getElementById('confirmOrg').innerText = data.org;
+            } else {
+                alert("신청 실패: " + result.message);
+            }
+        })
+        .catch(err => {
+            alert("오류 발생: " + err.message);
+        });
+    });
+});
 </script>
+
 
 </body>
 </html>

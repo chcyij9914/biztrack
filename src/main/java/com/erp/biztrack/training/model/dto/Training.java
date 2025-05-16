@@ -17,13 +17,14 @@ public class Training implements java.io.Serializable {
 	    private int capacity;
 	    private String location;
 	    private String detailContent;
+	    private int enrollmentCount;
 	    
 	    public Training() {
 	    	super();
 	    }
 
 		public Training(String trainingId, String title, String courseContent, String instructorName, Date startDate,
-				Date endDate, int capacity, String location , String detailContent) {
+				Date endDate, int capacity, String location, String detailContent, int enrollmentCount) {
 			super();
 			this.trainingId = trainingId;
 			this.title = title;
@@ -34,6 +35,7 @@ public class Training implements java.io.Serializable {
 			this.capacity = capacity;
 			this.location = location;
 			this.detailContent = detailContent;
+			this.enrollmentCount = enrollmentCount;
 		}
 
 		public String getTrainingId() {
@@ -99,7 +101,7 @@ public class Training implements java.io.Serializable {
 		public void setLocation(String location) {
 			this.location = location;
 		}
-		
+
 		public String getDetailContent() {
 			return detailContent;
 		}
@@ -108,14 +110,20 @@ public class Training implements java.io.Serializable {
 			this.detailContent = detailContent;
 		}
 
+		public int getEnrollmentCount() {
+			return enrollmentCount;
+		}
+
+		public void setEnrollmentCount(int enrollmentCount) {
+			this.enrollmentCount = enrollmentCount;
+		}
+
 		@Override
 		public String toString() {
 			return "Training [trainingId=" + trainingId + ", title=" + title + ", courseContent=" + courseContent
 					+ ", instructorName=" + instructorName + ", startDate=" + startDate + ", endDate=" + endDate
-					+ ", capacity=" + capacity + ", location=" + location + ", detailContent="+ detailContent+" ]";
+					+ ", capacity=" + capacity + ", location=" + location + ", detailContent=" + detailContent
+					+ ", enrollmentCount=" + enrollmentCount + "]";
 		}
-
-		
-	
 	    
 }

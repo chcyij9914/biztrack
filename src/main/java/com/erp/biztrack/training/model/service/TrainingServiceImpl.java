@@ -1,5 +1,6 @@
 package com.erp.biztrack.training.model.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,28 +178,57 @@ public class TrainingServiceImpl implements TrainingService {
 		
 	}
 	
+//	@Override
+//	public boolean insertTrainingRegistration(TrainingRegistration reg) {
+//	    Map<String, Object> param = new HashMap<>();
+//	    param.put("registrationId", reg.getRegistrationId());
+//	    param.put("trainingId", reg.getTrainingId());
+//
+//	    int count = trainingDao.checkDuplicateRegistration(param);
+//
+//	    if (count > 0) {
+//	        // 이미 신청했으므로 삽입하지 않음
+//	        return false;
+//	    }
+//
+//	    // 중복 아니면 등록
+//	    return trainingDao.insertTrainingRegistration(reg) > 0;
+//	}
+	
+	@Override
+	public int insertTrainingRegistration(Map<String, Object> data) {
+	    return trainingDao.insertTrainingRegistration(data);
+	}
+
 	@Override
 	public boolean insertTrainingRegistration(TrainingRegistration reg) {
-	    Map<String, Object> param = new HashMap<>();
-	    param.put("registrationId", reg.getRegistrationId());
-	    param.put("trainingId", reg.getTrainingId());
-
-	    int count = trainingDao.checkDuplicateRegistration(param);
-
-	    if (count > 0) {
-	        // 이미 신청했으므로 삽입하지 않음
-	        return false;
-	    }
-
-	    // 중복 아니면 등록
-	    return trainingDao.insertTrainingRegistration(reg) > 0;
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public void insertTrainingRegistration(Map<String, Object> data) {
-		
+	public int getCurrentEnrollment(String trainingId) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+	@Override
+	public int getTrainingCapacity(String trainingId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Date getTrainingStartDate(String trainingId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date getTrainingEndDate(String trainingId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 }
