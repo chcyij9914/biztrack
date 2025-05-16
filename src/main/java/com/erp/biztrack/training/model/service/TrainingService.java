@@ -50,7 +50,7 @@ public interface TrainingService {
 	int insertRegistration(TrainingRegistration registration);
 
 	void registerTraining(Map<String, String> paramMap) throws Exception;
-	void insertTrainingRegistration(Map<String, String> param);
+	/* void insertTrainingRegistration(Map<String, String> param); */
 	
 	List<Map<String, Object>> getAllRegistrations();
 	List<Map<String, Object>> getTrainingStatusList();
@@ -63,9 +63,16 @@ public interface TrainingService {
 	
 	public ArrayList<Training> getTrainingsByRegistrant(String email); 
 	List<Training> getTrainingsByEmail(String loginEmail);
-	List<Map<String, Object>> getMyTrainingListByEmail(String email); 
+	List<Map<String, Object>> getMyTrainingListByEmail(String email);
 	
+	int getEnrollmentCount(String trainingId);
+	List<Training> getTrainingListByEmpId(String empId);
 	
+	/* int insertTrainingRegistration(Map<String, Object> paramMap); */
+	
+	void insertTrainingRegistration(Map<String, Object> data);
+	boolean insertTrainingRegistration(TrainingRegistration reg);
+
 	
 
 	

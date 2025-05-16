@@ -115,6 +115,7 @@ public class Training implements java.io.Serializable {
 					+ ", capacity=" + capacity + ", location=" + location + ", detailContent="+ detailContent+" ]";
 		}
 
+		
 	
 	    
 }

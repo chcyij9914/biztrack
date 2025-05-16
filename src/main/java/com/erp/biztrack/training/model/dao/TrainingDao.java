@@ -92,9 +92,11 @@ public class TrainingDao {
 	    return sqlSessionTemplate.insert("trainingMapper.insertRegistration", registration);
 	}
 
-	public Object insertTrainingRegistration(Map<String, String> param) {
-		return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", param);
-	}
+	/*
+	 * public Object insertTrainingRegistration(Map<String, String> param) { return
+	 * sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration",
+	 * param); }
+	 */
 	
 	public void insertApplicant(Training training) {
 		sqlSessionTemplate.insert(NAMESPACE + "insertApplicant", training);
@@ -119,7 +121,27 @@ public class TrainingDao {
 	public List<Map<String, Object>> getTrainingListByEmail(String email) {
 		 return  sqlSessionTemplate.selectList(NAMESPACE + "getTrainingListByEmail", email);
 	}
+
+	public int getEnrollmentCount(String trainingId) {
+		 return sqlSessionTemplate.selectOne("trainingMapper.getEnrollmentCount", trainingId);
+	}
+
+	public List<Training> getTrainingListByEmpId(String empId) {
+		return sqlSessionTemplate.selectList(NAMESPACE + "getTrainingListByEmpId", empId);
+	}
 	 
+	public int insertTrainingRegistration(Map<String, Object> paramMap) {
+	    return sqlSessionTemplate.insert("trainingMapper.insertTrainingRegistration", paramMap);
+	}
+
+	public int checkDuplicateRegistration(Map<String, Object> param) {
+	    return sqlSessionTemplate.selectOne("trainingMapper.checkDuplicateRegistration", param);
+	}
+
+	public int insertTrainingRegistration(TrainingRegistration reg) {
+		return sqlSessionTemplate.selectOne("trainingMapper.insertTrainingRegistration", reg);
+	}
+
 
 	
 }

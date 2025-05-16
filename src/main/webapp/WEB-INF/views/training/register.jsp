@@ -80,8 +80,8 @@
 							action="${pageContext.request.contextPath}/training/insert.do"
 							enctype="multipart/form-data">
 
-																			
-									<%-- <!-- 교육 아이디 -->
+
+							<%-- <!-- 교육 아이디 -->
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">교육 아이디 :</label>
 								<div class="col-sm-10">
@@ -90,77 +90,77 @@
 								</div>
 							</div> --%>
 
-									<!-- 교육명 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">교육 명 :</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" name="title"
-												value="${training.title}" required>
-										</div>
-									</div>
+							<!-- 교육명 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">교육 명 :</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="title"
+										value="${training.title}" required>
+								</div>
+							</div>
 
-									<!-- 교육 내용 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">교육 내용 :</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" name="courseContent"
-												value="${training.courseContent}" required>
-										</div>
-									</div>
+							<!-- 교육 내용 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">교육 내용 :</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="courseContent"
+										value="${training.courseContent}" required>
+								</div>
+							</div>
 
-									<!-- 강사명 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">강사명 :</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" name="instructorName"
-												value="${training.instructorName}">
-										</div>
-									</div>
+							<!-- 강사명 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">강사명 :</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="instructorName"
+										value="${training.instructorName}">
+								</div>
+							</div>
 
-									<!-- 시작일 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">시작일 :</label>
-										<div class="col-sm-5">
-											<input type="date" class="form-control" name="startDate"
-												value="${training.startDate}">
-										</div>
-									</div>
+							<!-- 시작일 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">시작일 :</label>
+								<div class="col-sm-5">
+									<input type="date" class="form-control" name="startDate"
+										value="${training.startDate}">
+								</div>
+							</div>
 
-									<!-- 종료일 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">종료일 :</label>
-										<div class="col-sm-5">
-											<input type="date" class="form-control" name="endDate"
-												value="${training.endDate}">
-										</div>
-									</div>
+							<!-- 종료일 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">종료일 :</label>
+								<div class="col-sm-5">
+									<input type="date" class="form-control" name="endDate"
+										value="${training.endDate}">
+								</div>
+							</div>
 
-									<!-- 정원 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">정원 :</label>
-										<div class="col-sm-10">
-											<input type="number" class="form-control" name="capacity"
-												value="${training.capacity}">
-										</div>
-									</div>
+							<!-- 정원 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">정원 :</label>
+								<div class="col-sm-10">
+									<input type="number" class="form-control" name="capacity"
+										value="${training.capacity}">
+								</div>
+							</div>
 
-									<!-- 교육 장소 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">교육 장소 :</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" name="location"
-												value="${training.location}">
-										</div>
-									</div>
+							<!-- 교육 장소 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">교육 장소 :</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="location"
+										value="${training.location}">
+								</div>
+							</div>
 
-									<!-- 상세 내용 -->
-									<div class="form-group row">
-										<label class="col-sm-2 col-form-label">교육 계획서 :</label>
-										<div class="col-sm-10">
-											<textarea class="form-control" name="detailContent" rows="4">${training.detailContent}</textarea>
-										</div>
-									</div>
-									<!-- 
+							<!-- 상세 내용 -->
+							<div class="form-group row">
+								<label class="col-sm-2 col-form-label">교육 계획서 :</label>
+								<div class="col-sm-10">
+									<textarea class="form-control" name="detailContent" rows="4">${training.detailContent}</textarea>
+								</div>
+							</div>
+							<!-- 
 							파일 업로드 (선택사항)
 							<div class="form-group row">
 								<label class="col-sm-2 col-form-label">자료 업로드 :</label>
@@ -169,14 +169,12 @@
 								</div>
 							</div> -->
 
-									<!-- 제출 버튼 -->
-									<div class="form-group row">
-										<div class="col-sm-12 text-center">
-											<button type="submit" class="btn btn-primary px-5">등록</button>
-										</div>
-									</div>
-
-
+							<!-- 제출 버튼 -->
+							<div class="form-group row">
+								<div class="col-sm-12 text-center">
+									<button type="submit" class="btn btn-primary px-5">등록</button>
+								</div>
+							</div>
 					</div>
 
 					</form>

@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.erp.biztrack.common.Paging;
 import com.erp.biztrack.common.Search;
+import com.erp.biztrack.login.model.dto.LoginDto;
 import com.erp.biztrack.training.model.dto.Training;
 import com.erp.biztrack.training.model.service.TrainingService;
 import com.erp.biztrack.trainingregistration.model.dto.TrainingRegistration;
@@ -38,31 +39,32 @@ public class TrainingController {
 	@Autowired
 	private TrainingService trainingService;
 
-	// 교육 등록 페이지로 이동
-	@RequestMapping("/training/register.do")
-	public String registerPage() {
-	    return "training/register";  
-	}
-	
-	// 교육 등록 
+	/*
+	 * // 교육 등록 페이지로 이동
+	 * 
+	 * @RequestMapping("/training/register.do") public String registerPage() {
+	 * return "training/register"; }
+	 */
+
+	// 교육 등록
 	@RequestMapping(value = "/training/insert.do", method = RequestMethod.POST)
-	public String insertTraining(
-			  Training training, Model model) {
+	public String insertTraining(Training training, Model model) {
 		logger.info("insert.do : " + training);
-	    
-	    //  ID 생성
-	    training.setTrainingId(generateTrainingId());
-	    
-	    int result = trainingService.insertTraining(training);
-	    
-	    if (result > 0) {
-	    	//새 교육 등록 성공시, 교육 목록 페이지로 이동 처리
-	        return "redirect:/list.do";  
-	    } else {
-	        model.addAttribute("message", " 새 교육 등록 실패!");
-	        return "common/error";
-	    }
+
+		// ID 생성
+		training.setTrainingId(generateTrainingId());
+
+		int result = trainingService.insertTraining(training);
+
+		if (result > 0) {
+			// 새 교육 등록 성공시, 교육 목록 페이지로 이동 처리
+			return "redirect:/list.do";
+		} else {
+			model.addAttribute("message", " 새 교육 등록 실패!");
+			return "common/error";
+		}
 	}
+
 	private String generateTrainingId() {
 		int random = (int) (Math.random() * 1000);
 		return "TR" + String.format("%03d", random);
@@ -98,56 +100,99 @@ public class TrainingController {
 	}
 
 	// 교육 상세보기 페이지로 이동
-	@RequestMapping("training/detail.do")
+	@RequestMapping("/training/detail.do")
 	public ModelAndView trainingDetailMethod(@RequestParam("id") String trainingId, ModelAndView mv) {
 		logger.info("detail.do : " + trainingId);
 
 		System.out.println("받은 ID: " + trainingId);
 
-		Training training = trainingService.selectTraining(trainingId);
+		Training training = trainingService.selectTraining(trainingId); // 상세 조회
+
+		int enrollmentCount = trainingService.getEnrollmentCount(trainingId); // 수강 인원
+		boolean isFull = enrollmentCount >= training.getCapacity(); // 정원 확인
 
 		if (training != null) {
 			mv.addObject("training", training);
 			mv.setViewName("training/detail");
+			mv.addObject("isFull", isFull);
 		} else {
 			mv.addObject("message", trainingId + "번 교육 상세 조회 실패!");
 			mv.setViewName("common/error");
 		}
-
 		return mv;
 	}
-	
+
+	/*
+	 * @RequestMapping("training/detail.do") public ModelAndView
+	 * trainingDetailMethod(@RequestParam("id") String trainingId, ModelAndView mv)
+	 * { logger.info("detail.do : " + trainingId);
+	 * 
+	 * System.out.println("받은 ID: " + trainingId);
+	 * 
+	 * Training training = trainingService.selectTraining(trainingId);
+	 * 
+	 * if (training != null) { mv.addObject("training", training);
+	 * mv.setViewName("training/detail"); } else { mv.addObject("message",
+	 * trainingId + "번 교육 상세 조회 실패!"); mv.setViewName("common/error"); }
+	 * 
+	 * return mv; }
+	 */
+
 // 수강신청 목록 조회
 	@RequestMapping("training/registrationView.do")
 	public ModelAndView trainingRegistrationView(@RequestParam("id") String trainingId, ModelAndView mv) {
-	    Training training = trainingService.selectTraining(trainingId); // 동일 서비스 호출
-	    if (training != null) {
-	        mv.addObject("training", training);
-	        mv.setViewName("training/registrationView");
-	    } else {
-	        mv.addObject("message", trainingId + "번 교육 정보를 불러올 수 없습니다.");
-	        mv.setViewName("common/error");
-	    }
-	    return mv;
+		Training training = trainingService.selectTraining(trainingId); // 동일 서비스 호출
+		if (training != null) {
+			mv.addObject("training", training);
+			mv.setViewName("training/registrationView");
+		} else {
+			mv.addObject("message", trainingId + "번 교육 정보를 불러올 수 없습니다.");
+			mv.setViewName("common/error");
+		}
+		return mv;
 	}
 	
+	@RequestMapping(value = "/training/register.do", method = RequestMethod.GET)
+	public String registerPage() {
+	    return "training/register"; // JSP 페이지
+	}
+
+
 	// 수강신청 등록
-	@PostMapping("/training/register.do")
+	@RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> registerTraining(@RequestBody Map<String, String> param) {
+	public Map<String, Object> registerTraining(@RequestBody Map<String, Object> data, HttpSession session) {
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    
+
 	    Map<String, Object> result = new HashMap<>();
+
+	    if (loginInfo == null) {
+	        result.put("status", "fail");
+	        result.put("message", "로그인이 필요합니다.");
+	        return result;
+	    }
+	    
+
+	    data.put("registrationId", loginInfo.getEmpId());
+
 	    try {
-	        trainingService.insertTrainingRegistration(param);
+	        trainingService.insertTrainingRegistration(data);
 	        result.put("status", "success");
-	    } catch (Exception e) {
+	    } catch (RuntimeException e) {
 	        result.put("status", "fail");
 	        result.put("message", e.getMessage());
+	    } catch (Exception e) {
+	        result.put("status", "fail");
+	        result.put("message", "DB 오류: " + e.getMessage());
 	    }
+	   /* } catch (Exception e) {
+	        result.put("status", "fail");
+	        result.put("message", "DB 오류: " + e.getMessage());
+	    }*/
+
 	    return result;
 	}
-	
-	// 수강신청 정원 비활성화
-
 
 
 	// 교육 삭제
@@ -155,47 +200,43 @@ public class TrainingController {
 	public String deleteTraining(@RequestParam("trainingId") String trainingId, Model model) {
 		logger.info("deleteSelected.do : " + trainingId);
 
-	    int result = trainingService.deleteTraining(trainingId);
+		int result = trainingService.deleteTraining(trainingId);
 
-	    if (result > 0) {
-	        // 삭제 성공 시 목록 페이지로 이동
-	        return "redirect:/list.do";
-	    } else {
-	        model.addAttribute("message", "교육 삭제 실패!");
-	        return "common/error";
-	    }
+		if (result > 0) {
+			// 삭제 성공 시 목록 페이지로 이동
+			return "redirect:/list.do";
+		} else {
+			model.addAttribute("message", "교육 삭제 실패!");
+			return "common/error";
+		}
 	}
-	
-	// 교육 수정 
+
+	// 교육 수정
 	@RequestMapping(value = "training/update.do", method = RequestMethod.POST)
 	public String updateTraining(@ModelAttribute Training training, Model model) {
-	    logger.info("update.do : " + training);
+		logger.info("update.do : " + training);
 
-	    int result = trainingService.updateTraining(training); // 전체 Training 객체로 수정
+		int result = trainingService.updateTraining(training); // 전체 Training 객체로 수정
 
-	    if (result > 0) {
-	        return "redirect:/list.do"; // 수정 성공 시 목록 이동
-	    } else {
-	        model.addAttribute("message", "교육 수정 실패!");
-	        return "common/error";
-	    }
+		if (result > 0) {
+			return "redirect:/list.do"; // 수정 성공 시 목록 이동
+		} else {
+			model.addAttribute("message", "교육 수정 실패!");
+			return "common/error";
+		}
 	}
 
 	// 교육 평가 분석 페이지로 이동
 	@RequestMapping("training/analysis.do")
 	public String AnalysisPage(Model model) {
-	    // 분석 데이터 로딩 로직 작성
-	    return "training/analysis";
+		// 분석 데이터 로딩 로직 작성
+		return "training/analysis";
 	}
-	
-	
+
 	// 교육 검색 페이지
 	@RequestMapping("training/searchAll.do")
-	public ModelAndView trainingSearchAllMethod(
-			ModelAndView mv, 
-			@RequestParam("action") String action,
-			@RequestParam("keyword") String keyword,
-			@RequestParam(name = "page", required = false) String page,
+	public ModelAndView trainingSearchAllMethod(ModelAndView mv, @RequestParam("action") String action,
+			@RequestParam("keyword") String keyword, @RequestParam(name = "page", required = false) String page,
 			@RequestParam(name = "limit", required = false) String slimit) {
 		logger.info("searchAll.do : " + keyword);
 		logger.info("searchAll.do : " + action);
@@ -251,47 +292,54 @@ public class TrainingController {
 
 		return mv;
 	}
-	
-	
+
+	// 수강신청 내역 페이지 
 	@RequestMapping("/training/applicant.do")
-	public String viewApplicant(@RequestParam("trainingId") String trainingId, Model model) {
-		Training training = trainingService.getTrainingById(trainingId);
+	public ModelAndView viewMyTrainingList(HttpSession session) {
+	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	    if (loginInfo == null) return new ModelAndView("redirect:/login.do");
 
-		// 단일 객체를 리스트로 감싸서 넘김
-		List<Training> trainingList = new ArrayList<>();
-		trainingList.add(training);
+	    List<Training> trainingList = trainingService.getTrainingListByEmpId(loginInfo.getEmpId());
+	    ModelAndView mv = new ModelAndView("training/applicant");
+	    mv.addObject("trainingList", trainingList);
+	    return mv;
+	}
 
-		model.addAttribute("trainingList", trainingList); // ← 이름 맞춰줌!
+	/*
+	 * @RequestMapping("/training/applicant.do") public ModelAndView
+	 * viewTrainingApplicant(
+	 * 
+	 * @RequestParam(value = "trainingId", required = false) String trainingId,
+	 * HttpSession session ) { ModelAndView mv = new ModelAndView(); LoginDto
+	 * loginInfo = (LoginDto) session.getAttribute("loginInfo");
+	 * 
+	 * if (loginInfo == null) { mv.setViewName("redirect:/login.do"); return mv; }
+	 * 
+	 * String empId = loginInfo.getEmpId(); // 사원번호 기준 List<Training> list;
+	 * 
+	 * if (trainingId != null && !trainingId.isEmpty()) { Training training =
+	 * trainingService.selectTraining(trainingId); if (training == null) {
+	 * mv.setViewName("common/error"); mv.addObject("msg", "해당 교육 정보를 불러올 수 없습니다.");
+	 * return mv; } list = List.of(training); } else { list =
+	 * trainingService.getTrainingListByEmpId(empId); }
+	 * 
+	 * mv.addObject("trainingList", list); mv.setViewName("training/applicant");
+	 * return mv; }
+	 */
+
+
+
+	
+	@RequestMapping("/training/myList.do")
+	public String viewMyTrainingList(HttpSession session, Model model) {
+		String loginEmail = (String) session.getAttribute("loginEmail");
+		if (loginEmail == null) {
+			return "redirect:/login.do";
+		}
+
+		List<Training> myList = trainingService.getTrainingsByEmail(loginEmail);
+		model.addAttribute("trainingList", myList);
 		return "training/applicant";
 	}
-	
-	   @RequestMapping("/applicant.do")
-	    public String showTrainingApplicantList(HttpSession session, Model model) {
-	        // 세션에서 사용자 이메일을 가져옴
-	        String email = (String) session.getAttribute("loginEmail");
-
-	        if (email != null && !email.isEmpty()) {
-	            // 로그인한 사용자의 이메일로 해당 사용자가 신청한 교육 목록 조회
-	            List<Map<String, Object>> myCourses = trainingService.getMyTrainingListByEmail(email);
-	            model.addAttribute("trainingList", myCourses);
-	        }
-
-	        return "training/applicant"; // applicant.jsp로 이동
-	    }
-
-
-	@RequestMapping("/training/myList.do") 
-		  public String viewMyTrainingList(HttpSession session, Model model) { String loginEmail =
-		  (String) session.getAttribute("loginEmail");
-              if (loginEmail == null) { 
-			  return "redirect:/login.do";
-			  }
-		 
-	  
-				List<Training> myList = trainingService.getTrainingsByEmail(loginEmail);
-				model.addAttribute("trainingList", myList);
-				return "training/applicant";
-			}
-		
 
 }

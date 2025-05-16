@@ -139,7 +139,7 @@ String trainingId = request.getParameter("id");
 								<button type="button" class="btn btn-success"
 									data-toggle="modal" data-target="#registrationModal">
 									<i class="fas fa-check"></i> 수강신청 입력
-								</button> 
+								</button>
 								<a href="javascript:history.back();" class="btn btn-secondary">
 									<i class="fas fa-arrow-left"></i> 이전 페이지
 								</a>
@@ -242,15 +242,18 @@ String trainingId = request.getParameter("id");
 							</table>
 						</div>
 
-						<%-- <button type="button" class="btn btn-primary"
-							onclick="location.href='${pageContext.request.contextPath}/training/applicant.do?trainingId=<%=trainingId%>'">
-							확인</button>
- --%>
+						<a
+							href="${pageContext.request.contextPath}/training/applicant.do?trainingId=${training.trainingId}"
+							class="btn btn-info btn-icon-split"> <span
+							class="icon text-white-50"> <i class="fas fa-eye"></i>
+						</span> <span class="text">수강신청 확인</span>
+						</a>
 
-						<button type="button" class="btn btn-primary"
+
+						<%-- <button type="button" class="btn btn-primary"
 							onclick="location.href='${pageContext.request.contextPath}/training/applicant.do?trainingId=${training.trainingId}'">
 							확인</button>
-
+ --%>
 					</div>
 			</div>
 			</form>
