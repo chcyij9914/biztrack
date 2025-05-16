@@ -94,7 +94,11 @@ public class NoticeDao {
 	public Notice selectLast() {
 		return sqlSessionTemplate.selectOne("noticeMapper.selectLast");
 	}
-
-
+	
+	//메인페이지 최근공지글 5개---------------------------------------------------
+	public ArrayList<Notice> selectList5(Paging paging){
+		List<Notice> list = sqlSessionTemplate.selectList("noticeMapper.selectList5", paging);
+		return (ArrayList<Notice>)list;
+	}
 	
 }

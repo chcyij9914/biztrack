@@ -452,4 +452,42 @@ public class NoticeController {
 		return mv;
 	}
 
+	
+	//메인페이지 최근공지 5개!!-------------------------------------------------------------------------
+	@RequestMapping("nlist5.do")
+	public ModelAndView noticeListMethod5(ModelAndView mv,
+	                                     @RequestParam(name = "page", required = false) String page,
+	                                     @RequestParam(name = "limit", required = false) String slimit) {
+	    int currentPage = 1;
+	    if (page != null) {
+	        currentPage = Integer.parseInt(page);
+	    }
+
+	    int limit = 5;
+	    if (slimit != null) {
+	        limit = Integer.parseInt(slimit);
+	    }
+
+	    // 전체 공지 수 (중요공지 포함 전체 count)
+	    int listCount = noticeService.selectListCount();
+
+	    // 페이징 설정
+	    Paging paging = new Paging(listCount, limit, currentPage, "nlist.do");
+	    paging.calculate();
+
+	    // 공지 리스트
+	    ArrayList<Notice> List = noticeService.selectList5(paging);  
+
+	    // 뷰에 전달
+	    if (!List.isEmpty()) {
+	        mv.addObject("noticeList", List); 
+	        mv.addObject("paging", paging);
+	        mv.setViewName("common/notice-fragment"); 
+	    } else {
+	        mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
+	        mv.setViewName("common/error");
+	    }
+
+	    return mv;
+	}
 }

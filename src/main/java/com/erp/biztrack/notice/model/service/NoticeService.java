@@ -30,6 +30,8 @@ public interface NoticeService {
 		ArrayList<Notice> getAllNotices();
 		ArrayList<Notice> selectImportantList();
 		ArrayList<Notice> selectNoticeList(String page);
-	
+		
+		//메인페이지 공지 최근 5개------------------------------------------------
+		ArrayList<Notice> selectList5(Paging paging);
 		
 	}
