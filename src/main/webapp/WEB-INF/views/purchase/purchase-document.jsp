@@ -113,7 +113,7 @@
 						</div>
 						<br>
 
-						<!-- 하단: 문서 탭 버튼 (따로 줄 바꿈) -->
+						<!-- 문서 탭 버튼 -->
 						<div class="mt-2">
 							<a
 								href="${pageContext.request.contextPath}/purchase/purchase-document.do"
