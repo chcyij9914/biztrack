@@ -172,7 +172,7 @@ input[readonly] {
 							success : function(response) {
 								if (response === 'success') {
 									alert("삭제되었습니다.");
-									location.reload();
+					                window.close(); // 상세페이지 창 닫기
 								} else {
 									alert("삭제 실패: " + response);
 								}

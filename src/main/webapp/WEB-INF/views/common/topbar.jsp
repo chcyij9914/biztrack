@@ -20,12 +20,6 @@
   <!-- Topbar Navbar -->
   <ul class="navbar-nav ml-auto">
 
-    <!-- 🔔 알림 아이콘 -->
-    <li class="nav-item dropdown no-arrow mx-1">
-      <a class="nav-link" href="#" id="alertsDropdown" role="button">
-        <i class="fas fa-bell fa-fw"></i>
-      </a>
-    </li>
 
     <!-- 사용자 정보 (이미지 제거됨) -->
     <li class="nav-item dropdown no-arrow">
@@ -39,9 +33,6 @@
 
       <!-- 드롭다운 - 사용자 메뉴 -->
       <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-        <a class="dropdown-item" href="${pageContext.request.contextPath}/main.do">
-          <i class="fas fa-user-cog fa-sm fa-fw mr-2 text-gray-400"></i> 마이페이지
-        </a>
         <a class="dropdown-item" href="${pageContext.request.contextPath}/changePassword.do">
           <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i> 비밀번호 변경
         </a>

@@ -26,6 +26,7 @@ import com.erp.biztrack.product.model.dto.Product;
 import com.erp.biztrack.product.model.service.ProductService;
 import com.erp.biztrack.subcategory.model.dto.SubCategory;
 import com.erp.biztrack.subcategory.model.service.SubCategoryService;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Controller
 @RequestMapping("/product")
@@ -191,15 +192,18 @@ public class ProductController {
 	}
 
 	// 상품 삭제
-	@RequestMapping("delete.do")
+	@RequestMapping(value = "delete.do", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String deleteProduct(@RequestParam String productId) {
 		try {
 			int result = productService.deleteProduct(productId);
 			return (result > 0) ? "success" : "fail";
-		} catch (ProductException e) {
-			logger.error("상품 삭제 실패", e);
-			return "error: " + e.getMessage();
+		} catch (DataIntegrityViolationException e) {
+			logger.error("무결성 제약 위반 - 삭제 불가", e);
+			return "이미 사용 중인 상품은 삭제할 수 없습니다.";
+		} catch (Exception e) {
+			logger.error("예상치 못한 오류", e);
+			return "error: 서버 오류가 발생했습니다.";
 		}
 	}
 
