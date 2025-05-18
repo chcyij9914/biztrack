@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,7 +51,7 @@ public class ProductController {
 
 	// 뷰 페이지 내보내기용 메소드 -----------------------------------------------------
 	// 공지사항 전체 목록보기 요청 처리용 (페이징 처리 : 한 페이지에 10개씩 출력 처리)
-	@RequestMapping("product-list.do")
+	@RequestMapping("/product-list.do")
 	public ModelAndView productListMethod(ModelAndView mv, @RequestParam(name = "page", required = false) String page,
 			@RequestParam(name = "limit", required = false) String slimit) {
 		// 페이징 처리
@@ -93,7 +94,7 @@ public class ProductController {
 	}
 
 	// 상품 상세보기
-	@RequestMapping("product-detail.do")
+	@RequestMapping("/product-detail.do")
 	public ModelAndView productDetail(@RequestParam("productId") String productId, ModelAndView mv) {
 		Product detail = productService.selectProductDetail(productId);
 		List<Map<String, Object>> historyList = productService.getProductHistory(productId);
@@ -116,27 +117,27 @@ public class ProductController {
 	}
 
 	// 상품 추가페이지
-	@RequestMapping("new-product.do")
+	@RequestMapping("/new-product.do")
 	public String moveNewProductPage() {
 		return "product/new-product";
 	}
 
 	// 카테고리 리스트 가져오기
-	@RequestMapping("category-list.do")
+	@RequestMapping("/category-list.do")
 	@ResponseBody
 	public ArrayList<Category> getCategoryList() {
 		return categoryService.selectAll();
 	}
 
 	// 서브카테고리 리스트 가져오기
-	@RequestMapping("subcategory-list.do")
+	@RequestMapping("/subcategory-list.do")
 	@ResponseBody
 	public ArrayList<SubCategory> getSubCategoryList() {
 		return subcategoryService.selectAll();
 	}
 
 	// 상품 등록
-	@RequestMapping("insert.do")
+	@RequestMapping("/insert.do")
 	@ResponseBody
 	public String insertProduct(@RequestBody Product product) {
 		try {
@@ -167,7 +168,7 @@ public class ProductController {
 	}
 
 	// 검색기능-이름
-	@RequestMapping("csearchName.do")
+	@RequestMapping("/csearchName.do")
 	public String searchProductByName(@RequestParam("keyword") String keyword, Model model) {
 		List<Product> result = productService.searchByName(keyword);
 		model.addAttribute("list", result);
@@ -175,7 +176,7 @@ public class ProductController {
 	}
 
 	// 검색기능-카테고리
-	@RequestMapping("csearchCategory.do")
+	@RequestMapping("/csearchCategory.do")
 	public String searchProductByCategory(@RequestParam("categoryId") String categoryId, Model model) {
 		List<Product> result = productService.searchByCategory(categoryId);
 		List<Category> categoryList = categoryService.selectAll();
@@ -185,7 +186,7 @@ public class ProductController {
 	}
 
 	// 수정기능
-	@PostMapping("update.do")
+	@RequestMapping(value="/update.do", method=RequestMethod.POST)
 	public String updateProduct(@ModelAttribute Product product) {
 		productService.updateProduct(product);
 		return "redirect:/product/product-detail.do?productId=" + product.getProductId();
@@ -208,7 +209,7 @@ public class ProductController {
 	}
 
 	// 상품 상세보기
-	@GetMapping("/product/product-detail.do")
+	@RequestMapping("/product/product-detail.do")
 	public String getProductDetail(@RequestParam("productId") String productId, Model model) {
 		try {
 			Product product = productService.getProductById(productId);

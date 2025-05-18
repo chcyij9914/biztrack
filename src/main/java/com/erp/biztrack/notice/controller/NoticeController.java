@@ -487,7 +487,6 @@ public class NoticeController {
 	        mv.addObject("message", currentPage + "페이지에 출력할 공지글 목록 조회 실패!");
 	        mv.setViewName("common/error");
 	    }
-
 	    return mv;
 	}
 }

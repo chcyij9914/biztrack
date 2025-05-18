@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,7 +64,7 @@ public class InboundController {
 
 	// 입고서 조회 -----------------------------------------------------
 	// 문서 개수 카운팅 및 조회 
-	@RequestMapping("inbound-document.do")
+	@RequestMapping("/inbound-document.do")
 	public ModelAndView selectDocumentList(@RequestParam(name = "type", defaultValue = "I") String type,
 			@RequestParam(name = "page", required = false) String page,
 			@RequestParam(name = "limit", required = false) String slimit, HttpSession session, ModelAndView mv) {
@@ -117,7 +118,7 @@ public class InboundController {
 
 	// 검색기능-------------------------------------------------------------------------------------
 	// 검색기능 - 문서번호로 검색
-	@RequestMapping("searchByDocumentId.do")
+	@RequestMapping("/searchByDocumentId.do")
 	public String searchByDocumentId(@RequestParam("keyword") String documentId,
 	                                 HttpSession session,
 	                                 Model model) {
@@ -140,7 +141,7 @@ public class InboundController {
 	}
 
 	// 검색기능 - 제목으로 검색
-	@RequestMapping("searchByTitle.do")
+	@RequestMapping("/searchByTitle.do")
 	public String searchByTitle(@RequestParam("keyword") String title,
 	                                 HttpSession session,
 	                                 Model model) {
@@ -163,7 +164,7 @@ public class InboundController {
 	}
 	
 	// 검색기능 - 상태로 검색
-	@RequestMapping("searchByStatus.do")
+	@RequestMapping("/searchByStatus.do")
 	public String searchByStatus(@RequestParam("status") String status,
 	                                 HttpSession session,
 	                                 Model model) {
@@ -186,24 +187,18 @@ public class InboundController {
 	}
 
 
-	// -------------------------------------------------------------------------------------------------
-	// 입고 작성
-	@RequestMapping("new-inbound.do")
-	public String moveNewInboundPage() {
-		return "inbound/new-inbound";
-	}
 
 	// 입고서 등록 -------------------------------------------
-	// 입고서 등록(GET)
-	@GetMapping("new-inbound.do")
+	// 입고서 등록
+	@RequestMapping("/new-inbound.do")
 	public String showDocumentInsertForm(Model model) {
 		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
 		model.addAttribute("productList", productService.selectAll()); // 상품 목록
 		return "inbound/new-inbound"; // JSP 경로adminServiceImpl
 	}
 
-	// 입고서 등록(POST)
-	@PostMapping("new-inbound.do")
+	// 입고서 등록
+	@RequestMapping(value="/new-inbound.do", method=RequestMethod.POST)
 	public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
 			@RequestParam("approver2Info") String approver2Id,
 			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request,
@@ -269,7 +264,7 @@ public class InboundController {
 	
 
 	// 문서 상세보기 이동용 컨트롤러------------------------------------------------------------
-	@GetMapping("inbound-detail.do")
+	@RequestMapping("/inbound-detail.do")
 	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
 
 		// 1. 문서 기본 정보 조회
@@ -301,7 +296,7 @@ public class InboundController {
 	}
 
 	// 문서 파일 다운로드
-	@RequestMapping("documentDownload.do")
+	@RequestMapping("/documentDownload.do")
 	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
 			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
 
@@ -318,8 +313,8 @@ public class InboundController {
 	}
 
 	// 문서 수정 관련-------------------------------
-	// 문서 수정폼 이동 (GET)
-	@GetMapping("inbound-update.do")
+	// 문서 수정폼 이동 
+	@RequestMapping("/inbound-update.do")
 	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
 
 		// 문서 기본 정보
@@ -349,7 +344,7 @@ public class InboundController {
 		return "inbound/inbound-update";
 	}
 
-	@PostMapping("inbound-update.do")
+	@RequestMapping(value="/inbound-update.do", method=RequestMethod.POST)
 	public String updateDocument(@ModelAttribute DocumentDTO document, @ModelAttribute ApproveDTO approve,
 			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
 			@RequestParam(name = "deleteFlag", required = false) String deleteFlag,
@@ -418,7 +413,7 @@ public class InboundController {
 		return "redirect:/inbound/inbound-detail.do?documentId=" + document.getDocumentId();
 	}
 
-	@GetMapping("documentManEmpInfo.do")
+	@RequestMapping("/documentManEmpInfo.do")
 	@ResponseBody
 	public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
 		Employee emp = employeeService.selectEmpById(empId);
@@ -432,7 +427,7 @@ public class InboundController {
 		return result;
 	}
 
-	@GetMapping("documentDelete.do")
+	@RequestMapping("/documentDelete.do")
 	public String deleteDocument(@RequestParam("documentId") String documentId) {
 		// 재고 및 단가 복원
 		inboundService.deleteInbound(documentId);
@@ -448,7 +443,7 @@ public class InboundController {
 
 	//------------------------------
 	  // 결재자 결재 기능
-    @RequestMapping("updateApprovalStatus.do")
+    @RequestMapping("/updateApprovalStatus.do")
     public String updateApprovalStatus(@RequestParam("documentId") String documentId,
                                        @RequestParam("step") int step,
                                        @RequestParam("status") String status,

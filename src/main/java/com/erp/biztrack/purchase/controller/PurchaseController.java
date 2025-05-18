@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,7 +67,7 @@ public class PurchaseController {
 	}
 
 	// 문서 개수 카운팅 및 조회 (품의서)
-	@RequestMapping("purchase-document.do")
+	@RequestMapping("/purchase-document.do")
 	public ModelAndView selectDocumentList(@RequestParam(name = "type", defaultValue = "R") String type,
 			@RequestParam(name = "page", required = false) String page,
 			@RequestParam(name = "limit", required = false) String slimit, HttpSession session, ModelAndView mv) {
@@ -119,7 +120,7 @@ public class PurchaseController {
 	}
 
 	// 문서 개수 카운팅 및 조회 (지출결의서)
-	@RequestMapping("payment-document.do")
+	@RequestMapping("/payment-document.do")
 	public ModelAndView selectDocumentListT(@RequestParam(name = "type", defaultValue = "T") String type,
 			@RequestParam(name = "page", required = false) String page,
 			@RequestParam(name = "limit", required = false) String slimit, HttpSession session, ModelAndView mv) {
@@ -171,22 +172,11 @@ public class PurchaseController {
 		return mv;
 	}
 
-	// 문서 작성 페이지로 이동 처리용(품의서)
-	@RequestMapping("new-purchase.do")
-	public String moveNewPDocumentPage() {
-		return "purchase/new-purchase";
-	}
-
-	// 문서 작성 페이지로 이동 처리용(지출결의서)
-	@RequestMapping("new-payment.do")
-	public String moveNewPaymentDocumentPage() {
-		return "purchase/new-payment";
-	}
 
 	// 검색기능--품의서-------------------------------------------------------------------------------------
 	// 검색기능-------------------------------------------------------------------------------------
 		// 검색기능 - 문서번호로 검색
-		@RequestMapping("searchByDocumentId.do")
+		@RequestMapping("/searchByDocumentId.do")
 		public String searchByDocumentId(@RequestParam("keyword") String documentId,
 		                                 HttpSession session,
 		                                 Model model) {
@@ -209,7 +199,7 @@ public class PurchaseController {
 		}
 
 		// 검색기능 - 제목으로 검색
-		@RequestMapping("searchByTitle.do")
+		@RequestMapping("/searchByTitle.do")
 		public String searchByTitle(@RequestParam("keyword") String title,
 		                                 HttpSession session,
 		                                 Model model) {
@@ -232,7 +222,7 @@ public class PurchaseController {
 		}
 		
 		// 검색기능 - 상태로 검색
-		@RequestMapping("searchByStatus.do")
+		@RequestMapping("/searchByStatus.do")
 		public String searchByStatus(@RequestParam("status") String status,
 		                                 HttpSession session,
 		                                 Model model) {
@@ -257,7 +247,7 @@ public class PurchaseController {
 		// 검색기능--지출결의서-------------------------------------------------------------------------------------
 		// 검색기능-------------------------------------------------------------------------------------
 			// 검색기능 - 문서번호로 검색
-			@RequestMapping("searchByDocumentIdT.do")
+			@RequestMapping("/searchByDocumentIdT.do")
 			public String searchByDocumentIdT(@RequestParam("keyword") String documentId,
 			                                 HttpSession session,
 			                                 Model model) {
@@ -280,7 +270,7 @@ public class PurchaseController {
 			}
 
 			// 검색기능 - 제목으로 검색
-			@RequestMapping("searchByTitleT.do")
+			@RequestMapping("/searchByTitleT.do")
 			public String searchByTitleT(@RequestParam("keyword") String title,
 			                                 HttpSession session,
 			                                 Model model) {
@@ -303,7 +293,7 @@ public class PurchaseController {
 			}
 			
 			// 검색기능 - 상태로 검색
-			@RequestMapping("searchByStatusT.do")
+			@RequestMapping("/searchByStatusT.do")
 			public String searchByStatusT(@RequestParam("status") String status,
 			                                 HttpSession session,
 			                                 Model model) {
@@ -326,16 +316,16 @@ public class PurchaseController {
 			}
 
 	// 품의서 등록 -------------------------------------------
-	// 품의서 등록(GET)
-	@GetMapping("new-purchase.do")
+	// 품의서 등록 
+	@RequestMapping("/new-purchase.do")
 	public String showDocumentInsertForm(Model model) {
 		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
 		model.addAttribute("productList", productService.selectAll()); // 상품 목록
 		return "purchase/new-purchase"; // JSP 경로adminServiceImpl
 	}
 
-	// 품의서 등록(POST)
-	@PostMapping("new-purchase.do")
+	// 품의서 등록 
+	@RequestMapping(value="/new-purchase.do", method=RequestMethod.POST)
 	public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
 			@RequestParam("approver2Info") String approver2Id,
 			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request,
@@ -401,17 +391,17 @@ public class PurchaseController {
 
 	// ------------------------------------------------------------------------------------------------
 	// 지출결의서 등록 -------------------------------------------
-	// 지출결의서 등록(GET)
-	// 품의서 등록(GET)
-	@GetMapping("new-payment.do")
+	// 지출결의서 등록
+	// 품의서 등록
+	@RequestMapping("/new-payment.do")
 	public String showDocumentInsertFormT(Model model) {
 		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
 		model.addAttribute("productList", productService.selectAll()); // 상품 목록
 		return "purchase/new-payment"; // JSP 경로adminServiceImpl
 	}
 
-	// 품의서 등록(POST)
-	@PostMapping("new-payment.do")
+	// 품의서 등록
+	@RequestMapping(value="/new-payment.do", method=RequestMethod.POST)
 	public void insertDocumentT(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
 			@RequestParam("approver2Info") String approver2Id,
 			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request,
@@ -477,7 +467,7 @@ public class PurchaseController {
 
 	// 문서 상세보기 이동용
 	// 컨트롤러--------------------------------------------------------------
-	@GetMapping("purchase-detail.do")
+	@RequestMapping("/purchase-detail.do")
 	public String showDocumentDetail(@RequestParam("documentId") String documentId, Model model) {
 
 		// 1. 문서 기본 정보 조회
@@ -509,7 +499,7 @@ public class PurchaseController {
 	}
 
 	// 문서 파일 다운로드
-	@RequestMapping("documentDownload.do")
+	@RequestMapping("/documentDownload.do")
 	public ModelAndView fileDownload(ModelAndView mv, HttpServletRequest request,
 			@RequestParam("ofile") String originalFileName, @RequestParam("rfile") String renameFileName) {
 
@@ -526,8 +516,8 @@ public class PurchaseController {
 	}
 
 	// 문서 수정 관련
-	// 문서 수정폼 이동 (GET)
-	@GetMapping("purchase-update.do")
+	// 문서 수정폼 이동  
+	@RequestMapping("/purchase-update.do")
 	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
 
 		// 문서 기본 정보
@@ -557,7 +547,7 @@ public class PurchaseController {
 		return "purchase/purchase-update";
 	}
 
-	@PostMapping("purchase-update.do")
+	@RequestMapping(value="/purchase-update.do", method=RequestMethod.POST)
 	public String updateDocument(@ModelAttribute DocumentDTO document, @ModelAttribute ApproveDTO approve,
 			@RequestParam(name = "uploadFile", required = false) MultipartFile uploadFile,
 			@RequestParam(name = "deleteFlag", required = false) String deleteFlag,
@@ -625,7 +615,7 @@ public class PurchaseController {
 		return "redirect:/purchase/purchase-detail.do?documentId=" + document.getDocumentId();
 	}
 
-	@GetMapping("documentManEmpInfo.do")
+	@RequestMapping("/documentManEmpInfo.do")
 	@ResponseBody
 	public Map<String, String> fetchEmpInfo(@RequestParam("empId") String empId) {
 		Employee emp = employeeService.selectEmpById(empId);
@@ -639,7 +629,7 @@ public class PurchaseController {
 		return result;
 	}
 
-	@GetMapping("documentDelete.do")
+	@RequestMapping("/documentDelete.do")
 	public String deleteDocument(@RequestParam("documentId") String documentId) {
 		// 삭제 순서 중요!
 		purchaseService.deleteDocumentItems(documentId);
@@ -653,7 +643,7 @@ public class PurchaseController {
 	// ------------------------------------------------------------------------
 
 	  // 결재자 결재 기능
-    @RequestMapping("updateApprovalStatus.do")
+    @RequestMapping("/updateApprovalStatus.do")
     public String updateApprovalStatus(@RequestParam("documentId") String documentId,
                                        @RequestParam("step") int step,
                                        @RequestParam("status") String status,
