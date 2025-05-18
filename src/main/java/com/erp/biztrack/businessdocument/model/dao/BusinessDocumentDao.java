@@ -49,7 +49,7 @@ public class BusinessDocumentDao {
 	    return sqlSessionTemplate.selectOne("businessDocumentMapper.selectNextItemId");
 	}
 	
-	 // 출고서 상세 정보 조회 (문서 + 품목 목록 포함)
+	// 출고서 상세 정보 조회 (문서 + 품목 목록 포함)
     public BusinessDocument selectOneDocument(String documentId) {
         return sqlSessionTemplate.selectOne("businessDocumentMapper.selectOneDocument", documentId);
     }
@@ -79,11 +79,6 @@ public class BusinessDocumentDao {
         return sqlSessionTemplate.update("businessDocumentMapper.updateOutboundDocument", document);
     }
 
-    // 기존 품목 전체 삭제
-    public int deleteOutboundItems(String documentId) {
-        return sqlSessionTemplate.delete("businessDocumentMapper.deleteOutboundItems", documentId);
-    }
-
     // 품목 목록 다시 insert
     public int insertOutboundItem(DocumentItemDTO item) {
         return sqlSessionTemplate.insert("businessDocumentMapper.insertOutboundItem", item);
@@ -93,7 +88,28 @@ public class BusinessDocumentDao {
     public int insertUploadFile(FileDTO file) {
         return sqlSessionTemplate.insert("businessDocumentMapper.insertUploadFile", file);
     }
+
+    // 첨부파일 삭제 (documentId 기준)
+    public int deleteUploadFileByDocumentId(String documentId) {
+        return sqlSessionTemplate.delete("businessDocumentMapper.deleteUploadFileByDocumentId", documentId);
+    }
     
+    // 출고서 품목 삭제
+    public int deleteOutboundItems(String documentId) {
+        return sqlSessionTemplate.delete("businessDocumentMapper.deleteOutboundItems", documentId);
+    }
+    
+    // 결재정보 삭제
+    public int deleteApprovalInfo(String documentId) {
+        return sqlSessionTemplate.delete("businessDocumentMapper.deleteApprovalInfo", documentId);
+    }
+    
+    // 출고서 문서 삭제
+    public int deleteOutboundDocument(String documentId) {
+        return sqlSessionTemplate.delete("businessDocumentMapper.deleteOutboundDocument", documentId);
+    }
+
+
 	/*
 	 * // 세금계산서 목록 조회 public ArrayList<BusinessDocument>
 	 * selectTaxInvoiceDocumentList(DocumentPaging pageInfo) { return (ArrayList)

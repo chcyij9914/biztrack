@@ -126,6 +126,29 @@ public class BusinessDocumentServiceImpl implements BusinessDocumentService {
 		return businessdocumentDao.insertUploadFile(file);
 	}
 
+	// 첨부파일 삭제
+	@Override
+	public int deleteUploadFileByDocumentId(String documentId) {
+		return businessdocumentDao.deleteUploadFileByDocumentId(documentId);
+	}
+
+	@Override
+	public int deleteOutboundDocument(String documentId) {
+		return businessdocumentDao.deleteOutboundDocument(documentId);
+	}
+	
+	@Override
+	public int deleteApprovalInfo(String documentId) {
+		return businessdocumentDao.deleteApprovalInfo(documentId);
+	}
+
+	@Override
+	public int deleteOutboundItems(String documentId) {
+		return businessdocumentDao.deleteOutboundItems(documentId);
+	}
+
+	
+
 	/*
 	 * // 세금계산서 목록 조회
 	 * 

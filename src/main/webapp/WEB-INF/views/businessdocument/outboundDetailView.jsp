@@ -23,7 +23,6 @@
 		<div id="content-wrapper" class="d-flex flex-column">
 			<div id="content">
 				<c:import url="/WEB-INF/views/common/topbar.jsp" />
-
 				<div class="container-fluid">
 					<h1 class="h3 mb-2 text-gray-800">출고서 상세보기</h1>
 					<p class="mb-4 small text-muted">
@@ -76,14 +75,14 @@
 									</tr>
 								</thead>
 								<tbody>
-										<tr>
-											<td>${approval.firstApproverId}</td>
-											<td>${approval.firstApproverJobTitle}</td>
-											<td>${approval.firstApproverName}</td>
-											<td>${approval.firstApproverRoleName}</td>
-											<td>${approval.firstApproverDeptName}</td>
-											<td>${approval.firstApproveStatus}</td>
-										</tr>
+									<tr>
+										<td>${approval.firstApproverId}</td>
+										<td>${approval.firstApproverJobTitle}</td>
+										<td>${approval.firstApproverName}</td>
+										<td>${approval.firstApproverRoleName}</td>
+										<td>${approval.firstApproverDeptName}</td>
+										<td>${approval.firstApproveStatus}</td>
+									</tr>
 								</tbody>
 							</table>
 
@@ -122,7 +121,8 @@
 							<!-- 첨부파일 -->
 							<h5 class="mt-4">첨부파일</h5>
 							<c:choose>
-								<c:when test="${not empty file}">
+								<c:when
+									test="${not empty file and not empty file.originalFileName}">
 									<p class="mb-2 font-weight-bold">${file.originalFileName}</p>
 									<a class="btn btn-sm btn-info" target="_blank"
 										href="${pageContext.request.contextPath}${file.filePath}/${file.renameFileName}">
@@ -134,11 +134,7 @@
 									</a>
 								</c:when>
 								<c:otherwise>
-									<label for="uploadFile"
-										class="btn btn-outline-secondary btn-sm">첨부파일 선택</label>
-									<input type="file" id="uploadFile" name="uploadFile"
-										style="display: none;" onchange="showFileName(this)">
-									<p id="fileNameDisplay" class="text-muted mt-2">첨부파일 없음</p>
+									<p class="text-muted">첨부파일 없음</p>
 								</c:otherwise>
 							</c:choose>
 
@@ -156,35 +152,27 @@
 									href="${pageContext.request.contextPath}/businessdocument/OutboundList.do"
 									class="btn btn-info"> <i class="fas fa-list"></i> 목록으로
 								</a>
-								<button type="button" class="btn btn-danger"
-									onclick="confirmDelete('${document.documentId}')">
-									<i class="fas fa-trash-alt"></i> 삭제
-								</button>
+
+								<!-- 삭제 form (POST 방식) -->
+								<form id="deleteForm" method="post"
+									action="${pageContext.request.contextPath}/businessdocument/deleteOutbound.do"
+									style="display: inline;"
+									onsubmit="return confirm('정말 이 문서를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.');">
+									<input type="hidden" name="documentId"
+										value="${document.documentId}" />
+									<button type="submit" class="btn btn-danger">
+										<i class="fas fa-trash-alt"></i> 삭제
+									</button>
+								</form>
 							</div>
-
-							<script>
-								function confirmDelete(documentId) {
-									if (confirm("정말 이 문서를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {
-										location.href = '${pageContext.request.contextPath}/businessdocument/delete.do?documentId='
-												+ documentId;
-									}
-								}
-
-								function showFileName(input) {
-									const fileName = input.files.length > 0 ? input.files[0].name
-											: '첨부파일 없음';
-									document.getElementById('fileNameDisplay').textContent = fileName;
-								}
-							</script>
 
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</div>
 	</div>
-
+	
 	<!-- 공통 JS -->
 	<script
 		src="${pageContext.request.contextPath}/resources/vendor/jquery/jquery.min.js"></script>

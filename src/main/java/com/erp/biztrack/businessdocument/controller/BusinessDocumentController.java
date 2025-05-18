@@ -175,20 +175,28 @@ public class BusinessDocumentController {
                 businessDocumentService.updateOutboundItems(document.getDocumentId(), document.getItems());
             }
 
+            if ("yes".equals(request.getParameter("deleteFlag"))) {
+                FileDTO existingFile = businessDocumentService.selectOneFileByDocumentId(document.getDocumentId());
+                if (existingFile != null) {
+                    String fullPath = request.getServletContext().getRealPath(existingFile.getFilePath()) + File.separator + existingFile.getRenameFileName();
+                    File file = new File(fullPath);
+                    if (file.exists()) file.delete();
+                    businessDocumentService.deleteUploadFileByDocumentId(document.getDocumentId());
+                }
+            }
+
             if (uploadFiles != null && !uploadFiles.isEmpty()) {
                 String uploadDir = request.getServletContext().getRealPath("/resources/upload/outbound");
                 File uploadPath = new File(uploadDir);
-                if (!uploadPath.exists()) {
-                    uploadPath.mkdirs();
-                }
+                if (!uploadPath.exists()) uploadPath.mkdirs();
 
                 for (MultipartFile file : uploadFiles) {
                     if (!file.isEmpty()) {
                         String originName = file.getOriginalFilename();
                         String ext = originName.substring(originName.lastIndexOf("."));
-                        String rename = System.currentTimeMillis() + "_" + (int) (Math.random() * 10000) + ext;
+                        String rename = System.currentTimeMillis() + "_" + (int)(Math.random() * 10000) + ext;
 
-                        File saveFile = new File(uploadDir, rename);
+                        File saveFile = new File(uploadPath, rename);
                         file.transferTo(saveFile);
 
                         FileDTO fileDTO = new FileDTO();
@@ -211,5 +219,37 @@ public class BusinessDocumentController {
             redirectAttr.addFlashAttribute("errorMsg", "출고서 수정 중 오류가 발생했습니다.");
             return "redirect:/businessdocument/outboundUpdateForm.do?documentId=" + document.getDocumentId();
         }
+    }
+
+    // 출고서 삭제
+    @RequestMapping(value = "/deleteOutbound.do", method = RequestMethod.POST)
+    public String deleteOutboundDocument(
+        @RequestParam("documentId") String documentId,
+        RedirectAttributes redirectAttr,
+        HttpServletRequest request) {
+
+        try {
+            // 첨부파일 물리 삭제
+            FileDTO file = businessDocumentService.selectOneFileByDocumentId(documentId);
+            if (file != null) {
+                String fullPath = request.getServletContext().getRealPath(file.getFilePath())
+                                  + File.separator + file.getRenameFileName();
+                File target = new File(fullPath);
+                if (target.exists()) target.delete();
+            }
+
+            // DB 삭제 (물리 삭제 순서)
+            businessDocumentService.deleteUploadFileByDocumentId(documentId);
+            businessDocumentService.deleteOutboundItems(documentId);
+            businessDocumentService.deleteApprovalInfo(documentId);
+            businessDocumentService.deleteOutboundDocument(documentId);
+
+            redirectAttr.addFlashAttribute("msg", "출고서가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttr.addFlashAttribute("errorMsg", "출고서 삭제 중 오류가 발생했습니다.");
+        }
+
+        return "redirect:/businessdocument/OutboundList.do";
     }
 }

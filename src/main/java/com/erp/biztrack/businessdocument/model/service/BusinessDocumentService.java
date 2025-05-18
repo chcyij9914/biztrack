@@ -55,7 +55,15 @@ public interface BusinessDocumentService {
 
     // 첨부파일 insert
     int insertUploadFile(FileDTO file);
-
+    
+    // 첨부파일 삭제
+    int deleteUploadFileByDocumentId(String documentId);
+    
+    // 출고서 삭제 기능 추가
+    int deleteOutboundDocument(String documentId);
+    int deleteApprovalInfo(String documentId);
+    int deleteOutboundItems(String documentId);
+    
 	/*
 	 * // 세금계산서 목록 조회 ArrayList<BusinessDocument>
 	 * selectTaxInvoiceDocumentList(DocumentPaging pageInfo);
