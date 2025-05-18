@@ -164,7 +164,7 @@
           </div>
         </div>
 
-        <!-- 일정 상세 메시지 모델 -->
+        <!-- 일정 상세 메시지 모달 -->
         <div class="modal fade" id="eventDetailModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">

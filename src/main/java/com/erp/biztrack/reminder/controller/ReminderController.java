@@ -32,24 +32,23 @@ public class ReminderController {
     public String showReminderList(Model model) {
         List<Reminder> reminderList = reminderService.selectAllReminders();
         model.addAttribute("reminderList", reminderList);
+        logger.info("리마인더 목록 조회됨: {}건", reminderList.size());
         return "reminder/reminderList";
     }
 
-    // 메일 작성 폼 호출 (선택한 거래처 정보 전달)
+    // 메일 작성 폼
     @RequestMapping(value = "/sendForm.do", method = RequestMethod.GET)
-    public String openMailForm(
-            @RequestParam("clientEmail") String clientEmail,
-            @RequestParam("clientName") String clientName,
-            @RequestParam("reminderId") String reminderId,
-            Model model) {
-
+    public String openMailForm(@RequestParam("clientEmail") String clientEmail,
+                                @RequestParam("clientName") String clientName,
+                                @RequestParam("reminderId") String reminderId,
+                                Model model) {
         model.addAttribute("clientEmail", clientEmail);
         model.addAttribute("clientName", clientName);
         model.addAttribute("reminderId", reminderId);
         return "reminder/reminderMail";
     }
 
-    // 메일 전송 처리
+    // 메일 전송
     @RequestMapping(value = "/sendEmail.do", method = RequestMethod.POST)
     public String sendReminderEmail(@RequestParam("to") String to,
                                     @RequestParam("text") String text,
@@ -61,27 +60,24 @@ public class ReminderController {
         String from = "admin@biztrack.com";
         String subject = "[BizTrack] 리마인더 안내";
 
-        // 1. 전달값 확인 로그
-        logger.info("메일 수신자(to): {}", to);
-        logger.info("메일 내용(text): {}", text);
-        logger.info("리마인더 ID(reminderId): {}", reminderId);
+        // 로그
+        logger.info("메일 수신자: {}, 내용 길이: {}, reminderId: {}", to, text.length(), reminderId);
 
-        // 2. 메일 전송
+        // 메일 전송
         boolean mailSendResult = MailUtil.sendViaMailgun(to, subject, text, from, file);
+        logger.info("메일 전송 결과: {}", mailSendResult ? "성공" : "실패");
 
-        // 3. DB 저장 (reminderId 유효할 경우만)
+        // DB 업데이트
         if (reminderId != null && !reminderId.trim().isEmpty()) {
             Reminder reminder = new Reminder();
             reminder.setReminderId(reminderId);
             reminder.setMailContent(text);
-            reminderService.updateMailContent(reminder);
-            logger.info("메일 내용이 DB에 저장되었습니다.");
+            int result = reminderService.updateMailContent(reminder);
+            logger.info("DB 업데이트 결과: {}건", result);
         } else {
-            logger.warn("reminderId가 null 또는 빈 문자열이어서 저장되지 않았습니다.");
+            logger.warn("reminderId가 없어서 DB 저장 생략");
         }
 
-        // 4. 결과 처리
-        model.addAttribute("result", mailSendResult ? "성공" : "실패");
-        return "reminder/result";
+        return "redirect:/reminder/ReminderList.do";
     }
 }
