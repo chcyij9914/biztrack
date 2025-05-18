@@ -172,17 +172,6 @@ public class PurchaseController {
 		return mv;
 	}
 
-	// 문서 작성 페이지로 이동 처리용(품의서)
-	@RequestMapping("/new-purchase.do")
-	public String moveNewPDocumentPage() {
-		return "purchase/new-purchase";
-	}
-
-	// 문서 작성 페이지로 이동 처리용(지출결의서)
-	@RequestMapping("/new-payment.do")
-	public String moveNewPaymentDocumentPage() {
-		return "purchase/new-payment";
-	}
 
 	// 검색기능--품의서-------------------------------------------------------------------------------------
 	// 검색기능-------------------------------------------------------------------------------------
@@ -327,7 +316,7 @@ public class PurchaseController {
 			}
 
 	// 품의서 등록 -------------------------------------------
-	// 품의서 등록(GET)
+	// 품의서 등록 
 	@RequestMapping("/new-purchase.do")
 	public String showDocumentInsertForm(Model model) {
 		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
@@ -335,7 +324,7 @@ public class PurchaseController {
 		return "purchase/new-purchase"; // JSP 경로adminServiceImpl
 	}
 
-	// 품의서 등록(POST)
+	// 품의서 등록 
 	@RequestMapping(value="/new-purchase.do", method=RequestMethod.POST)
 	public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
 			@RequestParam("approver2Info") String approver2Id,
@@ -402,8 +391,8 @@ public class PurchaseController {
 
 	// ------------------------------------------------------------------------------------------------
 	// 지출결의서 등록 -------------------------------------------
-	// 지출결의서 등록(GET)
-	// 품의서 등록(GET)
+	// 지출결의서 등록
+	// 품의서 등록
 	@RequestMapping("/new-payment.do")
 	public String showDocumentInsertFormT(Model model) {
 		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
@@ -411,7 +400,7 @@ public class PurchaseController {
 		return "purchase/new-payment"; // JSP 경로adminServiceImpl
 	}
 
-	// 품의서 등록(POST)
+	// 품의서 등록
 	@RequestMapping(value="/new-payment.do", method=RequestMethod.POST)
 	public void insertDocumentT(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
 			@RequestParam("approver2Info") String approver2Id,
@@ -527,7 +516,7 @@ public class PurchaseController {
 	}
 
 	// 문서 수정 관련
-	// 문서 수정폼 이동 (GET)
+	// 문서 수정폼 이동  
 	@RequestMapping("/purchase-update.do")
 	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
 

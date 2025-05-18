@@ -187,15 +187,9 @@ public class InboundController {
 	}
 
 
-	// -------------------------------------------------------------------------------------------------
-	// 입고 작성
-	@RequestMapping("/new-inbound.do")
-	public String moveNewInboundPage() {
-		return "inbound/new-inbound";
-	}
 
 	// 입고서 등록 -------------------------------------------
-	// 입고서 등록(GET)
+	// 입고서 등록
 	@RequestMapping("/new-inbound.do")
 	public String showDocumentInsertForm(Model model) {
 		model.addAttribute("clientList", clientService.selectAllClients()); // 거래처 목록
@@ -203,7 +197,7 @@ public class InboundController {
 		return "inbound/new-inbound"; // JSP 경로adminServiceImpl
 	}
 
-	// 입고서 등록(POST)
+	// 입고서 등록
 	@RequestMapping(value="/new-inbound.do", method=RequestMethod.POST)
 	public void insertDocument(@ModelAttribute DocumentDTO document, @RequestParam("approver1Info") String approver1Id,
 			@RequestParam("approver2Info") String approver2Id,
@@ -319,7 +313,7 @@ public class InboundController {
 	}
 
 	// 문서 수정 관련-------------------------------
-	// 문서 수정폼 이동 (GET)
+	// 문서 수정폼 이동 
 	@RequestMapping("/inbound-update.do")
 	public String showDocumentUpdateForm(@RequestParam("documentId") String documentId, Model model) {
 
