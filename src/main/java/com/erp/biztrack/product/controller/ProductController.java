@@ -186,7 +186,7 @@ public class ProductController {
 	}
 
 	// 수정기능
-	@RequestMapping(value="/update-update.do", method=RequestMethod.POST)
+	@RequestMapping(value="/update.do", method=RequestMethod.POST)
 	public String updateProduct(@ModelAttribute Product product) {
 		productService.updateProduct(product);
 		return "redirect:/product/product-detail.do?productId=" + product.getProductId();
