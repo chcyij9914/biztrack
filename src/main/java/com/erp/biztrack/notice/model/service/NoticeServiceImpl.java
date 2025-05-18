@@ -117,7 +117,7 @@ public class NoticeServiceImpl implements NoticeService {
 	//메인페이지 최근공지 5개 ------------------------------------------------------
 	@Override
 	public ArrayList<Notice> selectList5(Paging paging) {
-		return noticeDao.selectList(paging);
+		return noticeDao.selectList5(paging);
 	}
 
 	
