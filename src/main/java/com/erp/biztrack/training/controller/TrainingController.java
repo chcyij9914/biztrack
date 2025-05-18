@@ -153,20 +153,18 @@ public class TrainingController {
 		}
 		return mv;
 	}
-	
+
 	@RequestMapping(value = "/training/register.do", method = RequestMethod.GET)
 	public String registerPage() {
-	    return "training/register"; // JSP 페이지
+		return "training/register"; // JSP 페이지
 	}
-
 
 	// 수강신청 등록
 	// 수강신청 등록 (Controller에서 로직 처리 중심)
-
+	
 	@RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> registerTraining(@RequestBody Map<String, Object> data, HttpSession session) {
-
 	    Map<String, Object> result = new HashMap<>();
 	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
 
@@ -183,32 +181,43 @@ public class TrainingController {
 	        return result;
 	    }
 
-	    int currentEnrollment = trainingService.getCurrentEnrollment(trainingId);
-	    int capacity = trainingService.getTrainingCapacity(trainingId);
-	    if (currentEnrollment >= capacity) {
+	    // 교육 상세 정보 한번에 조회
+	    Training training = trainingService.selectTraining(trainingId);
+	    if (training == null) {
+	        result.put("status", "fail");
+	        result.put("message", "해당 교육 정보를 불러올 수 없습니다.");
+	        return result;
+	    }
+
+	    // 정원 초과 여부 확인
+	    int currentEnrollment = trainingService.getEnrollmentCount(trainingId);
+	    if (currentEnrollment >= training.getCapacity()) {
 	        result.put("status", "fail");
 	        result.put("message", "정원이 초과되어 수강신청이 불가합니다.");
 	        return result;
 	    }
 
-	    Date startDate = trainingService.getTrainingStartDate(trainingId);
-	    Date endDate = trainingService.getTrainingEndDate(trainingId);
+	    // 신청 가능 날짜 확인
 	    Date today = new Date(System.currentTimeMillis());
+	    if (training.getStartDate() == null || training.getEndDate() == null) {
+	        result.put("status", "fail");
+	        result.put("message", "교육 시작일 또는 종료일이 없습니다.");
+	        return result;
+	    }
 
-	    if (today.before(startDate) || today.after(endDate)) {
+	    if (today.before(training.getStartDate()) || today.after(training.getEndDate())) {
 	        result.put("status", "fail");
 	        result.put("message", "신청 가능한 기간이 아닙니다.");
 	        return result;
 	    }
 
-	    String registrationId = loginInfo.getEmpId();
-	    data.put("registrationId", registrationId);
+	    // 파라미터 조립
+	    data.put("registrationId", loginInfo.getEmpId());
 	    data.put("isCancelled", "N");
-	    data.put("registrationAt", new Timestamp(System.currentTimeMillis())); // 이건 여전히 Timestamp 유지
+	    data.put("registrationAt", new Timestamp(System.currentTimeMillis()));
 
 	    try {
 	        int insertResult = trainingService.insertTrainingRegistration(data);
-
 	        if (insertResult > 0) {
 	            result.put("status", "success");
 	        } else {
@@ -217,8 +226,7 @@ public class TrainingController {
 	        }
 
 	    } catch (Exception e) {
-	        String errorMsg = e.getMessage();
-	        if (errorMsg != null && errorMsg.contains("ORA-00001")) {
+	        if (e.getMessage() != null && e.getMessage().contains("ORA-00001")) {
 	            result.put("status", "fail");
 	            result.put("message", "이미 신청하신 교육입니다.");
 	        } else {
@@ -230,6 +238,59 @@ public class TrainingController {
 
 	    return result;
 	}
+
+
+	/*
+	 * @RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
+	 * 
+	 * @ResponseBody public Map<String, Object> registerTraining(@RequestBody
+	 * Map<String, Object> data, HttpSession session) {
+	 * 
+	 * Map<String, Object> result = new HashMap<>(); LoginDto loginInfo = (LoginDto)
+	 * session.getAttribute("loginInfo");
+	 * 
+	 * if (loginInfo == null) { result.put("status", "fail"); result.put("message",
+	 * "로그인이 필요합니다."); return result; }
+	 * 
+	 * String trainingId = (String) data.get("trainingId"); if (trainingId == null
+	 * || trainingId.trim().isEmpty()) { result.put("status", "fail");
+	 * result.put("message", "교육 ID가 누락되었습니다."); return result; }
+	 * 
+	 * 
+	 * int currentEnrollment = trainingService.getCurrentEnrollment(trainingId); int
+	 * capacity = trainingService.getTrainingCapacity(trainingId); if
+	 * (currentEnrollment >= capacity) { result.put("status", "fail");
+	 * result.put("message", "정원이 초과되어 수강신청이 불가합니다."); return result; }
+	 * 
+	 * Date startDate = trainingService.getTrainingStartDate(trainingId); Date
+	 * endDate = trainingService.getTrainingEndDate(trainingId); Date today = new
+	 * Date(System.currentTimeMillis());
+	 * 
+	 * if (today.before(startDate) || today.after(endDate)) { result.put("status",
+	 * "fail"); result.put("message", "신청 가능한 기간이 아닙니다."); return result; }
+	 * 
+	 * String registrationId = loginInfo.getEmpId(); data.put("registrationId",
+	 * registrationId); data.put("isCancelled", "N"); data.put("registrationAt", new
+	 * Timestamp(System.currentTimeMillis())); // 이건 여전히 Timestamp 유지
+	 * 
+	 * try { int insertResult = trainingService.insertTrainingRegistration(data);
+	 * 
+	 * if (insertResult > 0) { result.put("status", "success"); } else {
+	 * result.put("status", "fail"); result.put("message", "수강신청에 실패했습니다."); }
+	 * 
+	 * } catch (Exception e) { String errorMsg = e.getMessage(); if (errorMsg !=
+	 * null && errorMsg.contains("ORA-00001")) { result.put("status", "fail");
+	 * result.put("message", "이미 신청하신 교육입니다."); } else { result.put("status",
+	 * "fail"); result.put("message", "처리 중 오류가 발생했습니다."); } e.printStackTrace(); }
+	 * 
+	 * return result; }
+	 */
+	
+	
+	
+	
+	
+	
 
 	/*
 	 * @RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
@@ -269,7 +330,6 @@ public class TrainingController {
 	 * return result; }
 	 */
 
-
 	/*
 	 * @RequestMapping(value = "/training/register.do", method = RequestMethod.POST)
 	 * 
@@ -294,7 +354,6 @@ public class TrainingController {
 	 * 
 	 * return result; }
 	 */
-
 
 	// 교육 삭제
 	@RequestMapping(value = "/training/delete.do", method = RequestMethod.POST)
@@ -394,16 +453,17 @@ public class TrainingController {
 		return mv;
 	}
 
-	// 수강신청 내역 페이지 
+	// 수강신청 내역 페이지
 	@RequestMapping("/training/applicant.do")
 	public ModelAndView viewMyTrainingList(HttpSession session) {
-	    LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
-	    if (loginInfo == null) return new ModelAndView("redirect:/login.do");
+		LoginDto loginInfo = (LoginDto) session.getAttribute("loginInfo");
+		if (loginInfo == null)
+			return new ModelAndView("redirect:/login.do");
 
-	    List<Training> trainingList = trainingService.getTrainingListByEmpId(loginInfo.getEmpId());
-	    ModelAndView mv = new ModelAndView("training/applicant");
-	    mv.addObject("trainingList", trainingList);
-	    return mv;
+		List<Training> trainingList = trainingService.getTrainingListByEmpId(loginInfo.getEmpId());
+		ModelAndView mv = new ModelAndView("training/applicant");
+		mv.addObject("trainingList", trainingList);
+		return mv;
 	}
 
 	/*
@@ -428,9 +488,6 @@ public class TrainingController {
 	 * return mv; }
 	 */
 
-
-
-	
 	@RequestMapping("/training/myList.do")
 	public String viewMyTrainingList(HttpSession session, Model model) {
 		String loginEmail = (String) session.getAttribute("loginEmail");
